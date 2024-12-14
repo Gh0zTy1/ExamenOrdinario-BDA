@@ -4,13 +4,10 @@
  */
 package daos;
 
-
-
 /**
  *
  * @author caarl
  */
-
 import conexion.IConexion;
 import entidades.Cliente;
 import idaos.IClienteDAO;

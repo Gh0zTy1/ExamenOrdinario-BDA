@@ -20,101 +20,133 @@ import javax.persistence.Table;
  * @author caarl
  */
 @Entity
-@Table(name = "clientes")
-public class Cliente implements Serializable{
-    
+@Table(name="cliente")
+public class Cliente implements Serializable {
+
     private static final long serialVersionUID = 1L;
-    
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id; 
+    private Long id;
     
-    @Column(name = "nombre",nullable = false)
-    private String nombre; 
+    @Column(name="nombre_completo", nullable=false, length=100)
+    private String nombreCompleto;
     
-    @Column(name = "telefono", nullable = false, unique = true)
-    private String telefono; 
-    
-    @OneToMany(mappedBy = "cliente", cascade = CascadeType.PERSIST)
-    private List<Reserva> reservas; 
+    @Column(name="telefono", nullable=false, length=15, unique=true)
+    private String telefono;
 
+    @OneToMany(
+            mappedBy="cliente", 
+            cascade={
+                CascadeType.PERSIST
+            }, 
+            orphanRemoval=true
+    )
+    private List<Reservacion> reservaciones;
+    
     /**
-     * Constructor por defecto de la clase 
+     * Constructor sin argumentos que inicializa un nuevo objeto Cliente.
      */
     public Cliente() {
-    }
-    
-    /**
-     * Constructor que se utilizara para inserciones
-     * 
-     * @param nombre nombre del cliente.
-     * @param telefono telefono del cliente.
-     */
-    public Cliente(String nombre, String telefono) {
-        this.nombre = nombre;
-        this.telefono = telefono;
-    }
-    
-    /**
-     * Metodo completo para obtener el cliente de la base de datos con todos
-     * sus atributos.
-     * 
-     * @param id id del cliente
-     * @param nombreCompleto nombre del cliente.
-     * @param telefono telefono del cliente. 
-     * @param reservas lista de reservas del cliente.
-     */
-    public Cliente(Long id, String nombreCompleto, String telefono, 
-            List<Reserva> reservas) {
-        this.id = id;
-        this.nombre = nombreCompleto;
-        this.telefono = telefono;
-        this.reservas = reservas;
-    }
-    
-    
 
+    }
+
+    /**
+     * Constructor que inicializa un nuevo objeto Cliente con el ID
+     * especificado.
+     *
+     * @param id el identificador único del cliente
+     */
+    public Cliente(Long id) {
+        this.id = id;
+    }
+
+    /**
+     * Constructor que inicializa un nuevo objeto Cliente con el teléfono
+     * especificado.
+     *
+     * @param telefono el número de teléfono del cliente
+     */
+    public Cliente(String telefono) {
+        this.telefono = telefono;
+    }
+
+    /**
+     * Obtiene el identificador único del cliente.
+     *
+     * @return el identificador del cliente
+     */
     public Long getId() {
         return id;
     }
 
+    /**
+     * Establece el identificador único del cliente.
+     *
+     * @param id el identificador del cliente a establecer
+     */
     public void setId(Long id) {
         this.id = id;
     }
 
-    public String getNombre() {
-        return nombre;
+    /**
+     * Obtiene el nombre completo del cliente.
+     *
+     * @return el nombre completo del cliente
+     */
+    public String getNombreCompleto() {
+        return nombreCompleto;
     }
 
-    public void setNombre(String nombre) {
-        this.nombre = nombre;
+    /**
+     * Establece el nombre completo del cliente.
+     *
+     * @param nombreCompleto el nombre completo del cliente a establecer
+     */
+    public void setNombreCompleto(String nombreCompleto) {
+        this.nombreCompleto = nombreCompleto;
     }
 
+    /**
+     * Obtiene el número de teléfono del cliente.
+     *
+     * @return el número de teléfono del cliente
+     */
     public String getTelefono() {
         return telefono;
     }
 
+    /**
+     * Establece el número de teléfono del cliente.
+     *
+     * @param telefono el número de teléfono del cliente a establecer
+     */
     public void setTelefono(String telefono) {
         this.telefono = telefono;
     }
 
-    public List<Reserva> getReservas() {
-        return reservas;
+
+    @Override
+    public int hashCode() {
+        int hash = 0;
+        hash += (id != null ? id.hashCode() : 0);
+        return hash;
     }
 
-    public void setReservas(List<Reserva> reservas) {
-        this.reservas = reservas;
+    @Override
+    public boolean equals(Object object) {
+        // TODO: Warning - this method won't work in the case the id fields are not set
+        if (!(object instanceof Cliente)) {
+            return false;
+        }
+        Cliente other = (Cliente) object;
+        if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
+            return false;
+        }
+        return true;
     }
 
-    /**
-     * Metodo toString para obtener los atributos de la clase.
-     * 
-     * @return String con todos los atributos de la clase.
-     */
     @Override
     public String toString() {
-        return "Cliente{" + "id=" + id + ", nombreCompleto=" + nombre + 
-                ", telefono=" + telefono + ", reservas=" + reservas + '}';
+        return "entidades.Cliente[ id=" + id + " ]";
     }
-    
 }

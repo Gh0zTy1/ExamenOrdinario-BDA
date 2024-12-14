@@ -5,10 +5,13 @@
 package entidades;
 
 import java.io.Serializable;
+import java.time.LocalDateTime;
 import java.util.List;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -23,168 +26,182 @@ import javax.persistence.Table;
  * @author caarl
  */
 @Entity
-@Table(name = "mesas")
+@Table(name = "mesa")
 public class Mesa implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id; 
+    private Long id;
 
-    @Column(name = "codigo_mesa", nullable = false, unique = true)
-    private String codigoMesa; 
-
-    @Column(name = "tipo_mesa", nullable = false)
-    private String tipoMesa; 
-
-    @Column(name = "capacidad_minima", nullable = false)
-    private int capacidadMinima; 
-    
-    @Column(name = "capacidad_maxima", nullable = false)
-    private int capacidadMaxima; 
-
-    @Column(nullable = false)
-    private String ubicacion; 
+    @Column(name = "codigo", nullable = false, length = 15)
+    private String codigo;
 
     @ManyToOne
-    @JoinColumn(name = "restaurante_id", nullable = false)
-    private Restaurante restaurante; 
+    @JoinColumn(name = "tipo_mesa", referencedColumnName = "id")
+    private TipoMesa tipoMesa;
 
-    @OneToMany(mappedBy = "mesa", cascade = CascadeType.PERSIST)
-    private List<Reserva> reservas; 
+    @Enumerated(EnumType.STRING)
+    @Column(name = "ubicacion", nullable = false)
+    private UbicacionMesa ubicacion;
+
+    @Column(name = "fecha_hora_disp", nullable=true, columnDefinition = "TIMESTAMP")
+    private LocalDateTime fechaNuevaDisponibilidad;
+
+    @ManyToOne
+    @JoinColumn(name = "restaurante", referencedColumnName = "id")
+    private Restaurante restaurante;
+
+    @Override
+    public int hashCode() {
+        int hash = 0;
+        hash += (id != null ? id.hashCode() : 0);
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object object) {
+        // TODO: Warning - this method won't work in the case the id fields are not set
+        if (!(object instanceof Mesa)) {
+            return false;
+        }
+        Mesa other = (Mesa) object;
+        if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
+            return false;
+        }
+        return true;
+    }
+
+    @Override
+    public String toString() {
+        return "entidades.Mesa[ id=" + id + " ]";
+    }
 
     /**
-     * Constructor por defecto de la clase.
+     * Constructor por defecto que inicializa una nueva instancia de Mesa. Este
+     * constructor no realiza ninguna acción adicional.
      */
     public Mesa() {
+
     }
 
     /**
-     * Constructor dedicado a las inserciones de nuevas mesas.
-     * 
-     * @param codigoMesa  codigo de la mesa.
-     * @param tipoMesa tipo de mesa
-     * @param capacidadMinima capacidad minima de la mesa.
-     * @param capacidadMaxima capacidad maxima de la mesa.
-     * @param ubicacion ubicacion de la mesa.
-     * @param restaurante restaurante asociado a la mesa.
+     * Constructor que inicializa una nueva instancia de Mesa con un
+     * identificador específico.
+     *
+     * @param id El identificador único de la mesa.
      */
-    public Mesa(String codigoMesa, String tipoMesa, int capacidadMinima,
-            int capacidadMaxima, String ubicacion, Restaurante restaurante) {
-        this.codigoMesa = codigoMesa;
-        this.tipoMesa = tipoMesa;
-        this.capacidadMinima = capacidadMinima;
-        this.capacidadMaxima = capacidadMaxima;
-        this.ubicacion = ubicacion;
-        this.restaurante = restaurante;
-    }
-
-    /**
-     * Constructor completo para obtener todos los atributos de la clase.
-     * 
-     * @param id id de la mesa.
-     * @param codigoMesa  codigo de la mesa.
-     * @param tipoMesa tipo de mesa
-     * @param capacidadMinima capacidad minima de la mesa.
-     * @param capacidadMaxima capacidad maxima de la mesa.
-     * @param ubicacion ubicacion de la mesa.
-     * @param restaurante restaurante asociado a la mesa. 
-     * @param reservas lista de reservas asociada a la mesa.
-     */
-    public Mesa(Long id, String codigoMesa, String tipoMesa, 
-            int capacidadMinima, int capacidadMaxima, String ubicacion, 
-            Restaurante restaurante, List<Reserva> reservas) {
+    public Mesa(Long id) {
         this.id = id;
-        this.codigoMesa = codigoMesa;
-        this.tipoMesa = tipoMesa;
-        this.capacidadMinima = capacidadMinima;
-        this.capacidadMaxima = capacidadMaxima;
-        this.ubicacion = ubicacion;
-        this.restaurante = restaurante;
-        this.reservas = reservas;
     }
 
-    
-
+    /**
+     * Obtiene el identificador único de la mesa.
+     *
+     * @return El identificador único de la mesa.
+     */
     public Long getId() {
         return id;
     }
 
+    /**
+     * Establece el identificador único de la mesa.
+     *
+     * @param id El identificador único de la mesa a establecer.
+     */
     public void setId(Long id) {
         this.id = id;
     }
 
-    public String getCodigoMesa() {
-        return codigoMesa;
+    /**
+     * Obtiene el código que representa la mesa.
+     *
+     * @return El código de la mesa.
+     */
+    public String getCodigo() {
+        return codigo;
     }
 
-    public void setCodigoMesa(String codigoMesa) {
-        this.codigoMesa = codigoMesa;
+    /**
+     * Establece el código que representa la mesa.
+     *
+     * @param codigo El código de la mesa a establecer.
+     */
+    public void setCodigo(String codigo) {
+        this.codigo = codigo;
     }
 
-    public String getTipoMesa() {
+    /**
+     * Obtiene el tipo de mesa.
+     *
+     * @return El tipo de mesa asociado a esta instancia de Mesa.
+     */
+    public TipoMesa getTipoMesa() {
         return tipoMesa;
     }
 
-    public void setTipoMesa(String tipoMesa) {
+    /**
+     * Establece el tipo de mesa.
+     *
+     * @param tipoMesa El tipo de mesa a establecer.
+     */
+    public void setTipoMesa(TipoMesa tipoMesa) {
         this.tipoMesa = tipoMesa;
     }
 
-    public int getCapacidadMinima() {
-        return capacidadMinima;
-    }
-
-    public void setCapacidadMinima(int capacidadMinima) {
-        this.capacidadMinima = capacidadMinima;
-    }
-
-    public int getCapacidadMaxima() {
-        return capacidadMaxima;
-    }
-
-    public void setCapacidadMaxima(int capacidadMaxima) {
-        this.capacidadMaxima = capacidadMaxima;
-    }
-
-    public String getUbicacion() {
+    /**
+     * Obtiene la ubicacion de la mesa en el restaurante
+     *
+     * @return La ubicacion de la mesa
+     */
+    public UbicacionMesa getUbicacion() {
         return ubicacion;
     }
 
-    public void setUbicacion(String ubicacion) {
+    /**
+     * Asigna la ubicacion de la mesa en el restaurante
+     *
+     * @param ubicacion Ubicacion de la mesa a asignar
+     */
+    public void setUbicacion(UbicacionMesa ubicacion) {
         this.ubicacion = ubicacion;
     }
 
+    /**
+     * Obtiene la fecha y hora en la que la mesa estará disponible nuevamente.
+     *
+     * @return la fecha y hora de nueva disponibilidad de la mesa.
+     */
+    public LocalDateTime getFechaNuevaDisponibilidad() {
+        return fechaNuevaDisponibilidad;
+    }
+
+    /**
+     * Establece la fecha y hora en la que la mesa estará disponible nuevamente.
+     *
+     * @param fechaNuevaDisponibilidad la nueva fecha y hora de disponibilidad.
+     */
+    public void setFechaNuevaDisponibilidad(LocalDateTime fechaNuevaDisponibilidad) {
+        this.fechaNuevaDisponibilidad = fechaNuevaDisponibilidad;
+    }
+
+    /**
+     * Obtiene el restaurante asociado a la mesa.
+     *
+     * @return el restaurante al que pertenece esta mesa.
+     */
     public Restaurante getRestaurante() {
         return restaurante;
     }
 
+    /**
+     * Establece el restaurante al que pertenece la mesa.
+     *
+     * @param restaurante el restaurante que se asociará a esta mesa.
+     */
     public void setRestaurante(Restaurante restaurante) {
         this.restaurante = restaurante;
     }
 
-    public List<Reserva> getReservas() {
-        return reservas;
-    }
-
-    public void setReservas(List<Reserva> reservas) {
-        this.reservas = reservas;
-    }
-
-    /**
-     * Metodo toString para representar en linea de texto los atributos 
-     * de la clase.
-     * 
-     * @return String con todos los atributos de la clase.
-     */
-    @Override
-    public String toString() {
-        return "Mesa{" + "id=" + id + ", codigoMesa=" + codigoMesa + 
-                ", tipoMesa=" + tipoMesa + ", capacidadMinima=" + 
-                capacidadMinima + ", capacidadMaxima=" + capacidadMaxima + 
-                ", ubicacion=" + ubicacion + ", restaurante=" + restaurante + 
-                ", reservas=" + reservas + '}';
-    }
-
-        
 }
