@@ -57,9 +57,6 @@ public class Reservacion implements Serializable {
     @Column(name="monto_total")
     private Float montoTotal;
     
-    @ManyToOne
-    @JoinColumn(name="multa_id")
-    private Multa multa;
 
     @Override
     public int hashCode() {
@@ -230,22 +227,6 @@ public class Reservacion implements Serializable {
      */
     public void setMontoTotal(Float montoTotal) {
         this.montoTotal = montoTotal;
-    }
-
-    /**
-     * Multa por cancelacion asociada a la reservacion
-     * @return the multa
-     */
-    public Multa getMulta() {
-        return multa;
-    }
-
-    /**
-     * Asigna una multa por cancelacion a la reservacion
-     * @param multa Multa a asignar
-     */
-    public void setMulta(Multa multa) {
-        this.multa = multa;
     }
 
     /**

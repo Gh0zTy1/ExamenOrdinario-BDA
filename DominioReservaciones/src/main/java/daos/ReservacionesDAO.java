@@ -3,12 +3,10 @@ package daos;
 import Excepciones.DAOException;
 import conexion.Conexion;
 import entidades.EstadoReservacion;
-import entidades.Multa;
 import entidades.Reservacion;
 import entidades.TipoMesa;
 import idaos.IMesasDAO;
 import idaos.IReservacionesDAO;
-import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.ArrayList;
@@ -297,151 +295,5 @@ public class ReservacionesDAO implements IReservacionesDAO {
         }
     }
 
-    @Override
-    public void cancelarReservacion(Long idReservacion) throws DAOException {
-        EntityManager entityManager = Conexion.getInstance().crearConexion();
-
-        Reservacion reservacion = entityManager.find(Reservacion.class, idReservacion);
-        if (reservacion == null) {
-            throw new DAOException("No se encontro la reservacion");
-        }
-
-        if (reservacion.getEstado().equals(EstadoReservacion.CANCELADA)) {
-            throw new DAOException("La reservacion ya fue cancelada con anterioridad");
-        }
-
-        if (reservacion.getEstado().equals(EstadoReservacion.FINALIZADA)) {
-            throw new DAOException("La reservacion que se intenta cancelar ya fue termino");
-        }
-
-        // se calcula la multa correspondiente al tiempo en el que fue cancelada
-        LocalDateTime fechaHoraReservacion = reservacion.getFechaHora();
-        LocalDateTime fechaHoraActual = LocalDateTime.now();
-
-        Duration diffTemporal = Duration.between(fechaHoraActual, fechaHoraReservacion);
-
-        long horasRestantes = diffTemporal.toHours();
-
-        // NOTE: DEBUG
-        System.out.println("DIFERENCIA TEMPORAL DE CANCELACION: " + horasRestantes + " horas...");
-
-        Multa multa = null;
-
-        // multa de 25%
-        if (horasRestantes > 24 && horasRestantes <= 48) {
-            multa = this.obtenerTiposMultaTodos()
-                    .stream()
-                    .filter(m -> m.getPorcentaje() == 25f)
-                    .findFirst()
-                    .orElse(null);
-
-            if (multa == null) {
-                throw new DAOException("Ocurrio un error al aplicar la multa en la reservacion, porfavor intente mas tarde...");
-            }
-            // multa de 50%
-        } else if (horasRestantes <= 24) {
-            multa = this.obtenerTiposMultaTodos()
-                    .stream()
-                    .filter(m -> m.getPorcentaje() == 50f)
-                    .findFirst()
-                    .orElse(null);
-
-            if (multa == null) {
-                throw new DAOException("Ocurrio un error al aplicar la multa en la reservacion, porfavor intente mas tarde...");
-            }
-        }
-
-        // se asigna la multa correspondiente a las horas restantes para la reservacion
-        reservacion.setMulta(multa);
-
-        if (multa != null) {
-            // se calcula el nuevo total para la reservacion
-            Float montoTotal = reservacion.getMesa().getTipoMesa().getPrecio() * (multa.getPorcentaje() / 100);
-            reservacion.setMontoTotal(montoTotal);
-        }
-
-        // se cambia el estado de la reservacion
-        reservacion.setEstado(EstadoReservacion.CANCELADA);
-
-        EntityTransaction transaction = entityManager.getTransaction();
-
-        try {
-            transaction.begin();
-            entityManager.merge(reservacion);
-            transaction.commit();
-        } catch (Exception e) {
-            if (transaction.isActive()) {
-                transaction.rollback();
-            }
-            throw new DAOException("Error al cancelar la reservacion, porfavor intente mas tarde");
-        } finally {
-            entityManager.close();
-        }
-
-        if (multa != null) {
-            throw new DAOException(
-                    String.format(
-                            "El cliente obtuvo una multa por cancelacion:\nDescripcion: %s\nTotal a pagar por la multa: $%.2f",
-                            multa.getDescripcion(),
-                            reservacion.getMontoTotal()
-                    )
-            );
-        }
+   
     }
-
-    @Override
-    public List<Multa> obtenerTiposMultaTodos() throws DAOException {
-        EntityManager entityManager = Conexion.getInstance().crearConexion();
-
-        try {
-            return entityManager.createQuery("SELECT m FROM Multa m", Multa.class).getResultList();
-        } catch (Exception e) {
-            throw new DAOException("No se pudo obtener los tipos de multa en el sistema");
-        } finally {
-            entityManager.close();
-        }
-    }
-
-    @Override
-    public void agregarTipoMulta(Multa multa) throws DAOException {
-        EntityManager entityManager = Conexion.getInstance().crearConexion();
-        EntityTransaction transaction = entityManager.getTransaction();
-
-        try {
-            transaction.begin();
-            entityManager.persist(multa);
-            transaction.commit();
-        } catch (Exception e) {
-            if (transaction.isActive()) {
-                transaction.rollback();
-            }
-            //System.out.println("ERROR EN AGREGARRESERVACION: " + e.getMessage());
-            throw new DAOException("Error al agregar el tipo de multa al sistema");
-        } finally {
-            entityManager.close();
-        }
-    }
-
-    @Override
-    public void eliminarTipoMulta(Long idMulta) throws DAOException {
-        EntityManager entityManager = Conexion.getInstance().crearConexion();
-        EntityTransaction transaction = entityManager.getTransaction();
-
-        try {
-            transaction.begin();
-            Multa multa = entityManager.find(Multa.class, idMulta);
-            if (multa != null) {
-                entityManager.remove(multa);
-            } else {
-                throw new DAOException("No se encontro el tipo de multa a eliminar");
-            }
-            transaction.commit();
-        } catch (Exception e) {
-            transaction.rollback();
-            System.out.println("ELIMINAR RESERVACION: " + e.getMessage());
-            throw new DAOException("Error al eliminar el tipo de multa");
-        } finally {
-            entityManager.close();
-        }
-    }
-}
