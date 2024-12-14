@@ -108,7 +108,6 @@ public class ReservacionesBO implements IReservacionesBO {
      * @param fechaInicio Fecha y hora de inicio del periodo
      * @param fechaFin Fecha y hora de fin del periodo
      * @return lista de ReservacionDTO dentro del periodo especificado
-     * @throws ServicioException si ocurre un error al obtener las reservaciones
      */
     @Override
     public List<ReservacionDTO> obtenerReservacionesPorPeriodo(Long idRestaurante, LocalDateTime fechaInicio, LocalDateTime fechaFin) throws NegocioException {
@@ -148,7 +147,6 @@ public class ReservacionesBO implements IReservacionesBO {
      * 
      * @param id ID de la reservación
      * @return ReservacionDTO de la reservación correspondiente al ID
-     * @throws ServicioException si ocurre un error al obtener la reservación
      */
     @Override
     public ReservacionDTO obtenerReservacionPorID(Long id) throws NegocioException {
@@ -167,7 +165,6 @@ public class ReservacionesBO implements IReservacionesBO {
      * Agrega una nueva reservación al sistema.
      * 
      * @param reservacion DTO de la reservación a agregar
-     * @throws ServicioException si ocurre un error al agregar la reservación
      */
     @Override
     public void agregarReservacion(ReservacionDTO reservacion) throws NegocioException {
@@ -186,7 +183,6 @@ public class ReservacionesBO implements IReservacionesBO {
      * Actualiza una reservación existente en el sistema.
      * 
      * @param reservacion DTO de la reservación a actualizar
-     * @throws ServicioException si ocurre un error al actualizar la reservación
      */
     @Override
     public void actualizarReservacion(ReservacionDTO reservacion) throws NegocioException {

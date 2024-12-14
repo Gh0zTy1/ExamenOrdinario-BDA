@@ -7,6 +7,7 @@ import entidades.Reservacion;
 import entidades.TipoMesa;
 import idaos.IMesasDAO;
 import idaos.IReservacionesDAO;
+import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.ArrayList;
@@ -23,24 +24,18 @@ import javax.persistence.TypedQuery;
  */
 public class ReservacionesDAO implements IReservacionesDAO {
 
-    private static IReservacionesDAO instancia;
+    private final EntityManager entityManager;
+    private final IMesasDAO mesasDAO;
 
-    private IMesasDAO mesasDAO = MesasDAO.getInstance();
-
-    private ReservacionesDAO() {
+    // Constructor con inyección de dependencias
+    public ReservacionesDAO(EntityManager entityManager, IMesasDAO mesasDAO) {
+        this.entityManager = entityManager;
+        this.mesasDAO = mesasDAO;
     }
+    
 
-    public static IReservacionesDAO getInstance() {
-        if (instancia == null) {
-            instancia = new ReservacionesDAO();
-        }
-        return instancia;
-    }
-
-    @Override
+     @Override
     public List<Reservacion> obtenerReservacionesTodos(Long idRestaurante) throws DAOException {
-        EntityManager entityManager = Conexion.getInstance().crearConexion();
-        // Filtrar por restaurante sin aplicar más filtros
         try {
             TypedQuery<Reservacion> query = entityManager.createQuery(
                     "SELECT r FROM Reservacion r WHERE r.mesa.restaurante.id = :idRestaurante", Reservacion.class);
@@ -49,15 +44,13 @@ public class ReservacionesDAO implements IReservacionesDAO {
         } catch (NoResultException e) {
             return new ArrayList<>();
         } catch (Exception e) {
-            throw new DAOException("Error al obtener todas las reservaciones del restaurante");
-        } finally {
-            entityManager.close();
+            throw new DAOException("Error al obtener todas las reservaciones del restaurante", e);
         }
     }
 
     @Override
     public List<Reservacion> obtenerReservacionesDeMesa(Long idRestaurante, String codigoMesa) throws DAOException {
-        EntityManager entityManager = Conexion.getInstance().crearConexion();
+       
         // Filtrar por restaurante y código de mesa dentro de ese restaurante
         try {
             boolean existeMesa = entityManager.createQuery(
@@ -84,7 +77,7 @@ public class ReservacionesDAO implements IReservacionesDAO {
 
     @Override
     public List<Reservacion> obtenerReservacionesPorPeriodo(Long idRestaurante, LocalDateTime fechaInicio, LocalDateTime fechaFin) throws DAOException {
-        EntityManager entityManager = Conexion.getInstance().crearConexion();
+      
         // Filtrar por restaurante y el período especificado
         try {
             TypedQuery<Reservacion> query = entityManager.createQuery(
@@ -102,7 +95,7 @@ public class ReservacionesDAO implements IReservacionesDAO {
 
     @Override
     public List<Reservacion> obtenerReservacionesCliente(Long idRestaurante, String telefono) throws DAOException {
-        EntityManager entityManager = Conexion.getInstance().crearConexion();
+      
         // Filtrar por restaurante y el teléfono del cliente
         try {
             TypedQuery<Reservacion> query = entityManager.createQuery(
@@ -119,7 +112,7 @@ public class ReservacionesDAO implements IReservacionesDAO {
 
     @Override
     public Reservacion obtenerReservacionPorID(Long id) throws DAOException {
-        EntityManager entityManager = Conexion.getInstance().crearConexion();
+       
 
         try {
             Reservacion res = entityManager.find(Reservacion.class, id);
@@ -137,7 +130,7 @@ public class ReservacionesDAO implements IReservacionesDAO {
 
     @Override
     public void agregarReservacion(Reservacion reservacion) throws DAOException {
-        EntityManager entityManager = Conexion.getInstance().crearConexion();
+       
         EntityTransaction transaction = entityManager.getTransaction();
 
         System.out.println("MESA: " + reservacion.getMesa());
@@ -228,7 +221,7 @@ public class ReservacionesDAO implements IReservacionesDAO {
 
     @Override
     public void actualizarReservacion(Reservacion reservacion) throws DAOException {
-        EntityManager entityManager = Conexion.getInstance().crearConexion();
+      
         EntityTransaction transaction = entityManager.getTransaction();
 
         try {
@@ -274,7 +267,7 @@ public class ReservacionesDAO implements IReservacionesDAO {
 
     @Override
     public void eliminarReservacion(Long id) throws DAOException {
-        EntityManager entityManager = Conexion.getInstance().crearConexion();
+      
         EntityTransaction transaction = entityManager.getTransaction();
 
         try {
@@ -294,6 +287,55 @@ public class ReservacionesDAO implements IReservacionesDAO {
             entityManager.close();
         }
     }
+    
+     @Override
+    public void cancelarReservacion(Long idReservacion) throws DAOException {
+      
+
+        Reservacion reservacion = entityManager.find(Reservacion.class, idReservacion);
+        if (reservacion == null) {
+            throw new DAOException("No se encontro la reservacion");
+        }
+
+        if (reservacion.getEstado().equals(EstadoReservacion.CANCELADA)) {
+            throw new DAOException("La reservacion ya fue cancelada con anterioridad");
+        }
+
+        if (reservacion.getEstado().equals(EstadoReservacion.FINALIZADA)) {
+            throw new DAOException("La reservacion que se intenta cancelar ya fue termino");
+        }
+
+        // se calcula la multa correspondiente al tiempo en el que fue cancelada
+        LocalDateTime fechaHoraReservacion = reservacion.getFechaHora();
+        LocalDateTime fechaHoraActual = LocalDateTime.now();
+
+        Duration diffTemporal = Duration.between(fechaHoraActual, fechaHoraReservacion);
+
+        long horasRestantes = diffTemporal.toHours();
+
+        // NOTE: DEBUG
+        System.out.println("DIFERENCIA TEMPORAL DE CANCELACION: " + horasRestantes + " horas...");
+
+        // se cambia el estado de la reservacion
+        reservacion.setEstado(EstadoReservacion.CANCELADA);
+
+        EntityTransaction transaction = entityManager.getTransaction();
+
+        try {
+            transaction.begin();
+            entityManager.merge(reservacion);
+            transaction.commit();
+        } catch (Exception e) {
+            if (transaction.isActive()) {
+                transaction.rollback();
+            }
+            throw new DAOException("Error al cancelar la reservacion, porfavor intente mas tarde");
+        } finally {
+            entityManager.close();
+        }
+
+    
 
    
+    }
     }

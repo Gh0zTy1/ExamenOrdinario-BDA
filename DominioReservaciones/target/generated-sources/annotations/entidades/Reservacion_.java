@@ -3,13 +3,12 @@ package entidades;
 import entidades.Cliente;
 import entidades.EstadoReservacion;
 import entidades.Mesa;
-import entidades.Multa;
 import java.time.LocalDateTime;
 import javax.annotation.processing.Generated;
 import javax.persistence.metamodel.SingularAttribute;
 import javax.persistence.metamodel.StaticMetamodel;
 
-@Generated(value="org.eclipse.persistence.internal.jpa.modelgen.CanonicalModelProcessor", date="2024-12-14T00:49:19", comments="EclipseLink-2.7.12.v20230209-rNA")
+@Generated(value="org.eclipse.persistence.internal.jpa.modelgen.CanonicalModelProcessor", date="2024-12-14T12:43:49", comments="EclipseLink-2.7.12.v20230209-rNA")
 @StaticMetamodel(Reservacion.class)
 public class Reservacion_ { 
 
@@ -18,7 +17,6 @@ public class Reservacion_ {
     public static volatile SingularAttribute<Reservacion, EstadoReservacion> estado;
     public static volatile SingularAttribute<Reservacion, Mesa> mesa;
     public static volatile SingularAttribute<Reservacion, LocalDateTime> fechaHora;
-    public static volatile SingularAttribute<Reservacion, Multa> multa;
     public static volatile SingularAttribute<Reservacion, Long> id;
     public static volatile SingularAttribute<Reservacion, LocalDateTime> fechaHoraRegistro;
     public static volatile SingularAttribute<Reservacion, Float> montoTotal;

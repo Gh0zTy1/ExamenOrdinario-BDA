@@ -11,6 +11,14 @@ import java.util.List;
  * @author caarl
  */
 public interface IReservacionesDAO {
+    
+    
+     /**
+     * Cancela la reservacion con el ID dado y le asigna una multa por cancelacion
+     * @param idReservacion ID de la reservacion en cuestion
+     * @throws DAOException Si ocurre un error en la cancelacion
+     */
+    public void cancelarReservacion(Long idReservacion) throws DAOException;
        
     /**
      * Obtiene la lista de reservaciones registradas de una mesa a partir de su codigo

@@ -20,21 +20,16 @@ import javax.persistence.TypedQuery;
  */
 public class RestaurantesDAO implements IRestaurantesDAO {
 
-    private static IRestaurantesDAO instancia;
+   private final EntityManager entityManager;
 
-    private RestaurantesDAO() {
-    }
-
-    public static IRestaurantesDAO getInstance() {
-        if (instancia == null) {
-            instancia = new RestaurantesDAO();
-        }
-        return instancia;
+    // Constructor para inyección de dependencias
+    public RestaurantesDAO(EntityManager entityManager) {
+        this.entityManager = entityManager;
     }
     
     @Override
     public List<Restaurante> obtenerRestaurantesTodos() throws DAOException {
-        EntityManager entityManager = Conexion.getInstance().crearConexion();
+       
         try {
             TypedQuery<Restaurante> query = entityManager.createQuery("SELECT r FROM Restaurante r", Restaurante.class);
             return query.getResultList();
@@ -47,7 +42,7 @@ public class RestaurantesDAO implements IRestaurantesDAO {
 
     @Override
     public Restaurante obtenerRestaurantePorID(Long id) throws DAOException {
-        EntityManager entityManager = Conexion.getInstance().crearConexion();
+      
         try {
             return entityManager.find(Restaurante.class, id);
         } catch (NoResultException e) {
@@ -61,7 +56,7 @@ public class RestaurantesDAO implements IRestaurantesDAO {
 
     @Override
     public Restaurante obtenerRestaurantePorNumeroTelefono(String numeroTelefono) throws DAOException {
-        EntityManager entityManager = Conexion.getInstance().crearConexion();
+      
         try {
             TypedQuery<Restaurante> query = entityManager.createQuery(
                 "SELECT r FROM Restaurante r WHERE r.telefono = :telefono", Restaurante.class);

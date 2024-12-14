@@ -16,22 +16,16 @@ import javax.persistence.TypedQuery;
  */
 public class TiposMesaDAO implements ITiposMesaDAO {
 
-    private static ITiposMesaDAO instancia;
+ private final EntityManager entityManager;
 
-    private TiposMesaDAO() {
-        
-    }
-
-    public static ITiposMesaDAO getInstance() {
-        if (instancia == null) {
-            instancia = new TiposMesaDAO();
-        }
-        return instancia;
+    // Constructor para inyección de dependencias
+    public TiposMesaDAO(EntityManager entityManager) {
+        this.entityManager = entityManager;
     }
     
     @Override
     public List<TipoMesa> obtenerTiposMesaTodos() throws DAOException {
-        EntityManager entityManager = Conexion.getInstance().crearConexion();
+       
 
         try {
             TypedQuery<TipoMesa> query = entityManager.createQuery("SELECT t FROM TipoMesa t", TipoMesa.class);
@@ -45,7 +39,7 @@ public class TiposMesaDAO implements ITiposMesaDAO {
 
     @Override
     public void agregarTipoMesa(TipoMesa tipoMesa) throws DAOException {
-        EntityManager entityManager = Conexion.getInstance().crearConexion();
+      
         EntityTransaction transaction = entityManager.getTransaction();
 
         try {
@@ -73,7 +67,7 @@ public class TiposMesaDAO implements ITiposMesaDAO {
 
     @Override
     public void eliminarTipoMesa(Long id) throws DAOException {
-        EntityManager entityManager = Conexion.getInstance().crearConexion();
+        
 
         try {
             
