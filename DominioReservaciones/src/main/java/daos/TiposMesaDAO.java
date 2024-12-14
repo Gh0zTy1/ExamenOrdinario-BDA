@@ -2,7 +2,6 @@
 package daos;
 
 import Excepciones.DAOException;
-import conexion.Conexion;
 import entidades.TipoMesa;
 import idaos.ITiposMesaDAO;
 import java.util.List;
