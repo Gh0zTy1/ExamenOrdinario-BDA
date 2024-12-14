@@ -12,15 +12,15 @@ import javax.persistence.Persistence;
  *
  * @author caarl
  */
-public class Conexion {
+public class Conexion implements IConexion {
     
     
 
     private static Conexion instancia;
     private EntityManagerFactory emf;
             
-    private Conexion() {
-        this.emf = Persistence.createEntityManagerFactory("restaurantePU");
+    public Conexion() {
+        this.emf = Persistence.createEntityManagerFactory("restaurantesPU");
     }
     
     public static Conexion getInstance() {
@@ -31,6 +31,7 @@ public class Conexion {
         return instancia;
     }
     
+    @Override
     public EntityManager crearConexion() {
         return emf.createEntityManager();
     }

@@ -1,4 +1,16 @@
+entidades\Mesa_.class
+entidades\Reserva_.class
+entidades\Cliente_.class
+idaos\IClienteDAO.class
+com\mycompany\dominioreservaciones\DominioReservaciones.class
+entidades\Mesa.class
 Excepciones\ConexionException.class
+daos\ClienteDAO.class
+entidades\Restaurante_.class
+entidades\Cliente.class
+conexion\PruebaConexion.class
 Excepciones\DAOException.class
 conexion\Conexion.class
-com\mycompany\dominioreservaciones\DominioReservaciones.class
+entidades\Restaurante.class
+conexion\IConexion.class
+entidades\Reserva.class
