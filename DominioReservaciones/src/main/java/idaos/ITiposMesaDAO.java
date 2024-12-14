@@ -7,7 +7,7 @@ import java.util.List;
 
 /**
  * Define las operaciones necesarias para manejar los tipos de mesa en el sistema
- * @author caarl
+ * @author neri
  */
 public interface ITiposMesaDAO {
     
