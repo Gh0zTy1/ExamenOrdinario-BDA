@@ -8,7 +8,7 @@ package com.mycompany.presentacionresevaciones;
  *
  * @author caarl
  */
-public class PresentacionResevaciones {
+public class MainPrograma {
 
     public static void main(String[] args) {
         System.out.println("Hello World!");

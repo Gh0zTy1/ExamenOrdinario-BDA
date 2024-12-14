@@ -8,6 +8,6 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.release>22</maven.compiler.release>
-        <exec.mainClass>com.mycompany.presentacionresevaciones.PresentacionResevaciones</exec.mainClass>
+        <exec.mainClass>com.mycompany.presentacionresevaciones.MainPrograma</exec.mainClass>
     </properties>
 </project>
