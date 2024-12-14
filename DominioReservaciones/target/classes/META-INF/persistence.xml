@@ -2,12 +2,14 @@
 <persistence version="2.2" xmlns="http://xmlns.jcp.org/xml/ns/persistence" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/persistence           http://xmlns.jcp.org/xml/ns/persistence/persistence_2_2.xsd">
   <persistence-unit name="restaurantesPU" transaction-type="RESOURCE_LOCAL">
     <provider>org.eclipse.persistence.jpa.PersistenceProvider</provider>
-    <class>entidades.Cliente</class>
-    <class>entidades.Mesa</class>
-    <class>entidades.Reserva</class>
-    <class>entidades.Restaurante</class>
-  
-    
+<class>entidades.Cliente</class>
+<class>entidades.EstadoReservacion</class>
+<class>entidades.Mesa</class>
+<class>entidades.Multa</class>
+<class>entidades.Reservacion</class>
+<class>entidades.Restaurante</class>
+<class>entidades.TipoMesa</class>
+<class>entidades.UbicacionMesa</class>
     <properties>
       <property name="javax.persistence.jdbc.url" value="jdbc:mysql://localhost:3306/restaurante"/>
       <property name="javax.persistence.jdbc.user" value="root"/>
