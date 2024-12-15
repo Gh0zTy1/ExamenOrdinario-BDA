@@ -42,31 +42,34 @@ public class MesaConvertidor extends Converter<MesaDTO, Mesa> {
      * @param dto el objeto MesaDTO a convertir
      * @return un objeto Mesa con los datos de dto
      */
-    public static Mesa convertirAEntidad(MesaDTO dto) {
-        Converter<TipoMesaDTO, TipoMesa> tipoMesaConvertidor = new TipoMesaConvertidor();
-        
-        Mesa mesa = new Mesa();
-        mesa.setId(dto.getId());
-        mesa.setCodigo(dto.getCodigo());
+   public static Mesa convertirAEntidad(MesaDTO dto) {
+    Converter<TipoMesaDTO, TipoMesa> tipoMesaConvertidor = new TipoMesaConvertidor();
+    Mesa mesa = new Mesa();
+
+    // Asignación básica
+    mesa.setId(dto.getId());
+    mesa.setCodigo(dto.getCodigo());
+
+    // Conversión de TipoMesa
+    if (dto.getTipoMesa() != null) {
         mesa.setTipoMesa(tipoMesaConvertidor.convertFromDto(dto.getTipoMesa()));
-        
-        // Conversión de Ubicación de Mesa
-        mesa.setUbicacion(UbicacionMesa.valueOf(dto.getUbicacion().toString()));
-        
-        // Conversión de Restaurante relacionado
-        Restaurante r = new Restaurante(
-                dto.getRestaurante().getId(),
-                dto.getRestaurante().getNombre(),
-                dto.getRestaurante().getTelefono(),
-                dto.getRestaurante().getDireccion(),
-                dto.getRestaurante().getHoraApertura(),
-                dto.getRestaurante().getHoraCierre()
-        );
-        
-        mesa.setRestaurante(r);
-        
-        return mesa;
     }
+
+    // Conversión de Ubicación
+    if (dto.getUbicacion() != null) {
+        mesa.setUbicacion(UbicacionMesa.valueOf(dto.getUbicacion().toString()));
+    }
+
+    // Conversión de Restaurante
+    if (dto.getRestaurante() != null) {
+        Restaurante restaurante = new Restaurante();
+        restaurante.setId(dto.getRestaurante().getId());
+        mesa.setRestaurante(restaurante); // Solo asignar el ID si es suficiente
+    }
+
+    return mesa;
+}
+
    
 
     
@@ -78,28 +81,31 @@ public class MesaConvertidor extends Converter<MesaDTO, Mesa> {
      * @return un objeto MesaDTO con los datos de la entidad
      */
     public static MesaDTO convertirADTO(Mesa entidad) {
-        Converter<TipoMesaDTO, TipoMesa> tipoMesaConvertidor = new TipoMesaConvertidor();
-        
-        MesaDTO mesa = new MesaDTO();
-        mesa.setId(entidad.getId());
-        mesa.setCodigo(entidad.getCodigo());
+    Converter<TipoMesaDTO, TipoMesa> tipoMesaConvertidor = new TipoMesaConvertidor();
+    MesaDTO mesa = new MesaDTO();
+
+    // Asignación básica
+    mesa.setId(entidad.getId());
+    mesa.setCodigo(entidad.getCodigo());
+
+    // Conversión de TipoMesa
+    if (entidad.getTipoMesa() != null) {
         mesa.setTipoMesa(tipoMesaConvertidor.convertFromEntity(entidad.getTipoMesa()));
-        
-        // Conversión de Ubicación de MesaDTO
-        mesa.setUbicacion(UbicacionMesaDTO.valueOf(entidad.getUbicacion().toString()));
-        
-        // Conversión de Restaurante relacionado
-        RestauranteDTO r = new RestauranteDTO(
-                entidad.getRestaurante().getId(),
-                entidad.getRestaurante().getNombre(),
-                entidad.getRestaurante().getTelefono(),
-                entidad.getRestaurante().getDireccion(),
-                entidad.getRestaurante().getHoraApertura(),
-                entidad.getRestaurante().getHoraCierre()
-        );
-        
-        mesa.setRestaurante(r);
-        
-        return mesa;
     }
+
+    // Conversión de Ubicación
+    if (entidad.getUbicacion() != null) {
+        mesa.setUbicacion(UbicacionMesaDTO.valueOf(entidad.getUbicacion().toString()));
+    }
+
+    // Conversión de Restaurante
+    if (entidad.getRestaurante() != null) {
+        RestauranteDTO restaurante = new RestauranteDTO();
+        restaurante.setId(entidad.getRestaurante().getId());
+        mesa.setRestaurante(restaurante);
+    }
+
+    return mesa;
+}
+
 }

@@ -218,6 +218,8 @@ public void insertarMesa(Mesa mesa) throws DAOException {
         if (transaction.isActive()) transaction.rollback();
         throw new DAOException("Error al insertar la mesa: " + e.getMessage());
     }
+    
+    
 }
 
 

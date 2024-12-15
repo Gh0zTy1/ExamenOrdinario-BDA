@@ -5,190 +5,110 @@
 package dto;
 
 import java.io.Serializable;
+import java.time.LocalDateTime;
 
 /**
- * Representa una Mesa en el sistema.
- * Esta clase es utilizada para almacenar la información de una mesa específica en un restaurante.
+ * Clase que representa el DTO de la entidad Mesa.
+ * Se utiliza para transferir datos entre capas sin exponer directamente la entidad.
+ * 
  * @author caarl
  */
 public class MesaDTO implements Serializable {
 
     private static final long serialVersionUID = 1L;
-    
-    /** El identificador único de la mesa. */
-    private Long id;
 
-    /** El código que representa la mesa. */
-    private String codigo;
-
-    /** El tipo de mesa asociado a esta instancia. */
-    private TipoMesaDTO tipoMesa;
-
-    /** La ubicación de la mesa en el restaurante. */
-    private UbicacionMesaDTO ubicacion;
-
-    /** El restaurante al cual pertenece la mesa. */
-    private RestauranteDTO restaurante;
+    private Long id; // Identificador único de la mesa
+    private String codigo; // Código de la mesa
+    private TipoMesaDTO tipoMesa; // Tipo de mesa
+    private UbicacionMesaDTO ubicacion; // Ubicación de la mesa
+    private LocalDateTime fechaNuevaDisponibilidad; // Fecha de nueva disponibilidad
+    private RestauranteDTO restaurante; // Restaurante asociado a la mesa
 
     /**
-     * Constructor por defecto que inicializa una nueva instancia de MesaDTO.
-     * Este constructor no realiza ninguna acción adicional.
+     * Constructor por defecto.
      */
     public MesaDTO() {
-        
     }
 
     /**
-     * Constructor que inicializa una nueva instancia de MesaDTO con los atributos especificados.
-     * 
-     * @param id El identificador único de la mesa.
-     * @param codigo El código que representa la mesa.
-     * @param tipoMesa El tipo de mesa asociado a esta instancia.
-     * @param ubicacion La ubicación de la mesa en el restaurante.
-     * @param restaurante El restaurante al cual pertenece la mesa.
+     * Constructor con todos los atributos.
+     *
+     * @param id Identificador único de la mesa.
+     * @param codigo Código de la mesa.
+     * @param tipoMesa Tipo de la mesa (DTO).
+     * @param ubicacion Ubicación de la mesa (DTO).
+     * @param fechaNuevaDisponibilidad Fecha de nueva disponibilidad de la mesa.
+     * @param restaurante Restaurante asociado a la mesa (DTO).
      */
-    public MesaDTO(Long id, String codigo, TipoMesaDTO tipoMesa, UbicacionMesaDTO ubicacion, RestauranteDTO restaurante) {
+    public MesaDTO(Long id, String codigo, TipoMesaDTO tipoMesa, UbicacionMesaDTO ubicacion,
+                   LocalDateTime fechaNuevaDisponibilidad, RestauranteDTO restaurante) {
         this.id = id;
         this.codigo = codigo;
         this.tipoMesa = tipoMesa;
         this.ubicacion = ubicacion;
+        this.fechaNuevaDisponibilidad = fechaNuevaDisponibilidad;
         this.restaurante = restaurante;
     }
 
-    /**
-     * Constructor que inicializa una nueva instancia de MesaDTO con el código, tipo de mesa y ubicación especificados.
-     * 
-     * @param codigo El código que representa la mesa.
-     * @param tipoMesa El tipo de mesa asociado a esta instancia.
-     * @param ubicacion La ubicación de la mesa en el restaurante.
-     */
-    public MesaDTO(String codigo, TipoMesaDTO tipoMesa, UbicacionMesaDTO ubicacion) {
-        this.codigo = codigo;
-        this.tipoMesa = tipoMesa;
-        this.ubicacion = ubicacion;
-    }
+    // Getters y Setters
 
-    /**
-     * Constructor que inicializa una nueva instancia de MesaDTO con un identificador específico.
-     * 
-     * @param id El identificador único de la mesa.
-     */
-    public MesaDTO(Long id) {
-        this.id = id;
-    }
-
-    /**
-     * Obtiene el identificador único de la mesa.
-     * 
-     * @return El identificador único de la mesa.
-     */
     public Long getId() {
         return id;
     }
 
-    /**
-     * Establece el identificador único de la mesa.
-     * 
-     * @param id El identificador único de la mesa a establecer.
-     */
     public void setId(Long id) {
         this.id = id;
     }
 
-    /**
-     * Obtiene el código que representa la mesa.
-     * 
-     * @return El código de la mesa.
-     */
     public String getCodigo() {
         return codigo;
     }
 
-    /**
-     * Establece el código que representa la mesa.
-     * 
-     * @param codigo El código de la mesa a establecer.
-     */
     public void setCodigo(String codigo) {
         this.codigo = codigo;
     }
 
-    /**
-     * Obtiene el tipo de mesa.
-     * 
-     * @return El tipo de mesa asociado a esta instancia de MesaDTO.
-     */
     public TipoMesaDTO getTipoMesa() {
         return tipoMesa;
     }
 
-    /**
-     * Establece el tipo de mesa.
-     * 
-     * @param tipoMesa El tipo de mesa a establecer.
-     */
     public void setTipoMesa(TipoMesaDTO tipoMesa) {
         this.tipoMesa = tipoMesa;
     }
 
-    /**
-     * Obtiene la ubicación de la mesa en el restaurante.
-     * 
-     * @return La ubicación de la mesa.
-     */
     public UbicacionMesaDTO getUbicacion() {
         return ubicacion;
     }
 
-    /**
-     * Asigna la ubicación de la mesa en el restaurante.
-     * 
-     * @param ubicacion Ubicación de la mesa a asignar.
-     */
     public void setUbicacion(UbicacionMesaDTO ubicacion) {
         this.ubicacion = ubicacion;
     }
 
-    /**
-     * Obtiene la información del restaurante al cual pertenece la mesa.
-     * 
-     * @return Restaurante de la mesa (sucursal).
-     */
+    public LocalDateTime getFechaNuevaDisponibilidad() {
+        return fechaNuevaDisponibilidad;
+    }
+
+    public void setFechaNuevaDisponibilidad(LocalDateTime fechaNuevaDisponibilidad) {
+        this.fechaNuevaDisponibilidad = fechaNuevaDisponibilidad;
+    }
+
     public RestauranteDTO getRestaurante() {
         return restaurante;
     }
 
-    /**
-     * Asigna el restaurante al cual pertenecerá la mesa.
-     * 
-     * @param restaurante Restaurante (sucursal).
-     */
     public void setRestaurante(RestauranteDTO restaurante) {
         this.restaurante = restaurante;
     }
 
     @Override
-    public int hashCode() {
-        int hash = 0;
-        hash += (id != null ? id.hashCode() : 0);
-        return hash;
-    }
-
-    @Override
-    public boolean equals(Object object) {
-        if (!(object instanceof MesaDTO)) {
-            return false;
-        }
-        MesaDTO other = (MesaDTO) object;
-        if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
-            return false;
-        }
-        return true;
-    }
-
-    @Override
     public String toString() {
-        return "MesaDTO[ id=" + id + " ]";
+        return "MesaDTO{" +
+               "id=" + id +
+               ", codigo='" + codigo + '\'' +
+               ", tipoMesa=" + tipoMesa +
+               ", ubicacion=" + ubicacion +
+               ", fechaNuevaDisponibilidad=" + fechaNuevaDisponibilidad +
+               ", restaurante=" + restaurante +
+               '}';
     }
 }
-

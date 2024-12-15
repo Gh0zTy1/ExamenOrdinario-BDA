@@ -103,9 +103,10 @@ public void agregarMesa(MesaDTO mesaDTO) throws NegocioException {
         Mesa mesa = mesaConvertidor.convertFromDto(mesaDTO);
         mesasDAO.insertarMesa(mesa);
     } catch (DAOException e) {
-        throw new NegocioException("Error al agregar la mesa");
+        throw new NegocioException("Error al agregar la mesa: " + e.getMessage());
     }
 }
+
 
 
     @Override

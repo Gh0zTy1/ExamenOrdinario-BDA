@@ -10,6 +10,7 @@ import dto.TipoMesaDTO;
 import dto.UbicacionMesaDTO;
 import excepciones.NegocioException;
 import fabricas.fabricaFCD;
+import fachadas.agregarMesasFCD;
 import iFachadas.ICargarMesasFCD;
 import iFachadas.IagregarMesasFCD;
 import java.awt.GridLayout;
@@ -63,6 +64,19 @@ public class frmAministradorMesas extends javax.swing.JFrame {
         JOptionPane.showMessageDialog(this, "Error al cargar mesas: " + x.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
     }
 }
+    
+    private String generarCodigoMesa(String ubicacion, String tipoMesa) {
+    // Convertir las primeras letras de ubicación y tipo de mesa
+    String ubicacionAbrev = ubicacion.substring(0, 3).toUpperCase();
+    String tipoMesaAbrev = tipoMesa.substring(0, 3).toUpperCase();
+
+    // Generar un número secuencial único (puedes usar lógica más avanzada si es necesario)
+    int numeroSecuencial = tblMesas.getRowCount() + 1; // Basado en las filas actuales de la tabla
+
+    // Formatear el código
+    return ubicacionAbrev + "-" + tipoMesaAbrev + "-" + String.format("%03d", numeroSecuencial);
+}
+
 
     
      
@@ -181,72 +195,59 @@ public class frmAministradorMesas extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnAgregarMesaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAgregarMesaActionPerformed
-try {
-    // Crear los JComboBox con las opciones
-    JComboBox<String> cmbTiposMesa = new JComboBox<>(new String[]{"Pequeña", "Mediana", "Grande"});
-    JComboBox<String> cmbUbicaciones = new JComboBox<>(new String[]{"GENERAL", "VENTANA", "TERRAZA"});
 
-    // Crear el panel para el JOptionPane
-    JPanel panel = new JPanel(new GridLayout(2, 2, 10, 10));
-    panel.add(new JLabel("Seleccione el tipo de mesa:"));
-    panel.add(cmbTiposMesa);
-    panel.add(new JLabel("Seleccione la ubicación:"));
-    panel.add(cmbUbicaciones);
+    try {
+        // Crear los JComboBox para las opciones
+        JComboBox<String> cmbTiposMesa = new JComboBox<>(new String[]{"Pequeña", "Mediana", "Grande"});
+        JComboBox<String> cmbUbicaciones = new JComboBox<>(new String[]{"GENERAL", "TERRAZA", "VENTANA"});
 
-    // Mostrar el JOptionPane
-    int resultado = JOptionPane.showConfirmDialog(this, panel, "Agregar Mesa", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
+        // Crear el panel para el JOptionPane
+        JPanel panel = new JPanel(new GridLayout(2, 2, 10, 10));
+        panel.add(new JLabel("Seleccione el tipo de mesa:"));
+        panel.add(cmbTiposMesa);
+        panel.add(new JLabel("Seleccione la ubicación:"));
+        panel.add(cmbUbicaciones);
 
-    if (resultado == JOptionPane.OK_OPTION) {
-        // Obtener los valores seleccionados
-        String tipoMesaSeleccionado = cmbTiposMesa.getSelectedItem().toString();
-        String ubicacionSeleccionada = cmbUbicaciones.getSelectedItem().toString();
+        // Mostrar el JOptionPane
+        int resultado = JOptionPane.showConfirmDialog(this, panel, "Agregar Mesa", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
 
-        // Obtener las primeras tres letras de la ubicación (GEN, VEN, TER)
-        String ubicacionCodigo = ubicacionSeleccionada.substring(0, 3).toUpperCase();
+        if (resultado == JOptionPane.OK_OPTION) {
+            // Obtener los valores seleccionados
+            String tipoMesaSeleccionado = cmbTiposMesa.getSelectedItem().toString();
+            String ubicacionSeleccionada = cmbUbicaciones.getSelectedItem().toString();
 
-        // Definir la capacidad según el tipo de mesa
-        int capacidad = 0;
-        switch (tipoMesaSeleccionado) {
-            case "Pequeña":
-                capacidad = 2; // 1-2 personas
-                break;
-            case "Mediana":
-                capacidad = 4; // 3-4 personas
-                break;
-            case "Grande":
-                capacidad = 8; // 5-8 personas
-                break;
+            // Generar automáticamente el código de la mesa
+            String codigoMesa = generarCodigoMesa(ubicacionSeleccionada, tipoMesaSeleccionado);
+
+            // Crear los DTOs necesarios
+            TipoMesaDTO tipoMesaDTO = new TipoMesaDTO(tipoMesaSeleccionado); // DTO del tipo de mesa
+            UbicacionMesaDTO ubicacionDTO = UbicacionMesaDTO.valueOf(ubicacionSeleccionada.toUpperCase()); // DTO de la ubicación
+
+            RestauranteDTO restauranteDTO = new RestauranteDTO();
+            restauranteDTO.setId(1L); // Solo manejamos el restaurante con ID 1
+
+            // Crear el DTO de la mesa
+            MesaDTO mesaDTO = new MesaDTO();
+            mesaDTO.setCodigo(codigoMesa);
+            mesaDTO.setTipoMesa(tipoMesaDTO);
+            mesaDTO.setUbicacion(ubicacionDTO);
+            mesaDTO.setRestaurante(restauranteDTO); // Asociar el restaurante
+            mesaDTO.setFechaNuevaDisponibilidad(null); // La fecha de disponibilidad inicial es NULL
+
+            // Llamar a la fachada para agregar la mesa
+            agregarMesasFCD fachadaMesas = fabricaFCD.fabricaFCDAgregarMesas();
+            fachadaMesas.agregarMesas(mesaDTO);
+
+            // Mensaje de éxito
+            JOptionPane.showMessageDialog(this, "Mesa agregada con éxito. Código de la mesa: " + codigoMesa);
+
+            // Actualizar la tabla
+            cargarMesasEnTabla();
         }
-
-        // Generar el código de la mesa (ubicacion-capacidad)
-        String codigoMesa = ubicacionCodigo + "-" + capacidad;
-
-        // Construir los DTO necesarios
-        TipoMesaDTO tipoMesa = new TipoMesaDTO(tipoMesaSeleccionado);  // DTO del tipo de mesa
-        UbicacionMesaDTO ubicacion = UbicacionMesaDTO.valueOf(ubicacionSeleccionada.toUpperCase());  // DTO de la ubicación
-
-        // Obtener el restaurante actual (puedes obtenerlo desde el contexto de tu aplicación)
-        RestauranteDTO restauranteDTO = new RestauranteDTO();
-        restauranteDTO.setId(1L); // Asigna el ID de tu restaurante según corresponda
-
-        // Crear el DTO de la mesa
-        MesaDTO mesaDTO = new MesaDTO(codigoMesa, tipoMesa, ubicacion);
-        mesaDTO.setRestaurante(restauranteDTO); // Asociar el restaurante con la mesa
-
-        // Enviar a la fachada para agregar la mesa
-        IagregarMesasFCD fachadaMesas = fabricaFCD.fabricaFCDAgregarMesas();  // Obtener la instancia de la fachada
-
-        // Llamar a la fachada para agregar la mesa
-        fachadaMesas.agregarMesas(mesaDTO);  
-
-        // Mensaje de éxito
-        JOptionPane.showMessageDialog(this, "Mesa agregada con éxito. Código de la mesa: " + codigoMesa);
+    } catch (Exception ex) {
+        // Manejo de errores
+        JOptionPane.showMessageDialog(this, "Error al agregar la mesa: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
     }
-} catch (Exception ex) {
-    // Manejo de errores
-    JOptionPane.showMessageDialog(this, "Error al agregar la mesa: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
-}
-
     }//GEN-LAST:event_btnAgregarMesaActionPerformed
 
     private void btnAtrasActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAtrasActionPerformed
