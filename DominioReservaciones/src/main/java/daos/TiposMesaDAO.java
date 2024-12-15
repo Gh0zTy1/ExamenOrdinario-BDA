@@ -88,7 +88,7 @@ public class TiposMesaDAO implements ITiposMesaDAO {
             }
 
             conexion.crearConexion().getTransaction().commit();
-        } catch (Exception e) {
+        } catch (DAOException e) {
             if (conexion.crearConexion().getTransaction().isActive()) {
                 conexion.crearConexion().getTransaction().rollback();
             }
