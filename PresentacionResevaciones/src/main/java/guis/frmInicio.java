@@ -10,6 +10,7 @@ import conexion.IConexion;
 import convertidores.ClienteConvertidor;
 import daos.ClientesDAO;
 import dto.ClienteDTO;
+import dto.RestauranteDTO;
 import excepciones.NegocioException;
 import ibo.IClientesBO;
 import idaos.IClientesDAO;
@@ -28,12 +29,14 @@ public class frmInicio extends javax.swing.JFrame {
  
     private final IClientesBO clientesBO;
     IConexion conexion = Conexion.getInstance();
+    private final RestauranteDTO restaurante;
     /**
      * Creates new form frmInicio
+     * @param restaurante
      */
-    public frmInicio() {
+    public frmInicio(RestauranteDTO restaurante) {
         initComponents();
-        
+         this.restaurante = restaurante;
         IClientesDAO clientesDAO = new ClientesDAO(conexion); // O cómo estés inicializando tu DAO
         ClienteConvertidor clienteConvertidor = new ClienteConvertidor(); 
         this.clientesBO = new ClientesBO(clientesDAO, clienteConvertidor);
@@ -60,6 +63,7 @@ public class frmInicio extends javax.swing.JFrame {
         jLabel5 = new javax.swing.JLabel();
         jLabel9 = new javax.swing.JLabel();
         jLabel10 = new javax.swing.JLabel();
+        jButton1 = new javax.swing.JButton();
         jLabel6 = new javax.swing.JLabel();
         jLabel7 = new javax.swing.JLabel();
         jLabel8 = new javax.swing.JLabel();
@@ -116,18 +120,24 @@ public class frmInicio extends javax.swing.JFrame {
         jLabel10.setFont(new java.awt.Font("Verdana", 3, 14)); // NOI18N
         jLabel10.setText("23:00");
 
+        jButton1.setText("Cambiar Horario");
+
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
         jPanel2Layout.setHorizontalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addGap(20, 20, 20)
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel2)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addGroup(jPanel2Layout.createSequentialGroup()
                         .addGap(6, 6, 6)
-                        .addComponent(jLabel3)))
-                .addGap(124, 124, 124)
+                        .addComponent(jLabel3)
+                        .addGap(124, 124, 124))
+                    .addGroup(jPanel2Layout.createSequentialGroup()
+                        .addComponent(jLabel2)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(jButton1)
+                        .addGap(27, 27, 27)))
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addGroup(jPanel2Layout.createSequentialGroup()
                         .addComponent(jLabel9)
@@ -137,16 +147,18 @@ public class frmInicio extends javax.swing.JFrame {
                         .addComponent(jLabel4)
                         .addGap(106, 106, 106)
                         .addComponent(jLabel5, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap(105, Short.MAX_VALUE))
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel2)
-                    .addComponent(jLabel4)
-                    .addComponent(jLabel5))
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(jLabel2)
+                        .addComponent(jLabel4)
+                        .addComponent(jLabel5))
+                    .addComponent(jButton1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel3)
@@ -326,7 +338,7 @@ public class frmInicio extends javax.swing.JFrame {
                 .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(24, 24, 24)
                 .addComponent(btnEntendido)
-                .addContainerGap(10, Short.MAX_VALUE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
             .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(jPanel1Layout.createSequentialGroup()
                     .addGap(131, 131, 131)
@@ -407,7 +419,7 @@ private List<ClienteDTO> generarClientesAleatorios(int cantidad) {
     }//GEN-LAST:event_btnSalirActionPerformed
 
     private void btnEntendidoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEntendidoActionPerformed
-        frmMenu men = new frmMenu();
+        frmMenu men = new frmMenu(restaurante);
         men.setVisible(true);
         this.dispose();
     }//GEN-LAST:event_btnEntendidoActionPerformed
@@ -418,6 +430,7 @@ private List<ClienteDTO> generarClientesAleatorios(int cantidad) {
     private javax.swing.JButton btnEntendido;
     private javax.swing.JButton btnInsercionClientes;
     private javax.swing.JButton btnSalir;
+    private javax.swing.JButton jButton1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel11;

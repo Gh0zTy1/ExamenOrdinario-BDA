@@ -4,6 +4,8 @@
  */
 package guis;
 
+import dto.RestauranteDTO;
+
 /**
  *
  * @author caarl
@@ -13,7 +15,9 @@ public class frmMenu extends javax.swing.JFrame {
     /**
      * Creates new form frmMenu
      */
-    public frmMenu() {
+    private final RestauranteDTO restaurante;
+    public frmMenu(RestauranteDTO restaurante) {
+         this.restaurante = restaurante;
         initComponents();
     }
 
@@ -37,11 +41,11 @@ public class frmMenu extends javax.swing.JFrame {
         jMenu1 = new javax.swing.JMenu();
         miAdminitrarMesas = new javax.swing.JMenuItem();
         jMenu2 = new javax.swing.JMenu();
-        miReservarMesa = new javax.swing.JMenu();
-        miCancelarReservacion = new javax.swing.JMenu();
+        miReservarMesa = new javax.swing.JMenuItem();
+        miCancelarReservacion = new javax.swing.JMenuItem();
         jMenu6 = new javax.swing.JMenu();
-        miHistorialCliente = new javax.swing.JMenu();
-        miHistorialRestaurante = new javax.swing.JMenu();
+        miHistorialCliente = new javax.swing.JMenuItem();
+        miHistorialRestaurante = new javax.swing.JMenuItem();
         jMenu8 = new javax.swing.JMenu();
 
         jMenuItem2.setText("jMenuItem2");
@@ -88,9 +92,19 @@ public class frmMenu extends javax.swing.JFrame {
         jMenu2.setText("Reservaciones");
 
         miReservarMesa.setText("ReservarMesa");
+        miReservarMesa.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                miReservarMesaActionPerformed(evt);
+            }
+        });
         jMenu2.add(miReservarMesa);
 
         miCancelarReservacion.setText("Cancelar Reservacion");
+        miCancelarReservacion.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                miCancelarReservacionActionPerformed(evt);
+            }
+        });
         jMenu2.add(miCancelarReservacion);
 
         jMenuBar1.add(jMenu2);
@@ -98,9 +112,19 @@ public class frmMenu extends javax.swing.JFrame {
         jMenu6.setText("Consultas");
 
         miHistorialCliente.setText("Historial por cliente");
+        miHistorialCliente.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                miHistorialClienteActionPerformed(evt);
+            }
+        });
         jMenu6.add(miHistorialCliente);
 
         miHistorialRestaurante.setText("Historial por restaurante");
+        miHistorialRestaurante.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                miHistorialRestauranteActionPerformed(evt);
+            }
+        });
         jMenu6.add(miHistorialRestaurante);
 
         jMenuBar1.add(jMenu6);
@@ -132,10 +156,34 @@ public class frmMenu extends javax.swing.JFrame {
 
     private void miAdminitrarMesasActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_miAdminitrarMesasActionPerformed
        
-        frmAministradorMesas men = new frmAministradorMesas();
+        frmAministradorMesas men = new frmAministradorMesas(restaurante);
         men.setVisible(true);
         this.dispose();
     }//GEN-LAST:event_miAdminitrarMesasActionPerformed
+
+    private void miReservarMesaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_miReservarMesaActionPerformed
+       frmReservarMesa men = new frmReservarMesa(restaurante);
+        men.setVisible(true);
+        this.dispose();
+    }//GEN-LAST:event_miReservarMesaActionPerformed
+
+    private void miCancelarReservacionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_miCancelarReservacionActionPerformed
+         frnCancelarReservacion men = new frnCancelarReservacion(restaurante);
+        men.setVisible(true);
+        this.dispose();
+    }//GEN-LAST:event_miCancelarReservacionActionPerformed
+
+    private void miHistorialClienteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_miHistorialClienteActionPerformed
+       frmHistorialCliente men = new frmHistorialCliente(restaurante);
+        men.setVisible(true);
+        this.dispose();
+    }//GEN-LAST:event_miHistorialClienteActionPerformed
+
+    private void miHistorialRestauranteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_miHistorialRestauranteActionPerformed
+        frmHistorialDeRestaurante men = new frmHistorialDeRestaurante(restaurante);
+        men.setVisible(true);
+        this.dispose();
+    }//GEN-LAST:event_miHistorialRestauranteActionPerformed
 
     
 
@@ -153,9 +201,9 @@ public class frmMenu extends javax.swing.JFrame {
     private javax.swing.JPanel jPanel1;
     private javax.swing.JLabel lblImagen;
     private javax.swing.JMenuItem miAdminitrarMesas;
-    private javax.swing.JMenu miCancelarReservacion;
-    private javax.swing.JMenu miHistorialCliente;
-    private javax.swing.JMenu miHistorialRestaurante;
-    private javax.swing.JMenu miReservarMesa;
+    private javax.swing.JMenuItem miCancelarReservacion;
+    private javax.swing.JMenuItem miHistorialCliente;
+    private javax.swing.JMenuItem miHistorialRestaurante;
+    private javax.swing.JMenuItem miReservarMesa;
     // End of variables declaration//GEN-END:variables
 }

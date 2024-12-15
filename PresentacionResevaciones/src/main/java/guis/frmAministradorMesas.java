@@ -25,12 +25,18 @@ import javax.swing.table.DefaultTableModel;
  *
  * @author caarl
  */
+
+
 public class frmAministradorMesas extends javax.swing.JFrame {
     /**
      * Creates new form frmAministradorMesas
      */
-    public frmAministradorMesas() {        
+    private final RestauranteDTO restaurante;
+    
+    public frmAministradorMesas(RestauranteDTO restaurante) {   
+        
         initComponents();
+        this.restaurante = restaurante;
       cargarMesasEnTabla();
         
         
@@ -250,7 +256,8 @@ public class frmAministradorMesas extends javax.swing.JFrame {
     }//GEN-LAST:event_btnAgregarMesaActionPerformed
 
     private void btnAtrasActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAtrasActionPerformed
-       frmMenu men = new frmMenu();
+       
+        frmMenu men = new frmMenu(restaurante);
         men.setVisible(true);
         this.dispose();
     }//GEN-LAST:event_btnAtrasActionPerformed

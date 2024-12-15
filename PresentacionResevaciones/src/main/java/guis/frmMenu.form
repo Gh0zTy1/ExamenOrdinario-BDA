@@ -52,16 +52,22 @@
             <Property name="text" type="java.lang.String" value="Reservaciones"/>
           </Properties>
           <SubComponents>
-            <Menu class="javax.swing.JMenu" name="miReservarMesa">
+            <MenuItem class="javax.swing.JMenuItem" name="miReservarMesa">
               <Properties>
                 <Property name="text" type="java.lang.String" value="ReservarMesa"/>
               </Properties>
-            </Menu>
-            <Menu class="javax.swing.JMenu" name="miCancelarReservacion">
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="miReservarMesaActionPerformed"/>
+              </Events>
+            </MenuItem>
+            <MenuItem class="javax.swing.JMenuItem" name="miCancelarReservacion">
               <Properties>
                 <Property name="text" type="java.lang.String" value="Cancelar Reservacion"/>
               </Properties>
-            </Menu>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="miCancelarReservacionActionPerformed"/>
+              </Events>
+            </MenuItem>
           </SubComponents>
         </Menu>
         <Menu class="javax.swing.JMenu" name="jMenu6">
@@ -69,16 +75,22 @@
             <Property name="text" type="java.lang.String" value="Consultas"/>
           </Properties>
           <SubComponents>
-            <Menu class="javax.swing.JMenu" name="miHistorialCliente">
+            <MenuItem class="javax.swing.JMenuItem" name="miHistorialCliente">
               <Properties>
                 <Property name="text" type="java.lang.String" value="Historial por cliente"/>
               </Properties>
-            </Menu>
-            <Menu class="javax.swing.JMenu" name="miHistorialRestaurante">
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="miHistorialClienteActionPerformed"/>
+              </Events>
+            </MenuItem>
+            <MenuItem class="javax.swing.JMenuItem" name="miHistorialRestaurante">
               <Properties>
                 <Property name="text" type="java.lang.String" value="Historial por restaurante"/>
               </Properties>
-            </Menu>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="miHistorialRestauranteActionPerformed"/>
+              </Events>
+            </MenuItem>
           </SubComponents>
         </Menu>
         <Menu class="javax.swing.JMenu" name="jMenu8">

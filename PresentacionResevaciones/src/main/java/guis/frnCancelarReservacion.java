@@ -332,7 +332,7 @@ public class frnCancelarReservacion extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
-       frmMenu men = new frmMenu();
+       frmMenu men = new frmMenu(restaurante);
         men.setVisible(true);
         this.dispose();
     }//GEN-LAST:event_jButton3ActionPerformed

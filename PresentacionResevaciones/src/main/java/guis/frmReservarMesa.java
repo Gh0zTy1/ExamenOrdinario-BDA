@@ -5,6 +5,7 @@
 package guis;
 
 import dto.MesaDTO;
+import dto.RestauranteDTO;
 import excepciones.NegocioException;
 import fabricas.fabricaFCD;
 import iFachadas.ICargarMesasFCD;
@@ -16,13 +17,16 @@ import javax.swing.table.DefaultTableModel;
  *
  * @author caarl
  */
-public class frmReservarMesa extends javax.swing.JFrame {
 
+
+public class frmReservarMesa extends javax.swing.JFrame {
+private final RestauranteDTO restaurante;
     /**
      * Creates new form frmReservarMesa
      */
-    public frmReservarMesa() {
+    public frmReservarMesa(RestauranteDTO restaurante) {
         initComponents();
+this.restaurante = restaurante;
         cargarMesasEnTabla();
     }
     
@@ -277,7 +281,7 @@ public class frmReservarMesa extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnAtrasActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAtrasActionPerformed
-        frmMenu men = new frmMenu();
+        frmMenu men = new frmMenu(restaurante);
         men.setVisible(true);
         this.dispose();
     }//GEN-LAST:event_btnAtrasActionPerformed

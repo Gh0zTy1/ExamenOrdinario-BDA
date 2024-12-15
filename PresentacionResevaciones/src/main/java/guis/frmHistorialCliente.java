@@ -43,6 +43,7 @@ public class frmHistorialCliente extends javax.swing.JFrame {
     private final IReservacionesBO reservacionesBO;
     private final ClientesBO clientesBO;
     private final RestauranteDTO restaurante;
+    
 
     public frmHistorialCliente(RestauranteDTO restaurante) {
         this.restaurante = restaurante;
@@ -418,7 +419,7 @@ public class frmHistorialCliente extends javax.swing.JFrame {
         this.dispose();
 
         // Abrir el nuevo frame
-        frmMenu nuevoFrame = new frmMenu();
+        frmMenu nuevoFrame = new frmMenu(restaurante);
         nuevoFrame.setVisible(true);
     }//GEN-LAST:event_jButton1ActionPerformed
 

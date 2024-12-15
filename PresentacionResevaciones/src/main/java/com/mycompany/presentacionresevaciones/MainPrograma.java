@@ -4,6 +4,7 @@
 
 package com.mycompany.presentacionresevaciones;
 
+import dto.RestauranteDTO;
 import guis.frmInicio;
 
 /**
@@ -19,10 +20,12 @@ public class MainPrograma {
         } catch (Exception e) {
             e.printStackTrace();
         }
-
+ // Crear una instancia de RestauranteDTO
+        RestauranteDTO restaurante = new RestauranteDTO();
+        restaurante.setId(1L); // Asignar un ID o los valores necesarios
         // Crear y mostrar el frame frmInicio
         java.awt.EventQueue.invokeLater(() -> {
-            new frmInicio().setVisible(true);
+            new frmInicio(restaurante).setVisible(true);
         });
     }
 }
