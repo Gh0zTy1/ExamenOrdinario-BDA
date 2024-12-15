@@ -181,7 +181,7 @@ public class frmHistorialDeRestaurante extends javax.swing.JFrame {
         jPanel1.setBackground(new java.awt.Color(102, 102, 102));
 
         jLabel1.setFont(new java.awt.Font("Sitka Subheading", 1, 24)); // NOI18N
-        jLabel1.setText("Generador de Reporte");
+        jLabel1.setText("Historial por restaurante");
 
         jLabel2.setFont(new java.awt.Font("Segoe UI Black", 3, 14)); // NOI18N
         jLabel2.setText("Filtros");

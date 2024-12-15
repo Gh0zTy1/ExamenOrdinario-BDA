@@ -142,7 +142,7 @@
             <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
               <Font name="Sitka Subheading" size="24" style="1"/>
             </Property>
-            <Property name="text" type="java.lang.String" value="Generador de Reporte"/>
+            <Property name="text" type="java.lang.String" value="Historial por restaurante"/>
           </Properties>
         </Component>
         <Component class="javax.swing.JLabel" name="jLabel2">

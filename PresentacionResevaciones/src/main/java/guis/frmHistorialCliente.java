@@ -41,9 +41,8 @@ import javax.swing.JOptionPane;
 public class frmHistorialCliente extends javax.swing.JFrame {
 
     private final IReservacionesBO reservacionesBO;
-    private final MesasBO mesasBO;
     private final ClientesBO clientesBO;
-    private RestauranteDTO restaurante;
+    private final RestauranteDTO restaurante;
 
     public frmHistorialCliente(RestauranteDTO restaurante) {
         this.restaurante = restaurante;
@@ -54,7 +53,7 @@ public class frmHistorialCliente extends javax.swing.JFrame {
         // Obtener la fachada desde la fábrica
         ReportesFachada fachada = ReportesFachadaFactory.getFachada();
         this.reservacionesBO = fachada.getReservacionesBO();
-        this.mesasBO = fachada.getMesasBO();
+        fachada.getMesasBO();
         this.clientesBO = fachada.getClientesBO();
         cargarReservaciones();
         cargarClientes();
@@ -170,7 +169,7 @@ public class frmHistorialCliente extends javax.swing.JFrame {
         jPanel1.setBackground(new java.awt.Color(102, 102, 102));
 
         jLabel1.setFont(new java.awt.Font("Sitka Subheading", 1, 24)); // NOI18N
-        jLabel1.setText("Generador de Reporte");
+        jLabel1.setText("Historial por cliente");
 
         jLabel2.setFont(new java.awt.Font("Segoe UI Black", 3, 14)); // NOI18N
         jLabel2.setText("Filtros");
@@ -241,15 +240,16 @@ public class frmHistorialCliente extends javax.swing.JFrame {
                         .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 870, Short.MAX_VALUE)
                         .addContainerGap())))
             .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGap(393, 393, 393)
+                .addGap(413, 413, 413)
                 .addComponent(jLabel1)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
+                .addContainerGap()
                 .addComponent(jLabel1)
-                .addGap(11, 11, 11)
+                .addGap(5, 5, 5)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel2)
                     .addComponent(jLabel6))

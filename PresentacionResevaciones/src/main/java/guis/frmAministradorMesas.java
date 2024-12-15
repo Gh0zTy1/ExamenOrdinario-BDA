@@ -12,7 +12,6 @@ import excepciones.NegocioException;
 import fabricas.fabricaFCD;
 import fachadas.agregarMesasFCD;
 import iFachadas.ICargarMesasFCD;
-import iFachadas.IagregarMesasFCD;
 import java.awt.GridLayout;
 import java.util.List;
 import javax.swing.JComboBox;
