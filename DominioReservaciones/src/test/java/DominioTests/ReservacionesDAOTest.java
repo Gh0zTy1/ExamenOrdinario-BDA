@@ -34,12 +34,12 @@ public class ReservacionesDAOTest {
     private MesasDAO mockMesasDAO;
     private ReservacionesDAO reservacionesDAO;
 
-    @BeforeEach
-    void setUp() {
-        em = mock(EntityManager.class);
-        mockMesasDAO = mock(MesasDAO.class);
-        reservacionesDAO = new ReservacionesDAO(em, mockMesasDAO);
-    }
+//    @BeforeEach
+//    void setUp() {
+//        em = mock(EntityManager.class);
+//        mockMesasDAO = mock(MesasDAO.class);
+//        reservacionesDAO = new ReservacionesDAO(em, mockMesasDAO);
+//    }
 
     @AfterEach
     void tearDown() {

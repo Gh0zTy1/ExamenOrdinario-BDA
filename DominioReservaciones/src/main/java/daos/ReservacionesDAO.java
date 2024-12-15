@@ -2,6 +2,7 @@ package daos;
 
 import Excepciones.DAOException;
 import conexion.Conexion;
+import conexion.IConexion;
 import entidades.EstadoReservacion;
 import entidades.Reservacion;
 import entidades.TipoMesa;
@@ -24,20 +25,21 @@ import javax.persistence.TypedQuery;
  */
 public class ReservacionesDAO implements IReservacionesDAO {
 
-    private final EntityManager entityManager;
+    private final IConexion conexion;
     private final IMesasDAO mesasDAO;
 
-    // Constructor con inyección de dependencias
-    public ReservacionesDAO(EntityManager entityManager, IMesasDAO mesasDAO) {
-        this.entityManager = entityManager;
+    public ReservacionesDAO(Conexion conexion, IMesasDAO mesasDAO) {
+        this.conexion = conexion;
         this.mesasDAO = mesasDAO;
     }
+
+ 
     
 
      @Override
     public List<Reservacion> obtenerReservacionesTodos(Long idRestaurante) throws DAOException {
         try {
-            TypedQuery<Reservacion> query = entityManager.createQuery(
+            TypedQuery<Reservacion> query = conexion.crearConexion().createQuery(
                     "SELECT r FROM Reservacion r WHERE r.mesa.restaurante.id = :idRestaurante", Reservacion.class);
             query.setParameter("idRestaurante", idRestaurante);
             return query.getResultList();
@@ -53,7 +55,7 @@ public class ReservacionesDAO implements IReservacionesDAO {
        
         // Filtrar por restaurante y código de mesa dentro de ese restaurante
         try {
-            boolean existeMesa = entityManager.createQuery(
+            boolean existeMesa = conexion.crearConexion().createQuery(
                     "SELECT COUNT(m) FROM Mesa m WHERE m.codigo = :codigoMesa AND m.restaurante.id = :idRestaurante", Long.class)
                     .setParameter("codigoMesa", codigoMesa)
                     .setParameter("idRestaurante", idRestaurante)
@@ -63,7 +65,7 @@ public class ReservacionesDAO implements IReservacionesDAO {
                 throw new DAOException("La mesa con el código indicado no existe en el restaurante especificado");
             }
 
-            TypedQuery<Reservacion> query = entityManager.createQuery(
+            TypedQuery<Reservacion> query = conexion.crearConexion().createQuery(
                     "SELECT r FROM Reservacion r WHERE r.mesa.codigo = :codigoMesa AND r.mesa.restaurante.id = :idRestaurante", Reservacion.class);
             query.setParameter("codigoMesa", codigoMesa);
             query.setParameter("idRestaurante", idRestaurante);
@@ -71,7 +73,7 @@ public class ReservacionesDAO implements IReservacionesDAO {
         } catch (Exception e) {
             throw new DAOException("Error al obtener reservaciones de la mesa en el restaurante");
         } finally {
-            entityManager.close();
+            conexion.crearConexion().close();
         }
     }
 
@@ -80,7 +82,7 @@ public class ReservacionesDAO implements IReservacionesDAO {
       
         // Filtrar por restaurante y el período especificado
         try {
-            TypedQuery<Reservacion> query = entityManager.createQuery(
+            TypedQuery<Reservacion> query = conexion.crearConexion().createQuery(
                     "SELECT r FROM Reservacion r WHERE r.mesa.restaurante.id = :idRestaurante AND r.fechaHora BETWEEN :fechaInicio AND :fechaFin", Reservacion.class);
             query.setParameter("idRestaurante", idRestaurante);
             query.setParameter("fechaInicio", fechaInicio);
@@ -89,7 +91,7 @@ public class ReservacionesDAO implements IReservacionesDAO {
         } catch (Exception e) {
             throw new DAOException("Error al obtener reservaciones por período en el restaurante");
         } finally {
-            entityManager.close();
+          conexion.crearConexion().close();
         }
     }
 
@@ -98,7 +100,7 @@ public class ReservacionesDAO implements IReservacionesDAO {
       
         // Filtrar por restaurante y el teléfono del cliente
         try {
-            TypedQuery<Reservacion> query = entityManager.createQuery(
+            TypedQuery<Reservacion> query = conexion.crearConexion().createQuery(
                     "SELECT r FROM Reservacion r WHERE r.mesa.restaurante.id = :idRestaurante AND r.cliente.telefono = :telefono", Reservacion.class);
             query.setParameter("idRestaurante", idRestaurante);
             query.setParameter("telefono", telefono);
@@ -106,7 +108,7 @@ public class ReservacionesDAO implements IReservacionesDAO {
         } catch (Exception e) {
             throw new DAOException("Error al obtener reservaciones del cliente en el restaurante");
         } finally {
-            entityManager.close();
+           conexion.crearConexion().close();
         }
     }
 
@@ -115,7 +117,7 @@ public class ReservacionesDAO implements IReservacionesDAO {
        
 
         try {
-            Reservacion res = entityManager.find(Reservacion.class, id);
+            Reservacion res = conexion.crearConexion().find(Reservacion.class, id);
             if (res == null) {
                 throw new DAOException("No se encontro la reservacion con el ID especificado");
             }
@@ -124,20 +126,20 @@ public class ReservacionesDAO implements IReservacionesDAO {
         } catch (Exception e) {
             throw new DAOException("Error al obtener la reservación por ID");
         } finally {
-            entityManager.close();
+            conexion.crearConexion().close();
         }
     }
 
     @Override
     public void agregarReservacion(Reservacion reservacion) throws DAOException {
        
-        EntityTransaction transaction = entityManager.getTransaction();
+        EntityTransaction transaction = conexion.crearConexion().getTransaction();
 
         System.out.println("MESA: " + reservacion.getMesa());
         
         try {
             // Verificar que el cliente no tenga una reservación activa en el mismo restaurante.
-            boolean reservacionActivaRestaurante = entityManager.createQuery(
+            boolean reservacionActivaRestaurante = conexion.crearConexion().createQuery(
                     "SELECT COUNT(r) FROM Reservacion r WHERE r.cliente.id = :idCliente AND r.mesa.restaurante.id = :idRestaurante AND r.estado LIKE 'PENDIENTE'", Long.class)
                     .setParameter("idCliente", reservacion.getCliente().getId())
                     .setParameter("idRestaurante", reservacion.getMesa().getRestaurante().getId())
@@ -148,7 +150,7 @@ public class ReservacionesDAO implements IReservacionesDAO {
             }
             
             // Verificar que el cliente no tenga una reservación activa en otro restaurante.
-            boolean reservacionActivaOtroRestaurante = entityManager.createQuery(
+            boolean reservacionActivaOtroRestaurante = conexion.crearConexion().createQuery(
                     "SELECT COUNT(r) FROM Reservacion r WHERE r.cliente.id = :idCliente AND r.estado LIKE 'PENDIENTE'", Long.class)
                     .setParameter("idCliente", reservacion.getCliente().getId())
                     .getSingleResult() > 0;
@@ -178,7 +180,7 @@ public class ReservacionesDAO implements IReservacionesDAO {
                 throw new DAOException(String.format("La reservación no puede realizarse porque excede el horario límite permitido, que es hasta las %s", limiteReservacion.toString()));
             }
             // Verificar que la mesa no esté ocupada por otra reservación pendiente.
-            boolean mesaOcupada = entityManager.createQuery(
+            boolean mesaOcupada = conexion.crearConexion().createQuery(
                     "SELECT COUNT(r) FROM Reservacion r WHERE r.mesa.codigo = :codigoMesa AND r.estado LIKE 'PENDIENTE' AND r.mesa.restaurante.id = :idRestaurante", Long.class)
                     .setParameter("codigoMesa", reservacion.getMesa().getCodigo())
                     .setParameter("idRestaurante", reservacion.getMesa().getRestaurante().getId())
@@ -207,7 +209,7 @@ public class ReservacionesDAO implements IReservacionesDAO {
 
             // Persistir la reservación.
             transaction.begin();
-            entityManager.persist(reservacion);
+            conexion.crearConexion().persist(reservacion);
             transaction.commit();
         } catch (Exception e) {
             if (transaction.isActive()) {
@@ -215,17 +217,17 @@ public class ReservacionesDAO implements IReservacionesDAO {
             }
             throw new DAOException(e.getMessage());
         } finally {
-            entityManager.close();
+            conexion.crearConexion().close();
         }
     }
 
     @Override
     public void actualizarReservacion(Reservacion reservacion) throws DAOException {
       
-        EntityTransaction transaction = entityManager.getTransaction();
+        EntityTransaction transaction = conexion.crearConexion().getTransaction();
 
         try {
-            Reservacion reservacionExistente = entityManager.find(Reservacion.class, reservacion.getId());
+            Reservacion reservacionExistente = conexion.crearConexion().find(Reservacion.class, reservacion.getId());
             if (reservacionExistente == null) {
                 throw new DAOException("La reservacion que se desea actualizar no existe en el sistema");
             }
@@ -252,8 +254,8 @@ public class ReservacionesDAO implements IReservacionesDAO {
             reservacion.setMontoTotal(reservacion.getMesa().getTipoMesa().getPrecio());
 
             transaction.begin();
-            entityManager.merge(reservacion);
-            entityManager.merge(reservacion.getMesa());
+            conexion.crearConexion().merge(reservacion);
+            conexion.crearConexion().merge(reservacion.getMesa());
             transaction.commit();
         } catch (Exception e) {
             if (transaction.isActive()) {
@@ -261,20 +263,20 @@ public class ReservacionesDAO implements IReservacionesDAO {
             }
             throw new DAOException(e.getMessage());
         } finally {
-            entityManager.close();
+            conexion.crearConexion().close();
         }
     }
 
     @Override
     public void eliminarReservacion(Long id) throws DAOException {
       
-        EntityTransaction transaction = entityManager.getTransaction();
+        EntityTransaction transaction = conexion.crearConexion().getTransaction();
 
         try {
             transaction.begin();
-            Reservacion reservacion = entityManager.find(Reservacion.class, id);
+            Reservacion reservacion = conexion.crearConexion().find(Reservacion.class, id);
             if (reservacion != null) {
-                entityManager.remove(reservacion);
+                conexion.crearConexion().remove(reservacion);
             } else {
                 throw new DAOException("No se encontro la reservacion a eliminar");
             }
@@ -284,7 +286,7 @@ public class ReservacionesDAO implements IReservacionesDAO {
             //System.out.println("ELIMINAR RESERVACION: " + e.getMessage());
             throw new DAOException(e.getMessage());
         } finally {
-            entityManager.close();
+            conexion.crearConexion().close();
         }
     }
     
@@ -292,7 +294,7 @@ public class ReservacionesDAO implements IReservacionesDAO {
     public void cancelarReservacion(Long idReservacion) throws DAOException {
       
 
-        Reservacion reservacion = entityManager.find(Reservacion.class, idReservacion);
+        Reservacion reservacion = conexion.crearConexion().find(Reservacion.class, idReservacion);
         if (reservacion == null) {
             throw new DAOException("No se encontro la reservacion");
         }
@@ -319,11 +321,11 @@ public class ReservacionesDAO implements IReservacionesDAO {
         // se cambia el estado de la reservacion
         reservacion.setEstado(EstadoReservacion.CANCELADA);
 
-        EntityTransaction transaction = entityManager.getTransaction();
+        EntityTransaction transaction = conexion.crearConexion().getTransaction();
 
         try {
             transaction.begin();
-            entityManager.merge(reservacion);
+            conexion.crearConexion().merge(reservacion);
             transaction.commit();
         } catch (Exception e) {
             if (transaction.isActive()) {
@@ -331,7 +333,7 @@ public class ReservacionesDAO implements IReservacionesDAO {
             }
             throw new DAOException("Error al cancelar la reservacion, porfavor intente mas tarde");
         } finally {
-            entityManager.close();
+            conexion.crearConexion().close();
         }
 
     

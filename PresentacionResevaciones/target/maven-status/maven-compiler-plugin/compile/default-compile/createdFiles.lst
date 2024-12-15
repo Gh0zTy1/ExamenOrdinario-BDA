@@ -1,1 +1,8 @@
-com\mycompany\presentacionresevaciones\PresentacionResevaciones.class
+guis\frmInicio.class
+com\mycompany\presentacionresevaciones\MainPrograma.class
+guis\frmCrearReservacion.class
+guis\frnCancelarReservacion.class
+guis\frmHistorialCliente.class
+guis\frmMenu.class
+guis\frmHistorialRestaurante.class
+guis\frmAministradorMesas.class

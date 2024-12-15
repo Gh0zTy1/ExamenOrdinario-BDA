@@ -19,7 +19,7 @@ public class Main {
         EntityManagerFactory emf = EntityManagerFactoryHelper.getEntityManagerFactory();
 
         // Inyectar la dependencia en la clase Conexion
-        IConexion conexion = new Conexion(emf);
+        IConexion conexion =  Conexion.getInstance();
 
         // Crear una conexión (EntityManager)
         System.out.println("Probando conexión...");

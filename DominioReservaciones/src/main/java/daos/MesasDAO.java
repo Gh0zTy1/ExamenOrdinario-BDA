@@ -5,13 +5,13 @@
 package daos;
 
 import Excepciones.DAOException;
+import conexion.Conexion;
+import conexion.IConexion;
 import entidades.Mesa;
 import entidades.Restaurante;
 import entidades.TipoMesa;
 import entidades.UbicacionMesa;
 import idaos.IMesasDAO;
-
-import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
 import javax.persistence.NoResultException;
 import javax.persistence.TypedQuery;
@@ -26,17 +26,19 @@ import java.util.concurrent.ThreadLocalRandom;
  */
 public class MesasDAO implements IMesasDAO {
 
-    private final EntityManager entityManager;
+    private final  IConexion conexion;
 
     // Constructor con inyección de dependencias
-    public MesasDAO(EntityManager entityManager) {
-        this.entityManager = entityManager;
+
+    public MesasDAO(Conexion conexion) {
+        this.conexion = conexion;
     }
+
 
     @Override
     public List<Mesa> obtenerMesasTodas(Long idRestaurante) throws DAOException {
         try {
-            TypedQuery<Mesa> query = entityManager.createQuery(
+            TypedQuery<Mesa> query = conexion.crearConexion().createQuery(
                 "SELECT m FROM Mesa m WHERE m.restaurante.id = :idRestaurante", 
                 Mesa.class
             );
@@ -50,7 +52,7 @@ public class MesasDAO implements IMesasDAO {
     @Override
     public List<Mesa> obtenerMesasPorTipo(Long idRestaurante, TipoMesa tipo) throws DAOException {
         try {
-            TypedQuery<Mesa> query = entityManager.createQuery(
+            TypedQuery<Mesa> query = conexion.crearConexion().createQuery(
                 "SELECT m FROM Mesa m WHERE m.tipoMesa = :tipo AND m.restaurante.id = :idRestaurante", 
                 Mesa.class
             );
@@ -64,11 +66,11 @@ public class MesasDAO implements IMesasDAO {
 
     @Override
     public void eliminarMesa(Long idRestaurante, String codigo) throws DAOException {
-        EntityTransaction transaction = entityManager.getTransaction();
+        EntityTransaction transaction = conexion.crearConexion().getTransaction();
         try {
             transaction.begin();
 
-            TypedQuery<Mesa> consulta = entityManager.createQuery(
+            TypedQuery<Mesa> consulta = conexion.crearConexion().createQuery(
                 "SELECT m FROM Mesa m WHERE m.codigo = :codigo AND m.restaurante.id = :idRestaurante", 
                 Mesa.class
             );
@@ -81,7 +83,7 @@ public class MesasDAO implements IMesasDAO {
                 throw new DAOException("No se encontró la mesa con el código dado");
             }
 
-            entityManager.remove(mesa);
+            conexion.crearConexion().remove(mesa);
             transaction.commit();
         } catch (NoResultException e) {
             if (transaction.isActive()) transaction.rollback();
@@ -94,7 +96,7 @@ public class MesasDAO implements IMesasDAO {
 
     @Override
     public void insertarMesas(Long idRestaurante, TipoMesa tipo, UbicacionMesa ubicacion, int cantidad) throws DAOException {
-        EntityTransaction transaction = entityManager.getTransaction();
+        EntityTransaction transaction = conexion.crearConexion().getTransaction();
 
         if (ubicacion == null || cantidad < 1) {
             throw new DAOException("Parámetros inválidos para la inserción de mesas");
@@ -109,12 +111,12 @@ public class MesasDAO implements IMesasDAO {
                 mesa.setTipoMesa(tipo);
                 mesa.setUbicacion(ubicacion);
 
-                Restaurante restaurante = entityManager.find(Restaurante.class, idRestaurante);
+                Restaurante restaurante = conexion.crearConexion().find(Restaurante.class, idRestaurante);
                 if (restaurante == null) {
                     throw new DAOException("El restaurante especificado no existe");
                 }
                 mesa.setRestaurante(restaurante);
-                entityManager.persist(mesa);
+                conexion.crearConexion().persist(mesa);
             }
             transaction.commit();
         } catch (Exception e) {
@@ -129,7 +131,7 @@ public class MesasDAO implements IMesasDAO {
             String jpql = "SELECT m FROM Mesa m WHERE m.restaurante.id = :idRestaurante " +
                           "AND (m.fechaNuevaDisponibilidad IS NULL OR m.fechaNuevaDisponibilidad <= :fechaActual) " +
                           "AND NOT EXISTS (SELECT r FROM Reservacion r WHERE r.mesa = m AND r.estado LIKE 'PENDIENTE')";
-            TypedQuery<Mesa> query = entityManager.createQuery(jpql, Mesa.class);
+            TypedQuery<Mesa> query = conexion.crearConexion().createQuery(jpql, Mesa.class);
             query.setParameter("idRestaurante", idRestaurante);
             query.setParameter("fechaActual", LocalDateTime.now());
             return query.getResultList();
@@ -146,7 +148,7 @@ public class MesasDAO implements IMesasDAO {
             int numeroRandom = ThreadLocalRandom.current().nextInt(0, 999);
             String codigo = String.format("%3s-%d-%03d", ubicacion.toString().substring(0, 3), tipo.getMaximoPersonas(), numeroRandom);
 
-            Long conteo = entityManager.createQuery(
+            Long conteo = conexion.crearConexion().createQuery(
                 "SELECT COUNT(m) FROM Mesa m WHERE m.codigo = :codigo", Long.class)
                 .setParameter("codigo", codigo)
                 .getSingleResult();

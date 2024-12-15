@@ -4,18 +4,29 @@
  */
 package guis;
 
+import fabricas.fabricaFCD;
+import iFachadas.ICrearReservacionFCD;
+
 /**
  *
  * @author caarl
  */
 public class frmAministradorMesas extends javax.swing.JFrame {
 
+    
+    
+    ICrearReservacionFCD fcdCrear;
     /**
      * Creates new form frmAministradorMesas
      */
     public frmAministradorMesas() {
+        
         initComponents();
+        this.fcdCrear= fabricaFCD.fabricaFCDRerservar();
     }
+    
+    
+    
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -58,6 +69,11 @@ public class frmAministradorMesas extends javax.swing.JFrame {
         jScrollPane1.setViewportView(tblMesas);
 
         btnAgregarMesa.setText("Agregar Mesas");
+        btnAgregarMesa.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnAgregarMesaActionPerformed(evt);
+            }
+        });
 
         btnModificarMesa.setText("Modificar Mesa");
 
@@ -119,6 +135,10 @@ public class frmAministradorMesas extends javax.swing.JFrame {
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
+
+    private void btnAgregarMesaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAgregarMesaActionPerformed
+//        fcdCrear.crearReservacion(reservacion);
+    }//GEN-LAST:event_btnAgregarMesaActionPerformed
 
    
 

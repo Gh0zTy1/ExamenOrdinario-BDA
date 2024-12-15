@@ -12,13 +12,6 @@ import java.util.List;
  *
  * @author caarl
  */
-public interface IFachadaReservaciones {
-
-    void crearReservacion(ReservacionDTO reservacion) throws NegocioException;
-
-    void cancelarReservacion(Long idReservacion) throws NegocioException;
-
+public interface IconsultarHistorialClienteFCD {
     List<ReservacionDTO> consultarHistorialCliente(Long idCliente) throws NegocioException;
-
-    List<ReservacionDTO> consultarHistorialRestaurante(Long idRestaurante) throws NegocioException;
 }

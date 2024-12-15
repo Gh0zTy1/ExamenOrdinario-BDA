@@ -6,18 +6,30 @@ package conexion;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
+import javax.persistence.Persistence;
 
 /**
  *
  * @author caarl
  */
+/**
+ * Implementación de la interfaz IConexion utilizando el patrón Singleton.
+ */
 public class Conexion implements IConexion {
 
-    private final EntityManagerFactory emf;
+    private static Conexion instancia;
+    private EntityManagerFactory emf;
 
-    // Constructor con inyección de dependencias
-    public Conexion(EntityManagerFactory emf) {
-        this.emf = emf;
+    private Conexion() {
+        this.emf = Persistence.createEntityManagerFactory("restaurantesPU");
+    }
+
+
+    public static Conexion getInstance() {
+        if (instancia == null) {
+            instancia = new Conexion();
+        }
+        return instancia;
     }
 
     @Override
