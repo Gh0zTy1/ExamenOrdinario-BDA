@@ -8,9 +8,10 @@ import dto.MesaDTO;
 import dto.RestauranteDTO;
 import dto.TipoMesaDTO;
 import dto.UbicacionMesaDTO;
+import excepciones.NegocioException;
 import fabricas.fabricaFCD;
+import iFachadas.ICargarMesasFCD;
 import iFachadas.IagregarMesasFCD;
-import ibo.IMesasBO;
 import java.awt.GridLayout;
 import java.util.List;
 import javax.swing.JComboBox;
@@ -30,31 +31,41 @@ public class frmAministradorMesas extends javax.swing.JFrame {
      */
     public frmAministradorMesas() {        
         initComponents();
-        cargarMesas();
+      cargarMesasEnTabla();
         
         
        
     }
     
-     private void cargarMesas() {
-        try {
-            IMesasBO mesasBO = fabricaFCD.getInstancia().getIMesasBO();
-            List<MesaDTO> mesas = mesasBO.obtenerMesasTodas(1L);
+    private void cargarMesasEnTabla() {
+    try {
+        // Obtener la instancia de la fachada desde la fábrica
+        ICargarMesasFCD fachadaMesas = fabricaFCD.fabricaFCDCargarMesas();
 
-            // Obtener el modelo de tabla
-            DefaultTableModel model = (DefaultTableModel) tblMesas.getModel();
-            model.setRowCount(0); // Limpiar la tabla
+        // Llamar al método de la fachada para cargar las mesas
+        Long idRestaurante = 1L; // Cambia esto según el contexto de tu aplicación
+        List<MesaDTO> mesas = fachadaMesas.cargarMesas(idRestaurante);
 
-            // Agregar filas a la tabla
-            for (MesaDTO mesa : mesas) {
-                Object[] rowData = {mesa.getId(), mesa.getCodigo(), mesa.getUbicacion(), mesa.getTipoMesa().getNombre()};
-                model.addRow(rowData);
-            }
-        } catch (Exception e) {
-            JOptionPane.showMessageDialog(this, "Error al cargar las mesas: " + e.getMessage());
+        // Configurar el modelo de la tabla
+        DefaultTableModel modelo = (DefaultTableModel) tblMesas.getModel();
+        modelo.setRowCount(0); // Limpiar la tabla antes de agregar nuevas filas
+
+        // Poblar la tabla con las mesas obtenidas
+        for (MesaDTO mesa : mesas) {
+            modelo.addRow(new Object[]{
+                mesa.getId(),
+                mesa.getCodigo(),
+                mesa.getUbicacion().toString(),
+                mesa.getTipoMesa().getNombre()
+            });
         }
+    } catch (NegocioException x) {
+        JOptionPane.showMessageDialog(this, "Error al cargar mesas: " + x.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
     }
+}
+
     
+     
 
     /**
      * This method is called from within the constructor to initialize the form.

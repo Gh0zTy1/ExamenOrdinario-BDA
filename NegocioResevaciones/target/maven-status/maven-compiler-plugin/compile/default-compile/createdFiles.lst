@@ -10,6 +10,7 @@ fachadas\consultarHistorialRestauranteFCD.class
 ibo\IRestaurantesBO.class
 dto\UbicacionMesaDTO.class
 bo\MesasBO.class
+iFachadas\ICargarMesasFCD.class
 convertidores\MesaConvertidor.class
 dto\EstadoReservacionDTO.class
 fabricas\fabricaFCD.class
@@ -34,6 +35,7 @@ fachadas\eliminarMesasFCD.class
 bo\ReservacionesBO.class
 bo\RestaurantesBO.class
 convertidores\RestauranteConvertidor.class
+fachadas\CargarMesasFACHADA.class
 iFachadas\ImodificarMesasFCD.class
 dto\MultaDTO.class
 iFachadas\IcancelarReservacionFCD.class
