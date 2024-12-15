@@ -38,14 +38,14 @@ import javax.swing.JOptionPane;
  *
  * @author caarl
  */
-public class frmHistorialCliente extends javax.swing.JFrame {
+public class frmHistorialDeRestaurante extends javax.swing.JFrame {
 
     private final IReservacionesBO reservacionesBO;
     private final MesasBO mesasBO;
     private final ClientesBO clientesBO;
     private RestauranteDTO restaurante;
 
-    public frmHistorialCliente(RestauranteDTO restaurante) {
+    public frmHistorialDeRestaurante(RestauranteDTO restaurante) {
         this.restaurante = restaurante;
         initComponents();
         this.setTitle("Historial");
@@ -56,8 +56,11 @@ public class frmHistorialCliente extends javax.swing.JFrame {
         this.reservacionesBO = fachada.getReservacionesBO();
         this.mesasBO = fachada.getMesasBO();
         this.clientesBO = fachada.getClientesBO();
+
         cargarReservaciones();
-        cargarClientes();
+        cargarEstados();
+        cargarMesasEnComboBox();
+        
         this.setLocationRelativeTo(null);
     }
 
@@ -85,27 +88,33 @@ public class frmHistorialCliente extends javax.swing.JFrame {
             }
         } catch (NegocioException ex) {
             // Manejo de excepciones
-            Logger.getLogger(frmHistorialCliente.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(frmHistorialDeRestaurante.class.getName()).log(Level.SEVERE, null, ex);
             JOptionPane.showMessageDialog(this, "Error al cargar las reservaciones: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
         }
     }
 
-    
+    private void cargarEstados() {
+        cbxEstado.addItem("<None>");
+        for (EstadoReservacionDTO estado : EstadoReservacionDTO.values()) {
+            cbxEstado.addItem(estado.name());
+        }
 
-   
+    }
 
-    private void cargarClientes() {
-        cbxClientes.removeAllItems(); // Limpiamos el combobox
-        cbxClientes.addItem("<None>"); // Añadimos la opción inicial
+    private void cargarMesasEnComboBox() {
+        cbxMesas.addItem("<None>");  // Primer elemento como <None>
+
         try {
-            List<ClienteDTO> clientes = clientesBO.obtenerClientesTodos();
-            for (ClienteDTO cliente : clientes) {
-                cbxClientes.addItem(cliente.getTelefono()); // Agregamos los teléfonos de los clientes
+            List<MesaDTO> mesas = mesasBO.obtenerMesasTodas(this.restaurante.getId());
+            for (MesaDTO mesa : mesas) {
+                cbxMesas.addItem(mesa.getCodigo());  // Aquí puedes usar `mesa.getCodigo()` o `mesa.getNombre()`, dependiendo de la información que prefieras mostrar
             }
         } catch (NegocioException e) {
-            JOptionPane.showMessageDialog(this, "Error al cargar clientes: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(this, "Error al cargar mesas: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
         }
     }
+
+   
    
 
     private Long obtenerIdReservacionSeleccionada() {
@@ -139,7 +148,7 @@ public class frmHistorialCliente extends javax.swing.JFrame {
                 }
             }
         } catch (NegocioException ex) {
-            Logger.getLogger(frmHistorialCliente.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(frmHistorialDeRestaurante.class.getName()).log(Level.SEVERE, null, ex);
             JOptionPane.showMessageDialog(this, "Error al cargar las reservaciones: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
         }
     }
@@ -157,13 +166,15 @@ public class frmHistorialCliente extends javax.swing.JFrame {
         jPanel1 = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
-        jLabel4 = new javax.swing.JLabel();
+        cbxEstado = new javax.swing.JComboBox<>();
+        jLabel3 = new javax.swing.JLabel();
+        cbxMesas = new javax.swing.JComboBox<>();
         jButton1 = new javax.swing.JButton();
         btnGenerarRe = new javax.swing.JButton();
         jScrollPane1 = new javax.swing.JScrollPane();
         tblResultado = new javax.swing.JTable();
         jLabel6 = new javax.swing.JLabel();
-        cbxClientes = new javax.swing.JComboBox<>();
+        jLabel7 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -175,7 +186,19 @@ public class frmHistorialCliente extends javax.swing.JFrame {
         jLabel2.setFont(new java.awt.Font("Segoe UI Black", 3, 14)); // NOI18N
         jLabel2.setText("Filtros");
 
-        jLabel4.setText("Clientes");
+        cbxEstado.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cbxEstadoActionPerformed(evt);
+            }
+        });
+
+        jLabel3.setText("Estado");
+
+        cbxMesas.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cbxMesasActionPerformed(evt);
+            }
+        });
 
         jButton1.setText("Volver");
         jButton1.addActionListener(new java.awt.event.ActionListener() {
@@ -207,11 +230,7 @@ public class frmHistorialCliente extends javax.swing.JFrame {
         jLabel6.setFont(new java.awt.Font("Segoe UI Black", 3, 14)); // NOI18N
         jLabel6.setText("Resultado");
 
-        cbxClientes.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                cbxClientesActionPerformed(evt);
-            }
-        });
+        jLabel7.setText("Mesa");
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -223,10 +242,17 @@ public class frmHistorialCliente extends javax.swing.JFrame {
                         .addGap(14, 14, 14)
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jLabel2)
-                            .addComponent(jLabel4)))
+                            .addComponent(jLabel3)))
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addContainerGap()
-                        .addComponent(cbxClientes, javax.swing.GroupLayout.PREFERRED_SIZE, 194, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addComponent(cbxMesas, javax.swing.GroupLayout.PREFERRED_SIZE, 194, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addContainerGap()
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(jPanel1Layout.createSequentialGroup()
+                                .addGap(6, 6, 6)
+                                .addComponent(jLabel7))
+                            .addComponent(cbxEstado, javax.swing.GroupLayout.PREFERRED_SIZE, 194, javax.swing.GroupLayout.PREFERRED_SIZE)))
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addContainerGap()
                         .addComponent(jButton1)
@@ -253,14 +279,17 @@ public class frmHistorialCliente extends javax.swing.JFrame {
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel2)
                     .addComponent(jLabel6))
-                .addGap(32, 32, 32)
+                .addGap(10, 10, 10)
+                .addComponent(jLabel3)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGap(78, 78, 78)
-                        .addComponent(jLabel4)
+                        .addComponent(cbxEstado, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(cbxClientes, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(196, 196, 196)
+                        .addComponent(jLabel7)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(cbxMesas, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(246, 246, 246)
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(btnGenerarRe)
                             .addComponent(jButton1)))
@@ -329,12 +358,13 @@ public class frmHistorialCliente extends javax.swing.JFrame {
         document.add(filtrosTitulo);
 
         // Obtener y agregar valores seleccionados en los combobox
-    
-        String filtroCliente = "Clientes: " + (cbxClientes.getSelectedItem() != null ? cbxClientes.getSelectedItem().toString() : "No especificado");
+        String filtroEstado = "Estado: " + (cbxEstado.getSelectedItem() != null ? cbxEstado.getSelectedItem().toString() : "No especificado");
+        String filtroMesa = "Mesa: " + (cbxMesas.getSelectedItem() != null ? cbxMesas.getSelectedItem().toString() : "No especificado");
+  
        
 
         Paragraph filtrosSeleccionados = new Paragraph(
-            filtroCliente  , fontContenido
+            filtroEstado + "\n" + filtroMesa    , fontContenido
         );
         filtrosSeleccionados.setAlignment(Element.ALIGN_LEFT);
         document.add(filtrosSeleccionados);
@@ -375,23 +405,29 @@ public class frmHistorialCliente extends javax.swing.JFrame {
     }
     }//GEN-LAST:event_btnGenerarReActionPerformed
 
-    private void cbxClientesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cbxClientesActionPerformed
-        String telefonoSeleccionado = (String) cbxClientes.getSelectedItem();
+    private void cbxEstadoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cbxEstadoActionPerformed
+        String estadoSeleccionado = (String) cbxEstado.getSelectedItem();
+        if (estadoSeleccionado != null && !estadoSeleccionado.equals("<None>")) {
+            filtrarReservacionesPorEstado(estadoSeleccionado);
+        } else {
+            cargarReservaciones(); // Mostrar todas las reservaciones si selecciona "<None>"
+        }
 
+    }//GEN-LAST:event_cbxEstadoActionPerformed
+
+    private void cbxMesasActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cbxMesasActionPerformed
+String mesaSeleccionada = (String) cbxMesas.getSelectedItem();
+
+    if ("<None>".equals(mesaSeleccionada)) {
+        cargarReservaciones();  // Muestra todas las reservaciones si selecciona "<None>"
+    } else {
         try {
-            List<ReservacionDTO> reservaciones;
+            // Usamos la instancia de reservacionesBO inyectada en el constructor
+            List<ReservacionDTO> reservaciones = reservacionesBO.obtenerReservacionesDeMesa(this.restaurante.getId(), mesaSeleccionada);
 
-            if (telefonoSeleccionado.equals("<None>")) {
-                // Si no hay un teléfono seleccionado, cargamos todas las reservaciones
-                reservaciones = reservacionesBO.obtenerReservacionesTodos(this.restaurante.getId());
-            } else {
-                // Filtramos las reservaciones por el teléfono del cliente
-                reservaciones = reservacionesBO.obtenerReservacionesCliente(this.restaurante.getId(), telefonoSeleccionado);
-            }
-
-            // Limpiar y cargar la tabla con las reservaciones filtradas
+            // Lógica para cargar en la tabla `tblResultado`
             DefaultTableModel modeloTabla = (DefaultTableModel) tblResultado.getModel();
-            modeloTabla.setRowCount(0); // Limpiamos la tabla
+            modeloTabla.setRowCount(0);  // Limpiamos la tabla
 
             for (ReservacionDTO reservacion : reservaciones) {
                 modeloTabla.addRow(new Object[]{
@@ -403,15 +439,13 @@ public class frmHistorialCliente extends javax.swing.JFrame {
                     reservacion.getNumeroPersonas(),
                     reservacion.getCliente().getTelefono(), // Cambiado a número de teléfono
                     reservacion.getMesa().getCodigo(),
-                   
                 });
             }
-        } catch (NegocioException ex) {
-            // Manejo de excepciones
-            Logger.getLogger(frmHistorialCliente.class.getName()).log(Level.SEVERE, null, ex);
-            JOptionPane.showMessageDialog(this, "Error al filtrar las reservaciones: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+        } catch (NegocioException e) {
+            JOptionPane.showMessageDialog(this, "Error al obtener reservaciones: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
         }
-    }//GEN-LAST:event_cbxClientesActionPerformed
+    }
+    }//GEN-LAST:event_cbxMesasActionPerformed
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         // Cerrar el frame actual
@@ -426,12 +460,14 @@ public class frmHistorialCliente extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnGenerarRe;
     private javax.swing.ButtonGroup buttonGroup1;
-    private javax.swing.JComboBox<String> cbxClientes;
+    private javax.swing.JComboBox<String> cbxEstado;
+    private javax.swing.JComboBox<String> cbxMesas;
     private javax.swing.JButton jButton1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
-    private javax.swing.JLabel jLabel4;
+    private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel6;
+    private javax.swing.JLabel jLabel7;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTable tblResultado;

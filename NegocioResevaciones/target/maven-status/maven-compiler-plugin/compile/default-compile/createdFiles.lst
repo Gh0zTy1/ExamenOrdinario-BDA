@@ -1,4 +1,5 @@
 iFachadas\ICrearReservacionFCD.class
+fachadas\ReportesFachada.class
 ibo\IMesasBO.class
 com\mycompany\negocioresevaciones\NegocioResevaciones.class
 fachadas\agregarMesasFCD.class
@@ -14,6 +15,7 @@ iFachadas\ICargarMesasFCD.class
 convertidores\MesaConvertidor.class
 dto\EstadoReservacionDTO.class
 fabricas\fabricaFCD.class
+fabricas\ReportesFachadaFactory.class
 ibo\IClientesBO.class
 fachadas\cancelarReservacionFCD.class
 dto\ClienteDTO.class

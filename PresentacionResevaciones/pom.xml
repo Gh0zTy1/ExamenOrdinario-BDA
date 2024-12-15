@@ -28,6 +28,11 @@
             <artifactId>swing-datetime-picker-1.2.3</artifactId>
             <version>SNAPSHOT</version>
         </dependency>
+        <dependency>
+            <groupId>ch.codeblock.qrinvoice.itext5</groupId>
+            <artifactId>qrinvoice-itext5</artifactId>
+            <version>1.19</version>
+        </dependency>
     </dependencies>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
