@@ -4,8 +4,6 @@
  */
 package guis;
 
-import fabricas.fabricaFCD;
-import iFachadas.ICrearReservacionFCD;
 
 /**
  *
@@ -15,14 +13,12 @@ public class frmAministradorMesas extends javax.swing.JFrame {
 
     
     
-    ICrearReservacionFCD fcdCrear;
+
     /**
      * Creates new form frmAministradorMesas
      */
-    public frmAministradorMesas() {
-        
+    public frmAministradorMesas() {        
         initComponents();
-        this.fcdCrear= fabricaFCD.fabricaFCDRerservar();
     }
     
     
@@ -37,6 +33,7 @@ public class frmAministradorMesas extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        jDayChooser1 = new com.toedter.calendar.JDayChooser();
         jPanel1 = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
         btnAtras = new javax.swing.JButton();
@@ -137,7 +134,7 @@ public class frmAministradorMesas extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnAgregarMesaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAgregarMesaActionPerformed
-//        fcdCrear.crearReservacion(reservacion);
+
     }//GEN-LAST:event_btnAgregarMesaActionPerformed
 
    
@@ -147,6 +144,7 @@ public class frmAministradorMesas extends javax.swing.JFrame {
     private javax.swing.JButton btnAtras;
     private javax.swing.JButton btnEliminarMesa;
     private javax.swing.JButton btnModificarMesa;
+    private com.toedter.calendar.JDayChooser jDayChooser1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane1;
