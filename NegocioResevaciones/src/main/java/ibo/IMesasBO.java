@@ -17,6 +17,9 @@ import java.util.List;
  * @author caarl
  */
 public interface IMesasBO {
+ 
+    void agregarMesa(MesaDTO mesaDTO) throws NegocioException;
+    void modificarMesa(MesaDTO mesaDTO) throws NegocioException;
 
     /**
      * Devuelve todas las mesas registradas en el sistema.

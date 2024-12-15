@@ -31,6 +31,9 @@ public class MesasBO implements IMesasBO {
     private final MesaConvertidor mesaConvertidor;
     private final TipoMesaConvertidor tipoMesaConvertidor;
 
+    
+    
+    
     /**
      * Constructor para inyección de dependencias.
      * 
@@ -93,4 +96,22 @@ public class MesasBO implements IMesasBO {
             throw new NegocioException(e.getMessage());
         }
     }
+    
+    @Override
+public void agregarMesa(MesaDTO mesaDTO) throws NegocioException {
+    try {
+        Mesa mesa = mesaConvertidor.convertFromDto(mesaDTO);
+        mesasDAO.insertarMesa(mesa);
+    } catch (DAOException e) {
+        throw new NegocioException("Error al agregar la mesa");
+    }
+}
+
+
+    @Override
+    public void modificarMesa(MesaDTO mesaDTO) throws NegocioException {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+    
+    
 }

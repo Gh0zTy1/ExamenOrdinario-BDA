@@ -4,11 +4,14 @@
  */
 package guis;
 
+import iFachadas.IagregarMesasFCD;
+
 /**
  *
  * @author caarl
  */
 public class frmMenu extends javax.swing.JFrame {
+private IagregarMesasFCD fachadaMesas;
 
     /**
      * Creates new form frmMenu
@@ -76,6 +79,11 @@ public class frmMenu extends javax.swing.JFrame {
         jMenu1.setText("Mesas");
 
         miAdminitrarMesas.setText("Administrar");
+        miAdminitrarMesas.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                miAdminitrarMesasActionPerformed(evt);
+            }
+        });
         jMenu1.add(miAdminitrarMesas);
 
         jMenuBar1.add(jMenu1);
@@ -124,6 +132,14 @@ public class frmMenu extends javax.swing.JFrame {
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
+
+    private void miAdminitrarMesasActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_miAdminitrarMesasActionPerformed
+       
+        
+        frmAministradorMesas men = new frmAministradorMesas(fachadaMesas);
+        men.setVisible(true);
+        this.dispose();
+    }//GEN-LAST:event_miAdminitrarMesasActionPerformed
 
     
 

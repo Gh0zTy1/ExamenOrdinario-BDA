@@ -4,17 +4,39 @@
  */
 package guis;
 
+import bo.ClientesBO;
+import conexion.Conexion;
+import conexion.IConexion;
+import convertidores.ClienteConvertidor;
+import daos.ClientesDAO;
+import dto.ClienteDTO;
+import excepciones.NegocioException;
+import ibo.IClientesBO;
+import idaos.IClientesDAO;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.swing.JOptionPane;
+
 /**
  *
  * @author caarl
  */
 public class frmInicio extends javax.swing.JFrame {
-
+ 
+    private final IClientesBO clientesBO;
+    IConexion conexion = Conexion.getInstance();
     /**
      * Creates new form frmInicio
      */
     public frmInicio() {
         initComponents();
+        
+        IClientesDAO clientesDAO = new ClientesDAO(conexion); // O cómo estés inicializando tu DAO
+        ClienteConvertidor clienteConvertidor = new ClienteConvertidor(); 
+        this.clientesBO = new ClientesBO(clientesDAO, clienteConvertidor);
     }
 
     /**
@@ -44,16 +66,10 @@ public class frmInicio extends javax.swing.JFrame {
         jPanel3 = new javax.swing.JPanel();
         jLabel12 = new javax.swing.JLabel();
         jLabel13 = new javax.swing.JLabel();
-        jLabel14 = new javax.swing.JLabel();
-        lblPequeniasDisponibles = new javax.swing.JLabel();
         jLabel16 = new javax.swing.JLabel();
         jLabel17 = new javax.swing.JLabel();
-        jLabel18 = new javax.swing.JLabel();
-        lblMedianasDisponibles = new javax.swing.JLabel();
         jLabel20 = new javax.swing.JLabel();
         jLabel21 = new javax.swing.JLabel();
-        jLabel22 = new javax.swing.JLabel();
-        lblGrandesDisponibles = new javax.swing.JLabel();
         jLabel24 = new javax.swing.JLabel();
         jLabel25 = new javax.swing.JLabel();
         jLabel26 = new javax.swing.JLabel();
@@ -72,8 +88,18 @@ public class frmInicio extends javax.swing.JFrame {
         jLabel1.setText("Informacion del restaurante");
 
         btnSalir.setText("Salir");
+        btnSalir.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnSalirActionPerformed(evt);
+            }
+        });
 
         btnInsercionClientes.setText("Insertar clientes");
+        btnInsercionClientes.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnInsercionClientesActionPerformed(evt);
+            }
+        });
 
         jLabel2.setText("Restaurante:");
 
@@ -145,25 +171,13 @@ public class frmInicio extends javax.swing.JFrame {
 
         jLabel13.setText("$300");
 
-        jLabel14.setText("Disponibles:");
-
-        lblPequeniasDisponibles.setText("0");
-
         jLabel16.setText("Medianas:");
 
         jLabel17.setText("$500");
 
-        jLabel18.setText("Disponibles:");
-
-        lblMedianasDisponibles.setText("0");
-
         jLabel20.setText("Grandes:");
 
         jLabel21.setText("$700");
-
-        jLabel22.setText("Disponibles:");
-
-        lblGrandesDisponibles.setText("0");
 
         jLabel24.setText("Cantidad de personas");
 
@@ -182,17 +196,11 @@ public class frmInicio extends javax.swing.JFrame {
         jPanel3Layout.setHorizontalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel3Layout.createSequentialGroup()
-                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addGroup(jPanel3Layout.createSequentialGroup()
-                        .addGap(16, 16, 16)
-                        .addComponent(jLabel12)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jLabel13, javax.swing.GroupLayout.PREFERRED_SIZE, 43, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(jPanel3Layout.createSequentialGroup()
-                        .addContainerGap()
-                        .addComponent(jLabel14)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(lblPequeniasDisponibles, javax.swing.GroupLayout.PREFERRED_SIZE, 43, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addGap(16, 16, 16)
+                .addComponent(jLabel12)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jLabel13, javax.swing.GroupLayout.PREFERRED_SIZE, 43, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(2, 2, 2)
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel3Layout.createSequentialGroup()
                         .addGap(103, 103, 103)
@@ -206,30 +214,18 @@ public class frmInicio extends javax.swing.JFrame {
                         .addContainerGap(38, Short.MAX_VALUE))
                     .addGroup(jPanel3Layout.createSequentialGroup()
                         .addGap(80, 80, 80)
-                        .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                .addComponent(jLabel26)
-                                .addGroup(jPanel3Layout.createSequentialGroup()
-                                    .addGap(32, 32, 32)
-                                    .addComponent(jLabel27, javax.swing.GroupLayout.PREFERRED_SIZE, 43, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel26)
                             .addGroup(jPanel3Layout.createSequentialGroup()
-                                .addComponent(jLabel18)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(lblMedianasDisponibles, javax.swing.GroupLayout.PREFERRED_SIZE, 43, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                                .addGap(32, 32, 32)
+                                .addComponent(jLabel27, javax.swing.GroupLayout.PREFERRED_SIZE, 43, javax.swing.GroupLayout.PREFERRED_SIZE)))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
-                                .addComponent(jLabel22)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(lblGrandesDisponibles, javax.swing.GroupLayout.PREFERRED_SIZE, 43, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(48, 48, 48))
-                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
-                                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(jLabel28)
-                                    .addGroup(jPanel3Layout.createSequentialGroup()
-                                        .addGap(32, 32, 32)
-                                        .addComponent(jLabel29, javax.swing.GroupLayout.PREFERRED_SIZE, 43, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                                .addGap(58, 58, 58))))))
+                            .addComponent(jLabel28)
+                            .addGroup(jPanel3Layout.createSequentialGroup()
+                                .addGap(32, 32, 32)
+                                .addComponent(jLabel29, javax.swing.GroupLayout.PREFERRED_SIZE, 43, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addGap(58, 58, 58))))
             .addGroup(jPanel3Layout.createSequentialGroup()
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel3Layout.createSequentialGroup()
@@ -265,20 +261,17 @@ public class frmInicio extends javax.swing.JFrame {
                         .addComponent(jLabel28)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jLabel29)))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 9, Short.MAX_VALUE)
-                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel14)
-                    .addComponent(lblPequeniasDisponibles)
-                    .addComponent(jLabel18)
-                    .addComponent(lblMedianasDisponibles)
-                    .addComponent(jLabel22)
-                    .addComponent(lblGrandesDisponibles))
-                .addGap(14, 14, 14))
+                .addContainerGap(39, Short.MAX_VALUE))
         );
 
         btnEntendido.setBackground(new java.awt.Color(0, 0, 0));
         btnEntendido.setForeground(new java.awt.Color(255, 255, 255));
         btnEntendido.setText("Entendido");
+        btnEntendido.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnEntendidoActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -361,6 +354,64 @@ public class frmInicio extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    // Método auxiliar para evitar teléfonos duplicados
+private boolean existeTelefono(List<ClienteDTO> clientes, String telefono) {
+    return clientes.stream()
+            .anyMatch(cliente -> cliente.getTelefono().equals(telefono));
+}
+    
+    
+    private void btnInsercionClientesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnInsercionClientesActionPerformed
+        try {
+            List<ClienteDTO> clientesAleatorios = generarClientesAleatorios(20);
+            clientesBO.insercionMasivaClientes(clientesAleatorios);
+            JOptionPane.showMessageDialog(null, "Se insertaron 20 clientes exitosamente");
+        } catch (NegocioException ex) {
+            Logger.getLogger(frmInicio.class.getName()).log(Level.SEVERE, null, ex);
+        }
+}
+
+private List<ClienteDTO> generarClientesAleatorios(int cantidad) {
+    List<ClienteDTO> clientes = new ArrayList<>();
+    String[] nombres = {"Juan", "María", "Carlos", "Ana", "Pedro", "Laura", "Miguel", "Sofía", "David", "Elena"};
+    String[] apellidos = {"García", "Rodríguez", "Martínez", "López", "González", "Pérez", "Sánchez", "Ramírez", "Torres", "Flores"};
+    
+    Random random = new Random();
+    
+    for (int i = 0; i < cantidad; i++) {
+        ClienteDTO cliente = new ClienteDTO();
+        
+        // Generar nombre completo aleatorio
+        String nombreAleatorio = nombres[random.nextInt(nombres.length)] + " " + 
+                                 apellidos[random.nextInt(apellidos.length)] + " " + 
+                                 apellidos[random.nextInt(apellidos.length)];
+        
+        cliente.setNombreCompleto(nombreAleatorio);
+        
+        // Generar teléfono aleatorio único
+        String telefonoAleatorio;
+        do {
+            telefonoAleatorio = "55" + String.format("%08d", random.nextInt(100000000));
+        } while (existeTelefono(clientes, telefonoAleatorio));
+        
+        cliente.setTelefono(telefonoAleatorio);
+        
+        clientes.add(cliente);
+    }
+    
+    return clientes;
+    }//GEN-LAST:event_btnInsercionClientesActionPerformed
+
+    private void btnSalirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSalirActionPerformed
+       this.dispose();
+    }//GEN-LAST:event_btnSalirActionPerformed
+
+    private void btnEntendidoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEntendidoActionPerformed
+        frmMenu men = new frmMenu();
+        men.setVisible(true);
+        this.dispose();
+    }//GEN-LAST:event_btnEntendidoActionPerformed
+
     
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -372,14 +423,11 @@ public class frmInicio extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel11;
     private javax.swing.JLabel jLabel12;
     private javax.swing.JLabel jLabel13;
-    private javax.swing.JLabel jLabel14;
     private javax.swing.JLabel jLabel16;
     private javax.swing.JLabel jLabel17;
-    private javax.swing.JLabel jLabel18;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel20;
     private javax.swing.JLabel jLabel21;
-    private javax.swing.JLabel jLabel22;
     private javax.swing.JLabel jLabel24;
     private javax.swing.JLabel jLabel25;
     private javax.swing.JLabel jLabel26;
@@ -396,8 +444,5 @@ public class frmInicio extends javax.swing.JFrame {
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
-    private javax.swing.JLabel lblGrandesDisponibles;
-    private javax.swing.JLabel lblMedianasDisponibles;
-    private javax.swing.JLabel lblPequeniasDisponibles;
     // End of variables declaration//GEN-END:variables
 }

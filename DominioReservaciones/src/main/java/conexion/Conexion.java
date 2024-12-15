@@ -20,7 +20,7 @@ public class Conexion implements IConexion {
     private static Conexion instancia;
     private EntityManagerFactory emf;
 
-    private Conexion() {
+    public Conexion() {
         this.emf = Persistence.createEntityManagerFactory("restaurantesPU");
     }
 

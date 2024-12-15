@@ -15,7 +15,15 @@ import java.util.List;
  * @author caarl
  */
 public interface IMesasDAO {
-    
+
+    void modificarMesa(Long idRestaurante, String codigo, TipoMesa nuevoTipo, UbicacionMesa nuevaUbicacion) throws DAOException;
+     /**
+     * Elimina una mesa en el sistema por su codigo especificado
+     * @param idRestaurante ID del restaurante en donde se eliminara la mesa
+     * @param codigo Codigo de la mesa a eliminar
+     * @throws DAOException Si ocurre un error en la eliminacion
+     */
+    void eliminarMesa(Long idRestaurante, String codigo) throws DAOException;
     /**
      * Devuelve todas las mesas registradas en el sistema
      * @param idRestaurante ID del restaurante
@@ -52,11 +60,12 @@ public interface IMesasDAO {
      */
     public void insertarMesas(Long idRestautante, TipoMesa tipo, UbicacionMesa ubicacion, int cantidad) throws DAOException;
     
-    /**
-     * Elimina una mesa en el sistema por su codigo especificado
-     * @param idRestaurante ID del restaurante en donde se eliminara la mesa
-     * @param codigo Codigo de la mesa a eliminar
-     * @throws DAOException Si ocurre un error en la eliminacion
-     */
-    public void eliminarMesa(Long idRestaurante, String codigo) throws DAOException;
+   /**
+ * Inserta una sola mesa en el sistema.
+ * @param mesa Mesa a insertar
+ * @throws DAOException Si ocurre un error en la inserción
+ */
+void insertarMesa(Mesa mesa) throws DAOException;
+
+   
 }

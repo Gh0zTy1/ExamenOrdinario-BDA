@@ -24,14 +24,33 @@ public class TipoMesaDTO implements Serializable {
     private Integer minimoPersonas; // Número mínimo de personas que pueden usar la mesa.
     private Float precio; // Precio asociado al tipo de mesa.
 
-    /**
+ /**
      * Constructor por defecto que inicializa una nueva instancia de TipoMesaDTO.
      * Este constructor no realiza ninguna acción adicional.
      */
     public TipoMesaDTO() {
-        
     }
-    
+
+    /**
+     * Constructor que inicializa el nombre del tipo de mesa.
+     *
+     * @param nombre El nombre descriptivo del tipo de mesa.
+     */
+    public TipoMesaDTO(String nombre) {
+        this.nombre = nombre;
+    }
+
+    /**
+     * Constructor que inicializa el nombre del tipo de mesa con un id nulo.
+     *
+     * @param id Null (permite instancias inicializadas sin id).
+     * @param nombre El nombre descriptivo del tipo de mesa.
+     */
+    public TipoMesaDTO(Long id, String nombre) {
+        this.id = null; // Id inicializado como null.
+        this.nombre = nombre;
+    }
+
     /**
      * Constructor que inicializa una nueva instancia de TipoMesaDTO con 
      * los valores especificados.

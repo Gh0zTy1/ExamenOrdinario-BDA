@@ -115,6 +115,11 @@ public class frmHistorialCliente extends javax.swing.JFrame {
         );
 
         btnAtras.setText("Atras");
+        btnAtras.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnAtrasActionPerformed(evt);
+            }
+        });
 
         btnGenerarPDF.setText("Generar documento PDF");
 
@@ -180,6 +185,12 @@ public class frmHistorialCliente extends javax.swing.JFrame {
         pack();
         setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
+
+    private void btnAtrasActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAtrasActionPerformed
+       frmMenu men = new frmMenu();
+        men.setVisible(true);
+        this.dispose();
+    }//GEN-LAST:event_btnAtrasActionPerformed
 
     
 
