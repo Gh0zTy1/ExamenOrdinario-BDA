@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuite xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://maven.apache.org/surefire/maven-surefire-plugin/xsd/surefire-test-report-3.0.xsd" version="3.0" name="DominioTests.ReservacionesDAOTest" time="0.7" tests="4" errors="0" skipped="0" failures="0">
+<testsuite xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://maven.apache.org/surefire/maven-surefire-plugin/xsd/surefire-test-report-3.0.xsd" version="3.0" name="DominioTests.ReservacionesDAOTest" time="0.062" tests="4" errors="4" skipped="0" failures="0">
   <properties>
     <property name="java.specification.version" value="22"/>
     <property name="sun.cpu.isalist" value="amd64"/>
@@ -15,9 +15,8 @@
     <property name="user.country" value="MX"/>
     <property name="sun.java.launcher" value="SUN_STANDARD"/>
     <property name="sun.boot.library.path" value="C:\Program Files\Java\jdk-22\bin"/>
-    <property name="sun.java.command" value="C:\Users\caarl\AppData\Local\Temp\surefire15423166774717490709\surefirebooter-20241214141150233_3.jar C:\Users\caarl\AppData\Local\Temp\surefire15423166774717490709 2024-12-14T14-11-50_091-jvmRun1 surefire-20241214141150233_1tmp surefire_0-20241214141150233_2tmp"/>
+    <property name="sun.java.command" value="C:\Users\caarl\AppData\Local\Temp\surefire11612091613043913488\surefirebooter-20241214192610181_3.jar C:\Users\caarl\AppData\Local\Temp\surefire11612091613043913488 2024-12-14T19-26-09_987-jvmRun1 surefire-20241214192610181_1tmp surefire_0-20241214192610181_2tmp"/>
     <property name="jdk.debug" value="release"/>
-    <property name="test" value="DominioTests.ReservacionesDAOTest"/>
     <property name="surefire.test.class.path" value="C:\Users\caarl\Documents\GitHub\ExamenOrdinario-BDA\DominioReservaciones\target\test-classes;C:\Users\caarl\Documents\GitHub\ExamenOrdinario-BDA\DominioReservaciones\target\classes;C:\Users\caarl\.m2\repository\org\eclipse\persistence\org.eclipse.persistence.core\2.7.12\org.eclipse.persistence.core-2.7.12.jar;C:\Users\caarl\.m2\repository\org\eclipse\persistence\org.eclipse.persistence.asm\9.4.0\org.eclipse.persistence.asm-9.4.0.jar;C:\Users\caarl\.m2\repository\org\eclipse\persistence\org.eclipse.persistence.antlr\2.7.12\org.eclipse.persistence.antlr-2.7.12.jar;C:\Users\caarl\.m2\repository\org\eclipse\persistence\org.eclipse.persistence.jpa\2.7.12\org.eclipse.persistence.jpa-2.7.12.jar;C:\Users\caarl\.m2\repository\org\eclipse\persistence\org.eclipse.persistence.jpa.jpql\2.7.12\org.eclipse.persistence.jpa.jpql-2.7.12.jar;C:\Users\caarl\.m2\repository\org\eclipse\persistence\org.eclipse.persistence.moxy\2.7.12\org.eclipse.persistence.moxy-2.7.12.jar;C:\Users\caarl\.m2\repository\com\mysql\mysql-connector-j\9.1.0\mysql-connector-j-9.1.0.jar;C:\Users\caarl\.m2\repository\com\google\protobuf\protobuf-java\4.26.1\protobuf-java-4.26.1.jar;C:\Users\caarl\.m2\repository\org\eclipse\persistence\jakarta.persistence\2.2.3\jakarta.persistence-2.2.3.jar;C:\Users\caarl\.m2\repository\org\eclipse\persistence\org.eclipse.persistence.jpa.modelgen.processor\2.7.12\org.eclipse.persistence.jpa.modelgen.processor-2.7.12.jar;C:\Users\caarl\.m2\repository\org\junit\jupiter\junit-jupiter-api\5.11.2\junit-jupiter-api-5.11.2.jar;C:\Users\caarl\.m2\repository\org\opentest4j\opentest4j\1.3.0\opentest4j-1.3.0.jar;C:\Users\caarl\.m2\repository\org\junit\platform\junit-platform-commons\1.11.2\junit-platform-commons-1.11.2.jar;C:\Users\caarl\.m2\repository\org\apiguardian\apiguardian-api\1.1.2\apiguardian-api-1.1.2.jar;C:\Users\caarl\.m2\repository\org\mockito\mockito-core\4.0.0\mockito-core-4.0.0.jar;C:\Users\caarl\.m2\repository\net\bytebuddy\byte-buddy\1.11.19\byte-buddy-1.11.19.jar;C:\Users\caarl\.m2\repository\net\bytebuddy\byte-buddy-agent\1.11.19\byte-buddy-agent-1.11.19.jar;C:\Users\caarl\.m2\repository\org\objenesis\objenesis\3.2\objenesis-3.2.jar;"/>
     <property name="sun.cpu.endian" value="little"/>
     <property name="user.home" value="C:\Users\caarl"/>
@@ -31,7 +30,7 @@
     <property name="line.separator" value="&#10;"/>
     <property name="java.vm.specification.vendor" value="Oracle Corporation"/>
     <property name="java.specification.name" value="Java Platform API Specification"/>
-    <property name="surefire.real.class.path" value="C:\Users\caarl\AppData\Local\Temp\surefire15423166774717490709\surefirebooter-20241214141150233_3.jar"/>
+    <property name="surefire.real.class.path" value="C:\Users\caarl\AppData\Local\Temp\surefire11612091613043913488\surefirebooter-20241214192610181_3.jar"/>
     <property name="user.script" value=""/>
     <property name="sun.management.compiler" value="HotSpot 64-Bit Tiered Compilers"/>
     <property name="java.runtime.version" value="22.0.2+9-70"/>
@@ -60,11 +59,36 @@
     <property name="sun.io.unicode.encoding" value="UnicodeLittle"/>
     <property name="java.class.version" value="66.0"/>
   </properties>
-  <testcase name="testObtenerReservacionesTodos" classname="DominioTests.ReservacionesDAOTest" time="0.617"/>
-  <testcase name="testObtenerReservacionPorID" classname="DominioTests.ReservacionesDAOTest" time="0.003"/>
-  <testcase name="testAgregarReservacion" classname="DominioTests.ReservacionesDAOTest" time="0.04">
-    <system-out><![CDATA[MESA: entidades.Mesa[ id=1 ]
-]]></system-out>
+  <testcase name="testObtenerReservacionesTodos" classname="DominioTests.ReservacionesDAOTest" time="0.009">
+    <error message="Cannot invoke &quot;javax.persistence.EntityManager.createQuery(String, java.lang.Class)&quot; because &quot;this.em&quot; is null" type="java.lang.NullPointerException"><![CDATA[java.lang.NullPointerException: Cannot invoke "javax.persistence.EntityManager.createQuery(String, java.lang.Class)" because "this.em" is null
+	at DominioTests.ReservacionesDAOTest.testObtenerReservacionesTodos(ReservacionesDAOTest.java:128)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1597)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1597)
+]]></error>
   </testcase>
-  <testcase name="testObtenerReservacionesCliente" classname="DominioTests.ReservacionesDAOTest" time="0.006"/>
+  <testcase name="testObtenerReservacionPorID" classname="DominioTests.ReservacionesDAOTest" time="0.019">
+    <error message="Cannot invoke &quot;javax.persistence.EntityManager.find(java.lang.Class, Object)&quot; because &quot;this.em&quot; is null" type="java.lang.NullPointerException"><![CDATA[java.lang.NullPointerException: Cannot invoke "javax.persistence.EntityManager.find(java.lang.Class, Object)" because "this.em" is null
+	at DominioTests.ReservacionesDAOTest.testObtenerReservacionPorID(ReservacionesDAOTest.java:183)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1597)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1597)
+]]></error>
+  </testcase>
+  <testcase name="testAgregarReservacion" classname="DominioTests.ReservacionesDAOTest" time="0.02">
+    <error message="Cannot invoke &quot;javax.persistence.EntityManager.getTransaction()&quot; because &quot;this.em&quot; is null" type="java.lang.NullPointerException"><![CDATA[java.lang.NullPointerException: Cannot invoke "javax.persistence.EntityManager.getTransaction()" because "this.em" is null
+	at DominioTests.ReservacionesDAOTest.testAgregarReservacion(ReservacionesDAOTest.java:83)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1597)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1597)
+]]></error>
+  </testcase>
+  <testcase name="testObtenerReservacionesCliente" classname="DominioTests.ReservacionesDAOTest" time="0.003">
+    <error message="Cannot invoke &quot;javax.persistence.EntityManager.createQuery(String, java.lang.Class)&quot; because &quot;this.em&quot; is null" type="java.lang.NullPointerException"><![CDATA[java.lang.NullPointerException: Cannot invoke "javax.persistence.EntityManager.createQuery(String, java.lang.Class)" because "this.em" is null
+	at DominioTests.ReservacionesDAOTest.testObtenerReservacionesCliente(ReservacionesDAOTest.java:157)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1597)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1597)
+]]></error>
+  </testcase>
 </testsuite>

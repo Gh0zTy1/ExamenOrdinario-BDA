@@ -1,4 +1,32 @@
 -------------------------------------------------------------------------------
 Test set: DominioTests.ReservacionesDAOTest
 -------------------------------------------------------------------------------
-Tests run: 4, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.700 s -- in DominioTests.ReservacionesDAOTest
+Tests run: 4, Failures: 0, Errors: 4, Skipped: 0, Time elapsed: 0.062 s <<< FAILURE! -- in DominioTests.ReservacionesDAOTest
+DominioTests.ReservacionesDAOTest.testObtenerReservacionesTodos -- Time elapsed: 0.009 s <<< ERROR!
+java.lang.NullPointerException: Cannot invoke "javax.persistence.EntityManager.createQuery(String, java.lang.Class)" because "this.em" is null
+	at DominioTests.ReservacionesDAOTest.testObtenerReservacionesTodos(ReservacionesDAOTest.java:128)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1597)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1597)
+
+DominioTests.ReservacionesDAOTest.testObtenerReservacionPorID -- Time elapsed: 0.019 s <<< ERROR!
+java.lang.NullPointerException: Cannot invoke "javax.persistence.EntityManager.find(java.lang.Class, Object)" because "this.em" is null
+	at DominioTests.ReservacionesDAOTest.testObtenerReservacionPorID(ReservacionesDAOTest.java:183)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1597)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1597)
+
+DominioTests.ReservacionesDAOTest.testAgregarReservacion -- Time elapsed: 0.020 s <<< ERROR!
+java.lang.NullPointerException: Cannot invoke "javax.persistence.EntityManager.getTransaction()" because "this.em" is null
+	at DominioTests.ReservacionesDAOTest.testAgregarReservacion(ReservacionesDAOTest.java:83)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1597)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1597)
+
+DominioTests.ReservacionesDAOTest.testObtenerReservacionesCliente -- Time elapsed: 0.003 s <<< ERROR!
+java.lang.NullPointerException: Cannot invoke "javax.persistence.EntityManager.createQuery(String, java.lang.Class)" because "this.em" is null
+	at DominioTests.ReservacionesDAOTest.testObtenerReservacionesCliente(ReservacionesDAOTest.java:157)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1597)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1597)
+

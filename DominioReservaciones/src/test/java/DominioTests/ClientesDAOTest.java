@@ -13,9 +13,7 @@ import conexion.IConexion;
 import daos.ClientesDAO;
 import entidades.Cliente;
 import org.junit.jupiter.api.*;
-
 import javax.persistence.EntityManager;
-import javax.persistence.EntityTransaction;
 import java.util.List;
 import javax.persistence.TypedQuery;
 
