@@ -4,14 +4,11 @@
  */
 package guis;
 
-import iFachadas.IagregarMesasFCD;
-
 /**
  *
  * @author caarl
  */
 public class frmMenu extends javax.swing.JFrame {
-private IagregarMesasFCD fachadaMesas;
 
     /**
      * Creates new form frmMenu
@@ -135,8 +132,7 @@ private IagregarMesasFCD fachadaMesas;
 
     private void miAdminitrarMesasActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_miAdminitrarMesasActionPerformed
        
-        
-        frmAministradorMesas men = new frmAministradorMesas(fachadaMesas);
+        frmAministradorMesas men = new frmAministradorMesas();
         men.setVisible(true);
         this.dispose();
     }//GEN-LAST:event_miAdminitrarMesasActionPerformed

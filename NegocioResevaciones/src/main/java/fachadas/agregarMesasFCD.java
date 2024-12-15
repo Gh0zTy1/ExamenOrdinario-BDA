@@ -4,6 +4,7 @@
  */
 package fachadas;
 
+import dto.MesaDTO;
 import dto.TipoMesaDTO;
 import dto.UbicacionMesaDTO;
 import excepciones.NegocioException;
@@ -22,7 +23,7 @@ public class agregarMesasFCD implements IagregarMesasFCD {
     }
 
     @Override
-    public void agregarMesas(Long idRestaurante, TipoMesaDTO tipoMesa, UbicacionMesaDTO ubicacion, int cantidad) throws NegocioException {
-        mesasBO.insertarMesas(idRestaurante, tipoMesa, ubicacion, cantidad);
+    public void agregarMesas(MesaDTO mesaDTO) throws NegocioException {
+        mesasBO.agregarMesa(mesaDTO);
     }
 }

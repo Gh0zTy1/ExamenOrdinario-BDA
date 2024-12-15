@@ -5,19 +5,19 @@
 package guis;
 
 import dto.MesaDTO;
+import dto.RestauranteDTO;
 import dto.TipoMesaDTO;
 import dto.UbicacionMesaDTO;
-import excepciones.NegocioException;
+import fabricas.fabricaFCD;
 import iFachadas.IagregarMesasFCD;
+import ibo.IMesasBO;
 import java.awt.GridLayout;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import javax.swing.BoxLayout;
+import java.util.List;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.JTextField;
+import javax.swing.table.DefaultTableModel;
 
 
 /**
@@ -25,19 +25,35 @@ import javax.swing.JTextField;
  * @author caarl
  */
 public class frmAministradorMesas extends javax.swing.JFrame {
-
-    private final IagregarMesasFCD fachadaMesas;
-    
-
     /**
      * Creates new form frmAministradorMesas
      */
-    public frmAministradorMesas(IagregarMesasFCD fachadaMesas) {        
+    public frmAministradorMesas() {        
         initComponents();
-        this.fachadaMesas = fachadaMesas;
+        cargarMesas();
+        
+        
+       
     }
     
-    
+     private void cargarMesas() {
+        try {
+            IMesasBO mesasBO = fabricaFCD.getInstancia().getIMesasBO();
+            List<MesaDTO> mesas = mesasBO.obtenerMesasTodas(1L);
+
+            // Obtener el modelo de tabla
+            DefaultTableModel model = (DefaultTableModel) tblMesas.getModel();
+            model.setRowCount(0); // Limpiar la tabla
+
+            // Agregar filas a la tabla
+            for (MesaDTO mesa : mesas) {
+                Object[] rowData = {mesa.getId(), mesa.getCodigo(), mesa.getUbicacion(), mesa.getTipoMesa().getNombre()};
+                model.addRow(rowData);
+            }
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this, "Error al cargar las mesas: " + e.getMessage());
+        }
+    }
     
 
     /**
@@ -56,7 +72,6 @@ public class frmAministradorMesas extends javax.swing.JFrame {
         jScrollPane1 = new javax.swing.JScrollPane();
         tblMesas = new javax.swing.JTable();
         btnAgregarMesa = new javax.swing.JButton();
-        btnModificarMesa = new javax.swing.JButton();
         btnEliminarMesa = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
@@ -75,13 +90,13 @@ public class frmAministradorMesas extends javax.swing.JFrame {
 
         tblMesas.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null}
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null}
             },
             new String [] {
-                "ID", "Codigo", "Fecha disponible", "Ubicacion", "Tipo mesa", "Restaurante"
+                "ID", "Codigo", "Ubicacion", "Tipo mesa"
             }
         ));
         jScrollPane1.setViewportView(tblMesas);
@@ -90,13 +105,6 @@ public class frmAministradorMesas extends javax.swing.JFrame {
         btnAgregarMesa.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnAgregarMesaActionPerformed(evt);
-            }
-        });
-
-        btnModificarMesa.setText("Modificar Mesa");
-        btnModificarMesa.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnModificarMesaActionPerformed(evt);
             }
         });
 
@@ -114,16 +122,14 @@ public class frmAministradorMesas extends javax.swing.JFrame {
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addGap(15, 15, 15)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 554, Short.MAX_VALUE)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
                         .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 205, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(btnAtras, javax.swing.GroupLayout.PREFERRED_SIZE, 61, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
                         .addComponent(btnAgregarMesa, javax.swing.GroupLayout.PREFERRED_SIZE, 151, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 54, Short.MAX_VALUE)
-                        .addComponent(btnModificarMesa, javax.swing.GroupLayout.PREFERRED_SIZE, 151, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(47, 47, 47)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(btnEliminarMesa, javax.swing.GroupLayout.PREFERRED_SIZE, 151, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addGap(14, 14, 14))
         );
@@ -138,7 +144,6 @@ public class frmAministradorMesas extends javax.swing.JFrame {
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 238, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 35, Short.MAX_VALUE)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(btnModificarMesa)
                     .addComponent(btnEliminarMesa)
                     .addComponent(btnAgregarMesa))
                 .addGap(20, 20, 20))
@@ -166,42 +171,71 @@ public class frmAministradorMesas extends javax.swing.JFrame {
 
     private void btnAgregarMesaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAgregarMesaActionPerformed
 try {
-        // Crear los JComboBox con las opciones
-        JComboBox<String> cmbTiposMesa = new JComboBox<>(new String[]{"Pequeña", "Mediana", "Grande"});
-        JComboBox<String> cmbUbicaciones = new JComboBox<>(new String[]{"GENERAL", "VENTANA", "TERRAZA"});
+    // Crear los JComboBox con las opciones
+    JComboBox<String> cmbTiposMesa = new JComboBox<>(new String[]{"Pequeña", "Mediana", "Grande"});
+    JComboBox<String> cmbUbicaciones = new JComboBox<>(new String[]{"GENERAL", "VENTANA", "TERRAZA"});
 
-        // Crear el panel para el JOptionPane
-        JPanel panel = new JPanel(new GridLayout(2, 2, 10, 10));
-        panel.add(new JLabel("Seleccione el tipo de mesa:"));
-        panel.add(cmbTiposMesa);
-        panel.add(new JLabel("Seleccione la ubicación:"));
-        panel.add(cmbUbicaciones);
+    // Crear el panel para el JOptionPane
+    JPanel panel = new JPanel(new GridLayout(2, 2, 10, 10));
+    panel.add(new JLabel("Seleccione el tipo de mesa:"));
+    panel.add(cmbTiposMesa);
+    panel.add(new JLabel("Seleccione la ubicación:"));
+    panel.add(cmbUbicaciones);
 
-        // Mostrar el JOptionPane
-        int resultado = JOptionPane.showConfirmDialog(this, panel, "Agregar Mesa", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
+    // Mostrar el JOptionPane
+    int resultado = JOptionPane.showConfirmDialog(this, panel, "Agregar Mesa", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
 
-        if (resultado == JOptionPane.OK_OPTION) {
-            // Obtener los valores seleccionados
-            String tipoMesaSeleccionado = cmbTiposMesa.getSelectedItem().toString();
-            String ubicacionSeleccionada = cmbUbicaciones.getSelectedItem().toString();
+    if (resultado == JOptionPane.OK_OPTION) {
+        // Obtener los valores seleccionados
+        String tipoMesaSeleccionado = cmbTiposMesa.getSelectedItem().toString();
+        String ubicacionSeleccionada = cmbUbicaciones.getSelectedItem().toString();
 
-            // Construir los DTO necesarios
-            TipoMesaDTO tipoMesa = new TipoMesaDTO(tipoMesaSeleccionado); // DTO del tipo de mesa
-            UbicacionMesaDTO ubicacion = UbicacionMesaDTO.valueOf(ubicacionSeleccionada.toUpperCase()); // DTO de la ubicación
-int cantidad = 1;
-            // ID del restaurante (puedes modificar este valor según tu contexto)
-            Long idRestaurante = 1L;
+        // Obtener las primeras tres letras de la ubicación (GEN, VEN, TER)
+        String ubicacionCodigo = ubicacionSeleccionada.substring(0, 3).toUpperCase();
 
-            // Llamar a la fachada para agregar la mesa
-            fachadaMesas.agregarMesas(idRestaurante, tipoMesa, ubicacion,cantidad);
-
-            // Mensaje de éxito
-            JOptionPane.showMessageDialog(this, "Mesa agregada con éxito.");
+        // Definir la capacidad según el tipo de mesa
+        int capacidad = 0;
+        switch (tipoMesaSeleccionado) {
+            case "Pequeña":
+                capacidad = 2; // 1-2 personas
+                break;
+            case "Mediana":
+                capacidad = 4; // 3-4 personas
+                break;
+            case "Grande":
+                capacidad = 8; // 5-8 personas
+                break;
         }
-    } catch (Exception ex) {
-        // Manejo de errores
-        JOptionPane.showMessageDialog(this, "Error al agregar la mesa: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
-    } 
+
+        // Generar el código de la mesa (ubicacion-capacidad)
+        String codigoMesa = ubicacionCodigo + "-" + capacidad;
+
+        // Construir los DTO necesarios
+        TipoMesaDTO tipoMesa = new TipoMesaDTO(tipoMesaSeleccionado);  // DTO del tipo de mesa
+        UbicacionMesaDTO ubicacion = UbicacionMesaDTO.valueOf(ubicacionSeleccionada.toUpperCase());  // DTO de la ubicación
+
+        // Obtener el restaurante actual (puedes obtenerlo desde el contexto de tu aplicación)
+        RestauranteDTO restauranteDTO = new RestauranteDTO();
+        restauranteDTO.setId(1L); // Asigna el ID de tu restaurante según corresponda
+
+        // Crear el DTO de la mesa
+        MesaDTO mesaDTO = new MesaDTO(codigoMesa, tipoMesa, ubicacion);
+        mesaDTO.setRestaurante(restauranteDTO); // Asociar el restaurante con la mesa
+
+        // Enviar a la fachada para agregar la mesa
+        IagregarMesasFCD fachadaMesas = fabricaFCD.fabricaFCDAgregarMesas();  // Obtener la instancia de la fachada
+
+        // Llamar a la fachada para agregar la mesa
+        fachadaMesas.agregarMesas(mesaDTO);  
+
+        // Mensaje de éxito
+        JOptionPane.showMessageDialog(this, "Mesa agregada con éxito. Código de la mesa: " + codigoMesa);
+    }
+} catch (Exception ex) {
+    // Manejo de errores
+    JOptionPane.showMessageDialog(this, "Error al agregar la mesa: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+}
+
     }//GEN-LAST:event_btnAgregarMesaActionPerformed
 
     private void btnAtrasActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAtrasActionPerformed
@@ -209,10 +243,6 @@ int cantidad = 1;
         men.setVisible(true);
         this.dispose();
     }//GEN-LAST:event_btnAtrasActionPerformed
-
-    private void btnModificarMesaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnModificarMesaActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_btnModificarMesaActionPerformed
 
     private void btnEliminarMesaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEliminarMesaActionPerformed
         // TODO add your handling code here:
@@ -224,7 +254,6 @@ int cantidad = 1;
     private javax.swing.JButton btnAgregarMesa;
     private javax.swing.JButton btnAtras;
     private javax.swing.JButton btnEliminarMesa;
-    private javax.swing.JButton btnModificarMesa;
     private com.toedter.calendar.JDayChooser jDayChooser1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JPanel jPanel1;

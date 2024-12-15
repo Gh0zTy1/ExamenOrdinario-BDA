@@ -10,6 +10,7 @@
 <class>entidades.Restaurante</class>
 <class>entidades.TipoMesa</class>
 <class>entidades.UbicacionMesa</class>
+
     <properties>
       <property name="javax.persistence.jdbc.url" value="jdbc:mysql://localhost:3306/restaurante"/>
       <property name="javax.persistence.jdbc.user" value="root"/>

@@ -4,8 +4,7 @@
  */
 package iFachadas;
 
-import dto.TipoMesaDTO;
-import dto.UbicacionMesaDTO;
+import dto.MesaDTO;
 import excepciones.NegocioException;
 
 /**
@@ -13,5 +12,5 @@ import excepciones.NegocioException;
  * @author caarl
  */
 public interface IagregarMesasFCD {
-    void agregarMesas(Long idRestaurante, TipoMesaDTO tipoMesa, UbicacionMesaDTO ubicacion, int cantidad) throws NegocioException;
+    void agregarMesas(MesaDTO mesaDTO) throws NegocioException;
 }

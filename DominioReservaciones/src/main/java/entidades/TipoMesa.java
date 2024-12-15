@@ -20,7 +20,7 @@ import javax.persistence.Table;
  * @author caarl
  */
 @Entity
-@Table(name="tipo_mesas")
+@Table(name="tipo_mesa")
 public class TipoMesa implements Serializable {
 
     private static final long serialVersionUID = 1L;

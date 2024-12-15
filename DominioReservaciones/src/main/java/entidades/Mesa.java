@@ -23,7 +23,7 @@ import javax.persistence.Table;
  * @author caarl
  */
 @Entity
-@Table(name = "mesas")
+@Table(name = "mesa")
 public class Mesa implements Serializable {
 
     private static final long serialVersionUID = 1L;

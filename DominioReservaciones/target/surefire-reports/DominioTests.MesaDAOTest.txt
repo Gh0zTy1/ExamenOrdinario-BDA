@@ -1,0 +1,14 @@
+-------------------------------------------------------------------------------
+Test set: DominioTests.MesaDAOTest
+-------------------------------------------------------------------------------
+Tests run: 1, Failures: 0, Errors: 1, Skipped: 0, Time elapsed: 1.619 s <<< FAILURE! -- in DominioTests.MesaDAOTest
+DominioTests.MesaDAOTest.testInsertarMesa_Exito -- Time elapsed: 0.227 s <<< ERROR!
+java.lang.IllegalArgumentException: An instance of a null PK has been incorrectly provided for this find operation.
+	at org.eclipse.persistence.internal.jpa.EntityManagerImpl.findInternal(EntityManagerImpl.java:886)
+	at org.eclipse.persistence.internal.jpa.EntityManagerImpl.find(EntityManagerImpl.java:830)
+	at org.eclipse.persistence.internal.jpa.EntityManagerImpl.find(EntityManagerImpl.java:696)
+	at DominioTests.MesaDAOTest.testInsertarMesa_Exito(MesaDAOTest.java:84)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1597)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1597)
+

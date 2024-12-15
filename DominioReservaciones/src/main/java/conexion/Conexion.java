@@ -20,20 +20,31 @@ public class Conexion implements IConexion {
     private static Conexion instancia;
     private EntityManagerFactory emf;
 
-    public Conexion() {
-        this.emf = Persistence.createEntityManagerFactory("restaurantesPU");
+    private Conexion() {
+        try {
+            this.emf = Persistence.createEntityManagerFactory("restaurantesPU");
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new RuntimeException("Error al crear EntityManagerFactory: " + e.getMessage(), e);
+        }
     }
-
 
     public static Conexion getInstance() {
         if (instancia == null) {
-            instancia = new Conexion();
+            synchronized (Conexion.class) {
+                if (instancia == null) {
+                    instancia = new Conexion();
+                }
+            }
         }
         return instancia;
     }
 
     @Override
     public EntityManager crearConexion() {
+        if (emf == null) {
+            throw new IllegalStateException("EntityManagerFactory no está inicializado correctamente.");
+        }
         return emf.createEntityManager();
     }
 }

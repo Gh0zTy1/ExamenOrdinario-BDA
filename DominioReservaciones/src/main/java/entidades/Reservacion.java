@@ -24,7 +24,7 @@ import javax.persistence.Table;
  * @author caarl
  */
 @Entity
-@Table(name="reservaciones")
+@Table(name="reservacion")
 public class Reservacion implements Serializable {
 
     private static final long serialVersionUID = 1L;

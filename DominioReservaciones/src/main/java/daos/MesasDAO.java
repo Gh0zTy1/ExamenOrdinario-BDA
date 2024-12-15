@@ -39,7 +39,7 @@ public class MesasDAO implements IMesasDAO {
     public List<Mesa> obtenerMesasTodas(Long idRestaurante) throws DAOException {
         try {
             TypedQuery<Mesa> query = conexion.crearConexion().createQuery(
-                "SELECT m FROM Mesas m WHERE m.restaurantes.id = :idRestaurante", 
+                "SELECT m FROM Mesa m WHERE m.restaurante.id = :idRestaurante", 
                 Mesa.class
             );
             query.setParameter("idRestaurante", idRestaurante);
@@ -53,7 +53,7 @@ public class MesasDAO implements IMesasDAO {
     public List<Mesa> obtenerMesasPorTipo(Long idRestaurante, TipoMesa tipo) throws DAOException {
         try {
             TypedQuery<Mesa> query = conexion.crearConexion().createQuery(
-                "SELECT m FROM Mesa m WHERE m.tipoMesas = :tipo AND m.restaurantes.id = :idRestaurante", 
+                "SELECT m FROM Mesa m WHERE m.tipoMesa = :tipo AND m.restaurante.id = :idRestaurante", 
                 Mesa.class
             );
             query.setParameter("tipo", tipo);
@@ -71,7 +71,7 @@ public class MesasDAO implements IMesasDAO {
             transaction.begin();
 
             TypedQuery<Mesa> consulta = conexion.crearConexion().createQuery(
-                "SELECT m FROM Mesas m WHERE m.codigo = :codigo AND m.restaurantes.id = :idRestaurante", 
+                "SELECT m FROM Mesa m WHERE m.codigo = :codigo AND m.restaurante.id = :idRestaurante", 
                 Mesa.class
             );
             consulta.setParameter("codigo", codigo);
@@ -95,40 +95,73 @@ public class MesasDAO implements IMesasDAO {
     }
 
     @Override
-    public void insertarMesas(Long idRestaurante, TipoMesa tipo, UbicacionMesa ubicacion, int cantidad) throws DAOException {
-        EntityTransaction transaction = conexion.crearConexion().getTransaction();
+public void insertarMesas(Long idRestaurante, TipoMesa tipo, UbicacionMesa ubicacion, int cantidad) throws DAOException {
+    EntityTransaction transaction = conexion.crearConexion().getTransaction();
 
-        if (ubicacion == null || cantidad < 1) {
-            throw new DAOException("Parámetros inválidos para la inserción de mesas");
-        }
-
-        try {
-            transaction.begin();
-            for (int i = 0; i < cantidad; i++) {
-                Mesa mesa = new Mesa();
-                String codigoMesa = generarCodigoMesa(ubicacion, tipo);
-                mesa.setCodigo(codigoMesa);
-                mesa.setTipoMesa(tipo);
-                mesa.setUbicacion(ubicacion);
-
-                Restaurante restaurante = conexion.crearConexion().find(Restaurante.class, idRestaurante);
-                if (restaurante == null) {
-                    throw new DAOException("El restaurante especificado no existe");
-                }
-                mesa.setRestaurante(restaurante);
-                conexion.crearConexion().persist(mesa);
-            }
-            transaction.commit();
-        } catch (Exception e) {
-            if (transaction.isActive()) transaction.rollback();
-            throw new DAOException("Error al insertar mesas: " + e.getMessage());
-        }
+    // Validar que los parámetros no sean nulos o incorrectos
+    if (ubicacion == null) {
+        throw new DAOException("La ubicación no puede ser nula.");
     }
+    if (cantidad < 1) {
+        throw new DAOException("La cantidad de mesas debe ser mayor o igual a 1.");
+    }
+    if (tipo == null) {
+        throw new DAOException("El tipo de mesa no puede ser nulo.");
+    }
+
+    // Verificar que el restaurante exista
+    Restaurante restaurante = conexion.crearConexion().find(Restaurante.class, idRestaurante);
+    if (restaurante == null) {
+        throw new DAOException("El restaurante especificado no existe.");
+    }
+
+    // Validar los atributos del tipo de mesa
+    if (tipo.getNombre() == null || tipo.getNombre().trim().isEmpty()) {
+        throw new DAOException("El nombre del tipo de mesa no puede estar vacío.");
+    }
+    if (tipo.getMaximoPersonas() == null || tipo.getMaximoPersonas() < 1) {
+        throw new DAOException("El número máximo de personas debe ser mayor o igual a 1.");
+    }
+    if (tipo.getMinimoPersonas() == null || tipo.getMinimoPersonas() < 1) {
+        throw new DAOException("El número mínimo de personas debe ser mayor o igual a 1.");
+    }
+    if (tipo.getPrecio() == null || tipo.getPrecio() <= 0) {
+        throw new DAOException("El precio del tipo de mesa debe ser mayor que 0.");
+    }
+
+    try {
+        transaction.begin();
+        for (int i = 0; i < cantidad; i++) {
+            Mesa mesa = new Mesa();
+            String codigoMesa = generarCodigoMesa(ubicacion, tipo);
+            
+            // Validar que el código de la mesa no esté vacío
+            if (codigoMesa == null || codigoMesa.trim().isEmpty()) {
+                throw new DAOException("El código de la mesa generado es inválido.");
+            }
+
+            mesa.setCodigo(codigoMesa);
+            mesa.setTipoMesa(tipo);
+            mesa.setUbicacion(ubicacion);
+            mesa.setRestaurante(restaurante);
+
+            // Persistir la mesa
+            conexion.crearConexion().persist(mesa);
+        }
+        transaction.commit();
+    } catch (Exception e) {
+        if (transaction.isActive()) {
+            transaction.rollback();
+        }
+        throw new DAOException("Error al insertar mesas: " + e.getMessage());
+    }
+}
+
 
     @Override
     public List<Mesa> obtenerMesasDisponibles(Long idRestaurante) throws DAOException {
         try {
-            String jpql = "SELECT m FROM Mesas m WHERE m.restaurante.id = :idRestaurante " +
+            String jpql = "SELECT m FROM Mesa m WHERE m.restaurante.id = :idRestaurante " +
                           "AND (m.fechaNuevaDisponibilidad IS NULL OR m.fechaNuevaDisponibilidad <= :fechaActual) " +
                           "AND NOT EXISTS (SELECT r FROM Reservaciones r WHERE r.mesa = m AND r.estado LIKE 'PENDIENTE')";
             TypedQuery<Mesa> query = conexion.crearConexion().createQuery(jpql, Mesa.class);
@@ -201,7 +234,7 @@ public void modificarMesa(Long idRestaurante, String codigo, TipoMesa nuevoTipo,
 
         // Buscar la mesa existente
         TypedQuery<Mesa> consulta = conexion.crearConexion().createQuery(
-            "SELECT m FROM Mesas m WHERE m.codigo = :codigo AND m.restaurantes.id = :idRestaurante", 
+            "SELECT m FROM Mesa m WHERE m.codigo = :codigo AND m.restaurante.id = :idRestaurante", 
             Mesa.class
         );
         consulta.setParameter("codigo", codigo);
