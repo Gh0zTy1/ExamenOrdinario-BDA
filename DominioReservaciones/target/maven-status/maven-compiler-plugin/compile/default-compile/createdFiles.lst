@@ -16,7 +16,6 @@ entidades\TipoMesa.class
 entidades\TipoMesa_.class
 idaos\IReservacionesDAO.class
 daos\ClientesDAO.class
-conexion\Main.class
 entidades\EstadoReservacion.class
 cifrado\CifradoTelefono.class
 entidades\Reservacion_.class

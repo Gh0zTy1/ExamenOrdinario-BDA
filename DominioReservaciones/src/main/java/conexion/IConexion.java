@@ -14,7 +14,10 @@ public interface IConexion {
     
     
 
-            
+   /**
+    * 
+    * @return 
+    */  
 public EntityManager crearConexion();
     
 }
