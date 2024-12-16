@@ -92,5 +92,7 @@ public interface IReservacionesBO {
      * @throws excepciones.NegocioException
      */
     public void eliminarReservacion(Long id) throws NegocioException;
+    
+     void cancelarReservacion(Long idReservacion) throws NegocioException;
 
 }

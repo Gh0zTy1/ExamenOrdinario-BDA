@@ -132,14 +132,15 @@ public class ReservacionesDAO implements IReservacionesDAO {
 
     @Override
     public void agregarReservacion(Reservacion reservacion) throws DAOException {
-       
-        EntityTransaction transaction = conexion.crearConexion().getTransaction();
+        
+                EntityManager entityManager = Conexion.getInstance().crearConexion();
+        EntityTransaction transaction = entityManager.getTransaction();
 
         System.out.println("MESA: " + reservacion.getMesa());
         
         try {
             // Verificar que el cliente no tenga una reservación activa en el mismo restaurante.
-            boolean reservacionActivaRestaurante = conexion.crearConexion().createQuery(
+            boolean reservacionActivaRestaurante = entityManager.createQuery(
                     "SELECT COUNT(r) FROM Reservacion r WHERE r.cliente.id = :idCliente AND r.mesa.restaurante.id = :idRestaurante AND r.estado LIKE 'PENDIENTE'", Long.class)
                     .setParameter("idCliente", reservacion.getCliente().getId())
                     .setParameter("idRestaurante", reservacion.getMesa().getRestaurante().getId())
@@ -150,7 +151,7 @@ public class ReservacionesDAO implements IReservacionesDAO {
             }
             
             // Verificar que el cliente no tenga una reservación activa en otro restaurante.
-            boolean reservacionActivaOtroRestaurante = conexion.crearConexion().createQuery(
+            boolean reservacionActivaOtroRestaurante = entityManager.createQuery(
                     "SELECT COUNT(r) FROM Reservacion r WHERE r.cliente.id = :idCliente AND r.estado LIKE 'PENDIENTE'", Long.class)
                     .setParameter("idCliente", reservacion.getCliente().getId())
                     .getSingleResult() > 0;
@@ -180,7 +181,7 @@ public class ReservacionesDAO implements IReservacionesDAO {
                 throw new DAOException(String.format("La reservación no puede realizarse porque excede el horario límite permitido, que es hasta las %s", limiteReservacion.toString()));
             }
             // Verificar que la mesa no esté ocupada por otra reservación pendiente.
-            boolean mesaOcupada = conexion.crearConexion().createQuery(
+            boolean mesaOcupada = entityManager.createQuery(
                     "SELECT COUNT(r) FROM Reservacion r WHERE r.mesa.codigo = :codigoMesa AND r.estado LIKE 'PENDIENTE' AND r.mesa.restaurante.id = :idRestaurante", Long.class)
                     .setParameter("codigoMesa", reservacion.getMesa().getCodigo())
                     .setParameter("idRestaurante", reservacion.getMesa().getRestaurante().getId())
@@ -209,7 +210,7 @@ public class ReservacionesDAO implements IReservacionesDAO {
 
             // Persistir la reservación.
             transaction.begin();
-            conexion.crearConexion().persist(reservacion);
+           entityManager.persist(reservacion);
             transaction.commit();
         } catch (Exception e) {
             if (transaction.isActive()) {
@@ -217,17 +218,20 @@ public class ReservacionesDAO implements IReservacionesDAO {
             }
             throw new DAOException(e.getMessage());
         } finally {
-            conexion.crearConexion().close();
+          if (entityManager.isOpen()) {
+                entityManager.close();
+            }
         }
     }
 
     @Override
     public void actualizarReservacion(Reservacion reservacion) throws DAOException {
       
-        EntityTransaction transaction = conexion.crearConexion().getTransaction();
+                       EntityManager entityManager = Conexion.getInstance().crearConexion();
+        EntityTransaction transaction = entityManager.getTransaction();
 
         try {
-            Reservacion reservacionExistente = conexion.crearConexion().find(Reservacion.class, reservacion.getId());
+            Reservacion reservacionExistente = entityManager.find(Reservacion.class, reservacion.getId());
             if (reservacionExistente == null) {
                 throw new DAOException("La reservacion que se desea actualizar no existe en el sistema");
             }
@@ -254,8 +258,8 @@ public class ReservacionesDAO implements IReservacionesDAO {
             reservacion.setMontoTotal(reservacion.getMesa().getTipoMesa().getPrecio());
 
             transaction.begin();
-            conexion.crearConexion().merge(reservacion);
-            conexion.crearConexion().merge(reservacion.getMesa());
+            entityManager.merge(reservacion);
+            entityManager.merge(reservacion.getMesa());
             transaction.commit();
         } catch (Exception e) {
             if (transaction.isActive()) {
@@ -263,7 +267,9 @@ public class ReservacionesDAO implements IReservacionesDAO {
             }
             throw new DAOException(e.getMessage());
         } finally {
-            conexion.crearConexion().close();
+          if (entityManager.isOpen()) {
+                entityManager.close();
+            }
         }
     }
 
@@ -292,9 +298,12 @@ public class ReservacionesDAO implements IReservacionesDAO {
     
      @Override
     public void cancelarReservacion(Long idReservacion) throws DAOException {
+        
+        EntityManager entityManager = Conexion.getInstance().crearConexion();
+        EntityTransaction transaction = entityManager.getTransaction();
       
 
-        Reservacion reservacion = conexion.crearConexion().find(Reservacion.class, idReservacion);
+        Reservacion reservacion = entityManager.find(Reservacion.class, idReservacion);
         if (reservacion == null) {
             throw new DAOException("No se encontro la reservacion");
         }
@@ -321,7 +330,7 @@ public class ReservacionesDAO implements IReservacionesDAO {
         // se cambia el estado de la reservacion
         reservacion.setEstado(EstadoReservacion.CANCELADA);
 
-        EntityTransaction transaction = conexion.crearConexion().getTransaction();
+      
 
         try {
             transaction.begin();
@@ -333,7 +342,9 @@ public class ReservacionesDAO implements IReservacionesDAO {
             }
             throw new DAOException("Error al cancelar la reservacion, porfavor intente mas tarde");
         } finally {
-            conexion.crearConexion().close();
+            if (entityManager.isOpen()) {
+                entityManager.close();
+            }
         }
 
     

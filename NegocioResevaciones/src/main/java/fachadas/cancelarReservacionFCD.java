@@ -21,6 +21,6 @@ public class cancelarReservacionFCD implements IcancelarReservacionFCD {
     
      @Override
     public void cancelarReservacion(Long idReservacion) throws NegocioException {
-        reservacionesBO.eliminarReservacion(idReservacion);
+        reservacionesBO.cancelarReservacion(idReservacion);
     }
 }

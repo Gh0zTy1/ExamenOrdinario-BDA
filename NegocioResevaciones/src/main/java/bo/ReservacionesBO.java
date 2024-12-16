@@ -11,6 +11,7 @@ import entidades.Reservacion;
 import excepciones.NegocioException;
 import ibo.IReservacionesBO;
 import idaos.IReservacionesDAO;
+import java.time.Duration;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -113,6 +114,28 @@ public class ReservacionesBO implements IReservacionesBO {
             reservacionesDAO.eliminarReservacion(id);
         } catch (DAOException e) {
             throw new NegocioException(e.getMessage());
+        }
+    }
+    
+     @Override
+    public void cancelarReservacion(Long idReservacion) throws NegocioException {
+        try {
+            // Llamar al DAO para cancelar la reservación
+            reservacionesDAO.cancelarReservacion(idReservacion);
+
+            // Lógica adicional de negocio si es necesario
+            Reservacion reservacion = reservacionesDAO.obtenerReservacionPorID(idReservacion);
+            LocalDateTime fechaHoraReservacion = reservacion.getFechaHora();
+            LocalDateTime fechaHoraActual = LocalDateTime.now();
+            Duration diffTemporal = Duration.between(fechaHoraActual, fechaHoraReservacion);
+            long horasRestantes = diffTemporal.toHours();
+            
+            // Aquí podrías manejar el cálculo de multas o cualquier lógica adicional
+            System.out.println("Horas restantes para la reservación: " + horasRestantes);
+
+        } catch (DAOException e) {
+            // Aquí manejamos las excepciones que puedan surgir en el DAO
+            throw new NegocioException("Error al cancelar la reservación. " + e.getMessage());
         }
     }
 }

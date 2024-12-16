@@ -10,7 +10,9 @@ import dto.ReservacionDTO;
 import dto.RestauranteDTO;
 import excepciones.NegocioException;
 import fabricas.ReportesFachadaFactory;
+import fabricas.fabricaFCD;
 import fachadas.ReportesFachada;
+import fachadas.cancelarReservacionFCD;
 import ibo.IReservacionesBO;
 import java.util.List;
 import java.util.logging.Level;
@@ -207,9 +209,7 @@ public class frnCancelarReservacion extends javax.swing.JFrame {
                             .addGroup(jPanel2Layout.createSequentialGroup()
                                 .addGap(36, 36, 36)
                                 .addComponent(cbxClientes, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addGroup(jPanel2Layout.createSequentialGroup()
-                                .addGap(18, 18, 18)
-                                .addComponent(jLabel5)))
+                            .addComponent(jLabel5))
                         .addContainerGap(42, Short.MAX_VALUE))))
         );
         jPanel2Layout.setVerticalGroup(
@@ -248,6 +248,11 @@ public class frnCancelarReservacion extends javax.swing.JFrame {
         jButton2.setBackground(new java.awt.Color(0, 0, 0));
         jButton2.setForeground(new java.awt.Color(255, 255, 255));
         jButton2.setText("Cancelar mi reservacion");
+        jButton2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton2ActionPerformed(evt);
+            }
+        });
 
         jButton3.setText("Atras");
         jButton3.addActionListener(new java.awt.event.ActionListener() {
@@ -285,15 +290,13 @@ public class frnCancelarReservacion extends javax.swing.JFrame {
                         .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 213, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(173, 173, 173))))
             .addGroup(jPanel1Layout.createSequentialGroup()
+                .addContainerGap()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addContainerGap()
                         .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 205, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(jButton3, javax.swing.GroupLayout.PREFERRED_SIZE, 62, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addContainerGap()
-                        .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 1066, Short.MAX_VALUE)))
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 1066, Short.MAX_VALUE))
                 .addContainerGap())
         );
         jPanel1Layout.setVerticalGroup(
@@ -385,6 +388,40 @@ public class frnCancelarReservacion extends javax.swing.JFrame {
         JOptionPane.showMessageDialog(this, "Error al filtrar las reservaciones: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
     }
     }//GEN-LAST:event_cbxClientesActionPerformed
+
+    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
+       // Verifica si se ha seleccionado una fila en la tabla
+    int filaSeleccionada = tblResultado.getSelectedRow();  // Suponiendo que 'tablaReservaciones' es tu JTable
+    if (filaSeleccionada == -1) {
+        JOptionPane.showMessageDialog(this, "Debe seleccionar una reservación para cancelar.", 
+                                      "Error", JOptionPane.ERROR_MESSAGE);
+        return; // Si no se selecciona ninguna fila, salir del método
+    }
+    
+    // Obtén el ID de la reservación desde la tabla (suponiendo que la columna 0 tiene el ID)
+    Long idReservacion = (Long) tblResultado.getValueAt(filaSeleccionada, 0);
+    
+    try {
+        // Instanciar la fachada utilizando la fábrica
+        cancelarReservacionFCD fachadaCancelar = fabricaFCD.fabricaFCDCancelar();
+        
+        // Llamar al método cancelarReservacion de la fachada
+        fachadaCancelar.cancelarReservacion(idReservacion);
+        
+        // Mostrar mensaje de éxito
+        JOptionPane.showMessageDialog(this, "Reservación cancelada correctamente.");
+        
+        // Opcional: Actualizar la tabla o interfaz después de cancelar
+        // Actualiza la tabla o realiza cualquier otra acción necesaria después de la cancelación
+cargarReservaciones();
+    } catch (NegocioException e) {
+        // Manejar la excepción y mostrar mensaje de error
+        JOptionPane.showMessageDialog(this, "Error al cancelar la reservación: " + e.getMessage(), 
+                                      "Error", JOptionPane.ERROR_MESSAGE);
+    }
+    
+    
+    }//GEN-LAST:event_jButton2ActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
