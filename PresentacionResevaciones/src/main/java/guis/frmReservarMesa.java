@@ -6,6 +6,7 @@ package guis;
 
 import bo.ClientesBO;
 import dto.ClienteDTO;
+import dto.EstadoReservacionDTO;
 import dto.MesaDTO;
 import dto.ReservacionDTO;
 import dto.RestauranteDTO;
@@ -15,12 +16,15 @@ import fabricas.fabricaFCD;
 import fachadas.ReportesFachada;
 import iFachadas.ICargarMesasFCD;
 import iFachadas.ICrearReservacionFCD;
+import ibo.IReservacionesBO;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.ZoneId;
-import java.time.format.DateTimeParseException;
 import java.util.Date;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 
@@ -33,6 +37,7 @@ import javax.swing.table.DefaultTableModel;
 public class frmReservarMesa extends javax.swing.JFrame {
 private final RestauranteDTO restaurante;
  private final ClientesBO clientesBO;
+ private final IReservacionesBO reservacionesBO;
     /**
      * Creates new form frmReservarMesa
      */
@@ -41,6 +46,7 @@ private final RestauranteDTO restaurante;
         initComponents();
         // Obtener la fachada desde la fábrica
         ReportesFachada fachada = ReportesFachadaFactory.getFachada();
+         this.reservacionesBO = fachada.getReservacionesBO();
 this.restaurante = restaurante;
 this.clientesBO = fachada.getClientesBO();
         cargarMesasEnTabla();
@@ -100,6 +106,15 @@ this.clientesBO = fachada.getClientesBO();
             JOptionPane.showMessageDialog(this, "Error al cargar clientes: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
         }
     }
+    
+    private void limpiarFormulario() {
+    tblMesas.clearSelection();
+    cbxClientes.setSelectedIndex(0);
+    dtcFechaReservacion.setDate(null);
+    tpHoradeseada.setTime(null);
+    cbxCantPersonas.setSelectedIndex(0);
+}
+
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -124,8 +139,8 @@ this.clientesBO = fachada.getClientesBO();
         btnAtras = new javax.swing.JButton();
         jScrollPane1 = new javax.swing.JScrollPane();
         tblMesas = new javax.swing.JTable();
-        txtHoraReserva = new javax.swing.JTextField();
-        txtCantPersonas = new javax.swing.JTextField();
+        tpHoradeseada = new com.github.lgooddatepicker.components.TimePicker();
+        cbxCantPersonas = new javax.swing.JComboBox<>();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -157,11 +172,10 @@ this.clientesBO = fachada.getClientesBO();
                         .addComponent(jLabel2))
                     .addGroup(jPanel2Layout.createSequentialGroup()
                         .addContainerGap()
-                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addGroup(jPanel2Layout.createSequentialGroup()
-                                .addGap(6, 6, 6)
-                                .addComponent(cbxClientes, javax.swing.GroupLayout.PREFERRED_SIZE, 107, javax.swing.GroupLayout.PREFERRED_SIZE)))))
+                        .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(jPanel2Layout.createSequentialGroup()
+                        .addGap(20, 20, 20)
+                        .addComponent(cbxClientes, javax.swing.GroupLayout.PREFERRED_SIZE, 107, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap(23, Short.MAX_VALUE))
         );
         jPanel2Layout.setVerticalGroup(
@@ -209,14 +223,7 @@ this.clientesBO = fachada.getClientesBO();
         ));
         jScrollPane1.setViewportView(tblMesas);
 
-        txtHoraReserva.setText("00:00:00");
-
-        txtCantPersonas.setText("De 1 a 8");
-        txtCantPersonas.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                txtCantPersonasActionPerformed(evt);
-            }
-        });
+        cbxCantPersonas.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "NONE", "1", "2", "3", "4", "5", "6", "7", "8" }));
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -227,25 +234,34 @@ this.clientesBO = fachada.getClientesBO();
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addGroup(jPanel1Layout.createSequentialGroup()
                                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
                                     .addComponent(jLabel6, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                     .addComponent(jLabel5, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(txtHoraReserva, javax.swing.GroupLayout.PREFERRED_SIZE, 104, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(txtCantPersonas))))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                    .addGroup(jPanel1Layout.createSequentialGroup()
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                        .addComponent(tpHoradeseada, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 17, Short.MAX_VALUE)
+                                        .addComponent(cbxCantPersonas, javax.swing.GroupLayout.PREFERRED_SIZE, 81, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addGap(18, 18, 18))))
+                            .addGroup(jPanel1Layout.createSequentialGroup()
+                                .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
                         .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(jPanel1Layout.createSequentialGroup()
                                 .addComponent(jLabel7, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(18, 18, 18)
-                                .addComponent(dtcFechaReservacion, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(147, 147, 147)
-                                .addComponent(btnReservar, javax.swing.GroupLayout.PREFERRED_SIZE, 222, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addGroup(jPanel1Layout.createSequentialGroup()
+                                        .addGap(250, 250, 250)
+                                        .addComponent(btnReservar, javax.swing.GroupLayout.PREFERRED_SIZE, 222, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                    .addGroup(jPanel1Layout.createSequentialGroup()
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                        .addComponent(dtcFechaReservacion, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))))
                             .addGroup(jPanel1Layout.createSequentialGroup()
                                 .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 205, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addGap(395, 395, 395)
@@ -267,16 +283,16 @@ this.clientesBO = fachada.getClientesBO();
                         .addGap(103, 103, 103)
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(jLabel5)
-                            .addComponent(txtCantPersonas, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(cbxCantPersonas, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(jLabel6)
-                            .addComponent(txtHoraReserva, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(tpHoradeseada, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                             .addComponent(jLabel7)
                             .addComponent(dtcFechaReservacion, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addContainerGap(37, Short.MAX_VALUE))
+                        .addContainerGap(38, Short.MAX_VALUE))
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 238, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -311,91 +327,99 @@ this.clientesBO = fachada.getClientesBO();
     }//GEN-LAST:event_btnAtrasActionPerformed
 
     private void btnReservarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnReservarActionPerformed
-try {
-        // Validar que se haya seleccionado una mesa
-        int selectedRow = tblMesas.getSelectedRow();
-        if (selectedRow == -1) {
-            JOptionPane.showMessageDialog(this, "Seleccione una mesa de la tabla.", "Error", JOptionPane.WARNING_MESSAGE);
-            return;
+ try {
+        // Validación 1: Obtener la mesa seleccionada
+        int filaSeleccionada = tblMesas.getSelectedRow();
+        if (filaSeleccionada == -1) {
+            throw new IllegalArgumentException("Por favor, seleccione una mesa.");
         }
+        Long idMesa = (Long) tblMesas.getValueAt(filaSeleccionada, 0); // ID de la mesa
+        String codigoMesa = (String) tblMesas.getValueAt(filaSeleccionada, 1);
 
-        // Obtener la mesa seleccionada
-        DefaultTableModel modelo = (DefaultTableModel) tblMesas.getModel();
-        Long idMesa = (Long) modelo.getValueAt(selectedRow, 0);
-
-        // Validar que se haya seleccionado un cliente
-        int selectedClienteIndex = cbxClientes.getSelectedIndex();
-        if (selectedClienteIndex == -1) {
-            JOptionPane.showMessageDialog(this, "Seleccione un cliente.", "Error", JOptionPane.WARNING_MESSAGE);
-            return;
-        }
-        ClienteDTO clienteSeleccionado = (ClienteDTO) cbxClientes.getSelectedItem();
-
-        // Validar que se haya ingresado la fecha y la hora
-        Date fecha = dtcFechaReservacion.getDate();
-        if (fecha == null) {
-            JOptionPane.showMessageDialog(this, "Seleccione una fecha válida.", "Error", JOptionPane.WARNING_MESSAGE);
-            return;
-        }
-
-        String horaTexto = txtHoraReserva.getText();
-        LocalTime hora;
-        try {
-            hora = LocalTime.parse(horaTexto); // Formato esperado: HH:mm
-        } catch (DateTimeParseException e) {
-            JOptionPane.showMessageDialog(this, "Ingrese una hora válida (formato HH:mm).", "Error", JOptionPane.WARNING_MESSAGE);
-            return;
-        }
-
-        LocalDateTime fechaHora = LocalDateTime.of(fecha.toInstant().atZone(ZoneId.systemDefault()).toLocalDate(), hora);
-
-        // Validar la cantidad de personas
-        int cantidadPersonas;
-        try {
-            cantidadPersonas = Integer.parseInt(txtCantPersonas.getText());
-            if (cantidadPersonas <= 0) {
-                throw new NumberFormatException("La cantidad debe ser mayor a 0.");
-            }
-        } catch (NumberFormatException e) {
-            JOptionPane.showMessageDialog(this, "Ingrese una cantidad válida de personas.", "Error", JOptionPane.WARNING_MESSAGE);
-            return;
-        }
-
-        // Crear el objeto ReservacionDTO
+        // Crear un objeto MesaDTO
         MesaDTO mesaSeleccionada = new MesaDTO();
         mesaSeleccionada.setId(idMesa);
+        mesaSeleccionada.setCodigo(codigoMesa);
+        mesaSeleccionada.setRestaurante(restaurante);
 
-        ReservacionDTO reservacion = new ReservacionDTO();
-        reservacion.setMesa(mesaSeleccionada);
-        reservacion.setCliente(clienteSeleccionado);
-        reservacion.setFechaHora(fechaHora);
-        reservacion.setNumeroPersonas(cantidadPersonas);
+        // Validación 2: Obtener el cliente seleccionado
+        String telefonoCliente = (String) cbxClientes.getSelectedItem();
+        if (telefonoCliente == null || telefonoCliente.equals("<None>")) {
+            throw new IllegalArgumentException("Seleccione un cliente válido.");
+        }
 
-        // Llamar a la fachada para crear la reservación
-        ICrearReservacionFCD fachadaReservacion = fabricaFCD.fabricaFCDRerservar();
-        fachadaReservacion.crearReservacion(reservacion);
+        ClienteDTO cliente = clientesBO.obtenerClientePorTelefono(telefonoCliente);
 
-        // Mostrar mensaje de éxito
-        JOptionPane.showMessageDialog(this, "Reservación realizada exitosamente.", "Éxito", JOptionPane.INFORMATION_MESSAGE);
-    } catch (NegocioException e) {
-        // Mostrar mensaje de error si ocurre alguna excepción de negocio
-        JOptionPane.showMessageDialog(this, "Error al realizar la reservación: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+        // Validación 3: Obtener la fecha y hora
+        Date fechaSeleccionada = dtcFechaReservacion.getDate();
+        LocalTime horaSeleccionada = tpHoradeseada.getTime();
+        if (fechaSeleccionada == null) {
+            throw new IllegalArgumentException("Seleccione una fecha válida.");
+        }
+        if (horaSeleccionada == null) {
+            throw new IllegalArgumentException("Seleccione una hora válida.");
+        }
+
+        // Validaciones de fecha y hora
+        LocalDate fechaActual = LocalDate.now();
+        LocalDate fechaReservacion = fechaSeleccionada.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+        if (fechaReservacion.isBefore(fechaActual)) {
+            throw new IllegalArgumentException("La fecha no puede ser anterior al día de hoy.");
+        }
+        if (fechaReservacion.isEqual(fechaActual) && horaSeleccionada.isBefore(LocalTime.now())) {
+            throw new IllegalArgumentException("La hora no puede ser anterior a la hora actual si la reservación es para hoy.");
+        }
+
+        // Validación de horario del restaurante
+        LocalTime horaApertura = restaurante.getHoraApertura();
+        LocalTime horaCierre = restaurante.getHoraCierre().minusHours(1); // Última hora válida
+        if (horaSeleccionada.isBefore(horaApertura) || horaSeleccionada.isAfter(horaCierre)) {
+            throw new IllegalArgumentException("La reservación solo puede hacerse entre %s y %s"
+                    .formatted(horaApertura, horaCierre));
+        }
+
+        // Combinar fecha y hora en LocalDateTime
+        LocalDateTime fechaHoraReservacion = LocalDateTime.of(fechaReservacion, horaSeleccionada);
+
+        // Validación 4: Obtener el número de personas
+        String cantPersonasStr = (String) cbxCantPersonas.getSelectedItem();
+        if (cantPersonasStr == null) {
+            throw new IllegalArgumentException("Seleccione la cantidad de personas.");
+        }
+        int numeroPersonas = Integer.parseInt(cantPersonasStr);
+
+        // Creación del DTO de Reservación
+        ReservacionDTO nuevaReservacion = new ReservacionDTO();
+        nuevaReservacion.setMesa(mesaSeleccionada);
+        nuevaReservacion.setCliente(cliente);
+        nuevaReservacion.setFechaHora(fechaHoraReservacion);
+        nuevaReservacion.setNumeroPersonas(numeroPersonas);
+        nuevaReservacion.setEstado(EstadoReservacionDTO.PENDIENTE);
+
+        // Guardar la reservación
+        reservacionesBO.agregarReservacion(nuevaReservacion);
+        JOptionPane.showMessageDialog(this, "Reservación creada exitosamente.", "Éxito", JOptionPane.INFORMATION_MESSAGE);
+        limpiarFormulario();
+
+    } catch (IllegalArgumentException ex) {
+        JOptionPane.showMessageDialog(this, ex.getMessage(), "Error de Validación", JOptionPane.ERROR_MESSAGE);
+    } catch (NegocioException ex) {
+        JOptionPane.showMessageDialog(this, "Error al guardar la reservación: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+    } catch (Exception e) {
+        JOptionPane.showMessageDialog(this, "Ocurrió un error inesperado: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
     }
     }//GEN-LAST:event_btnReservarActionPerformed
 
     private void cbxClientesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cbxClientesActionPerformed
-        
+     
     }//GEN-LAST:event_cbxClientesActionPerformed
-
-    private void txtCantPersonasActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtCantPersonasActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_txtCantPersonasActionPerformed
 
     
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnAtras;
     private javax.swing.JButton btnReservar;
+    private javax.swing.JComboBox<String> cbxCantPersonas;
     private javax.swing.JComboBox<String> cbxClientes;
     private com.toedter.calendar.JDateChooser dtcFechaReservacion;
     private javax.swing.JLabel jLabel1;
@@ -408,7 +432,6 @@ try {
     private javax.swing.JPanel jPanel2;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTable tblMesas;
-    private javax.swing.JTextField txtCantPersonas;
-    private javax.swing.JTextField txtHoraReserva;
+    private com.github.lgooddatepicker.components.TimePicker tpHoradeseada;
     // End of variables declaration//GEN-END:variables
 }

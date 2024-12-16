@@ -131,98 +131,58 @@ public class ReservacionesDAO implements IReservacionesDAO {
     }
 
     @Override
-    public void agregarReservacion(Reservacion reservacion) throws DAOException {
-        
-                EntityManager entityManager = Conexion.getInstance().crearConexion();
-        EntityTransaction transaction = entityManager.getTransaction();
+public void agregarReservacion(Reservacion reservacion) throws DAOException {
+    EntityManager entityManager = Conexion.getInstance().crearConexion();
+    EntityTransaction transaction = entityManager.getTransaction();
 
-        System.out.println("MESA: " + reservacion.getMesa());
-        
-        try {
-            // Verificar que el cliente no tenga una reservación activa en el mismo restaurante.
-            boolean reservacionActivaRestaurante = entityManager.createQuery(
-                    "SELECT COUNT(r) FROM Reservacion r WHERE r.cliente.id = :idCliente AND r.mesa.restaurante.id = :idRestaurante AND r.estado LIKE 'PENDIENTE'", Long.class)
-                    .setParameter("idCliente", reservacion.getCliente().getId())
-                    .setParameter("idRestaurante", reservacion.getMesa().getRestaurante().getId())
-                    .getSingleResult() > 0;
+    try {
+        // Verificar que el cliente no tenga una reservación activa en el mismo restaurante
+        boolean reservacionActivaRestaurante = entityManager.createQuery(
+                "SELECT COUNT(r) FROM Reservacion r WHERE r.cliente.id = :idCliente AND r.mesa.restaurante.id = :idRestaurante AND r.estado LIKE 'PENDIENTE'", Long.class)
+                .setParameter("idCliente", reservacion.getCliente().getId())
+                .setParameter("idRestaurante", reservacion.getMesa().getRestaurante().getId())
+                .getSingleResult() > 0;
 
-            if (reservacionActivaRestaurante) {
-                throw new DAOException("No se puede realizar la reservación porque el cliente ya tiene una reservación activa en este restaurante.");
-            }
-            
-            // Verificar que el cliente no tenga una reservación activa en otro restaurante.
-            boolean reservacionActivaOtroRestaurante = entityManager.createQuery(
-                    "SELECT COUNT(r) FROM Reservacion r WHERE r.cliente.id = :idCliente AND r.estado LIKE 'PENDIENTE'", Long.class)
-                    .setParameter("idCliente", reservacion.getCliente().getId())
-                    .getSingleResult() > 0;
+        if (reservacionActivaRestaurante) {
+            throw new DAOException("No se puede realizar la reservación porque el cliente ya tiene una reservación activa en este restaurante.");
+        }
 
-            if (reservacionActivaOtroRestaurante) {
-                throw new DAOException("No se puede realizar la reservación porque el cliente ya tiene una reservación activa en otro restaurante.");
-            }
+        // Verificar disponibilidad de la mesa
+        LocalTime horaCierre = reservacion.getMesa().getRestaurante().getHoraCierre();
+        LocalTime limiteReservacion = horaCierre.minusHours(1); // Última hora válida para reservar
+        LocalTime horaReservacion = reservacion.getFechaHora().toLocalTime();
 
-            // Obtener la fecha y hora actual
-            LocalDateTime fechaActual = LocalDateTime.now();
+        if (horaReservacion.isAfter(limiteReservacion)) {
+            throw new DAOException(String.format("La reservación no puede realizarse porque excede el horario límite permitido, que es hasta las %s", limiteReservacion.toString()));
+        }
 
-            // Verificar que la mesa esté disponible (fecha de disponibilidad vencida).
-            if (reservacion.getMesa().getFechaNuevaDisponibilidad() != null
-                    && reservacion.getMesa().getFechaNuevaDisponibilidad().isAfter(fechaActual)) {
-                throw new DAOException(String.format("La mesa estará disponible hasta %s",
-                        reservacion.getMesa().getFechaNuevaDisponibilidad().toString()));
-            }
+        // Verificar que la mesa no esté ocupada
+        boolean mesaOcupada = entityManager.createQuery(
+                "SELECT COUNT(r) FROM Reservacion r WHERE r.mesa.codigo = :codigoMesa AND r.estado LIKE 'PENDIENTE' AND r.mesa.restaurante.id = :idRestaurante", Long.class)
+                .setParameter("codigoMesa", reservacion.getMesa().getCodigo())
+                .setParameter("idRestaurante", reservacion.getMesa().getRestaurante().getId())
+                .getSingleResult() > 0;
 
-            // Verificar que la hora de la reservación no exceda el límite permitido (una hora antes del cierre del restaurante).
-            LocalTime horaCierre = reservacion.getMesa().getRestaurante().getHoraCierre();
-            LocalTime limiteReservacion = horaCierre.minusHours(1);
+        if (mesaOcupada) {
+            throw new DAOException("La mesa que se intenta reservar ya está ocupada.");
+        }
 
-            // Extrae la hora de la fecha y hora de la reservación
-            LocalTime horaReservacion = reservacion.getFechaHora().toLocalTime();
-
-            if (horaReservacion.isAfter(limiteReservacion)) {
-                throw new DAOException(String.format("La reservación no puede realizarse porque excede el horario límite permitido, que es hasta las %s", limiteReservacion.toString()));
-            }
-            // Verificar que la mesa no esté ocupada por otra reservación pendiente.
-            boolean mesaOcupada = entityManager.createQuery(
-                    "SELECT COUNT(r) FROM Reservacion r WHERE r.mesa.codigo = :codigoMesa AND r.estado LIKE 'PENDIENTE' AND r.mesa.restaurante.id = :idRestaurante", Long.class)
-                    .setParameter("codigoMesa", reservacion.getMesa().getCodigo())
-                    .setParameter("idRestaurante", reservacion.getMesa().getRestaurante().getId())
-                    .getSingleResult() > 0;
-
-            if (mesaOcupada) {
-                throw new DAOException("La mesa que se intenta reservar ya está ocupada.");
-            }
-
-            // Validar el número de personas para la reservación en base al tipo de mesa.
-            Integer cantidadPersonas = reservacion.getNumeroPersonas();
-            TipoMesa tipoMesa = reservacion.getMesa().getTipoMesa();
-
-            if (cantidadPersonas == null) {
-                throw new DAOException("Debe especificarse el número de personas para la reservación.");
-            }
-            if (cantidadPersonas > tipoMesa.getMaximoPersonas()) {
-                throw new DAOException(String.format("El número de personas excede el máximo permitido por mesa [máximo: %d]", tipoMesa.getMaximoPersonas()));
-            }
-            if (cantidadPersonas < tipoMesa.getMinimoPersonas()) {
-                throw new DAOException(String.format("El número de personas no cumple el mínimo permitido por mesa [mínimo: %d]", tipoMesa.getMinimoPersonas()));
-            }
-
-            // Establecer el monto total de la reservación basado en el tipo de mesa.
-            reservacion.setMontoTotal(tipoMesa.getPrecio());
-
-            // Persistir la reservación.
-            transaction.begin();
-           entityManager.persist(reservacion);
-            transaction.commit();
-        } catch (Exception e) {
-            if (transaction.isActive()) {
-                transaction.rollback();
-            }
-            throw new DAOException(e.getMessage());
-        } finally {
-          if (entityManager.isOpen()) {
-                entityManager.close();
-            }
+        // Persistir la reservación
+        transaction.begin();
+        entityManager.persist(reservacion);
+        transaction.commit();
+    } catch (Exception e) {
+        if (transaction.isActive()) {
+            transaction.rollback();
+        }
+        throw new DAOException(e.getMessage());
+    } finally {
+        if (entityManager.isOpen()) {
+            entityManager.close();
         }
     }
+}
+
 
     @Override
     public void actualizarReservacion(Reservacion reservacion) throws DAOException {

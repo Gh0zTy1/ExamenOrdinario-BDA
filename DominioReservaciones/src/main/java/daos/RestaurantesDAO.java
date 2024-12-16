@@ -11,6 +11,8 @@ import conexion.IConexion;
 import entidades.Restaurante;
 import idaos.IRestaurantesDAO;
 import java.util.List;
+import javax.persistence.EntityManager;
+import javax.persistence.EntityTransaction;
 import javax.persistence.NoResultException;
 import javax.persistence.TypedQuery;
 
@@ -33,36 +35,43 @@ public class RestaurantesDAO implements IRestaurantesDAO {
     
     @Override
     public List<Restaurante> obtenerRestaurantesTodos() throws DAOException {
-       
+       EntityManager entityManager = Conexion.getInstance().crearConexion();
+        EntityTransaction transaction = entityManager.getTransaction();
         try {
-            TypedQuery<Restaurante> query = conexion.crearConexion().createQuery("SELECT r FROM Restaurante r", Restaurante.class);
+            TypedQuery<Restaurante> query = entityManager.createQuery("SELECT r FROM Restaurante r", Restaurante.class);
             return query.getResultList();
         } catch (Exception e) {
             throw new DAOException("Error al obtener todos los restaurantes");
         } finally {
-            conexion.crearConexion().close();
+           if (entityManager.isOpen()) {
+                entityManager.close();
+            }
         }
     }
 
     @Override
     public Restaurante obtenerRestaurantePorID(Long id) throws DAOException {
-      
+       EntityManager entityManager = Conexion.getInstance().crearConexion();
+        EntityTransaction transaction = entityManager.getTransaction();
         try {
-            return conexion.crearConexion().find(Restaurante.class, id);
+            return entityManager.find(Restaurante.class, id);
         } catch (NoResultException e) {
             throw new DAOException("No se encontro al restaurante con el ID dado [telefono: %d]".formatted(id));
         } catch (Exception e) {
             throw new DAOException("Error al obtener el restaurante por ID");
         } finally {
-            conexion.crearConexion().close();
+           if (entityManager.isOpen()) {
+                entityManager.close();
+            }
         }
     }
 
     @Override
     public Restaurante obtenerRestaurantePorNumeroTelefono(String numeroTelefono) throws DAOException {
-      
+       EntityManager entityManager = Conexion.getInstance().crearConexion();
+        EntityTransaction transaction = entityManager.getTransaction();
         try {
-            TypedQuery<Restaurante> query = conexion.crearConexion().createQuery(
+            TypedQuery<Restaurante> query = entityManager.createQuery(
                 "SELECT r FROM Restaurante r WHERE r.telefono = :telefono", Restaurante.class);
             query.setParameter("telefono", numeroTelefono);
             return query.getSingleResult();
@@ -72,7 +81,9 @@ public class RestaurantesDAO implements IRestaurantesDAO {
             System.out.println("ERROR CONSULTA TELEFONO(%s): %s".formatted(e.getClass().getSimpleName(), e.getMessage()));
             throw new DAOException("Error al obtener el restaurante por número de teléfono");
         } finally {
-            conexion.crearConexion().close();
+            if (entityManager.isOpen()) {
+                entityManager.close();
+            }
         }
     }
 

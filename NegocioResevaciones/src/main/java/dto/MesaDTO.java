@@ -29,6 +29,8 @@ public class MesaDTO implements Serializable {
      */
     public MesaDTO() {
     }
+    
+    
 
     /**
      * Constructor con todos los atributos.
