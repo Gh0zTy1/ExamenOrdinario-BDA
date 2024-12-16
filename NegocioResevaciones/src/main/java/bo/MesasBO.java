@@ -77,16 +77,7 @@ public class MesasBO implements IMesasBO {
         }
     }
 
-    @Override
-    public void insertarMesas(Long idRestaurante, TipoMesaDTO tipo, UbicacionMesaDTO ubicacion, int cantidad) throws NegocioException {
-        try {
-            TipoMesa tipoMesa = tipoMesaConvertidor.convertFromDto(tipo);
-            UbicacionMesa ubicacionMesa = UbicacionMesa.valueOf(ubicacion.toString());
-            mesasDAO.insertarMesas(idRestaurante, tipoMesa, ubicacionMesa, cantidad);
-        } catch (DAOException e) {
-            throw new NegocioException(e.getMessage());
-        }
-    }
+
 
     @Override
     public void eliminarMesa(Long idRestaurante, String codigo) throws NegocioException {

@@ -2,6 +2,7 @@
 package daos;
 
 import Excepciones.DAOException;
+import conexion.Conexion;
 import conexion.IConexion;
 import entidades.TipoMesa;
 import idaos.ITiposMesaDAO;
@@ -28,14 +29,18 @@ public class TiposMesaDAO implements ITiposMesaDAO {
     @Override
     public List<TipoMesa> obtenerTiposMesaTodos() throws DAOException {
        
-
+   EntityManager entityManager = Conexion.getInstance().crearConexion();
+       
+        
         try {
-            TypedQuery<TipoMesa> query = conexion.crearConexion().createQuery("SELECT t FROM TipoMesa t", TipoMesa.class);
+           TypedQuery<TipoMesa> query = entityManager.createQuery("SELECT t FROM TipoMesa t", TipoMesa.class);
             return query.getResultList();
         } catch (Exception e) {
             throw new DAOException("Error al obtener todos los tipos de mesas");
         } finally {
-            conexion.crearConexion().close();
+            if (entityManager.isOpen()) {
+                entityManager.close();
+            }
         }
     }
 

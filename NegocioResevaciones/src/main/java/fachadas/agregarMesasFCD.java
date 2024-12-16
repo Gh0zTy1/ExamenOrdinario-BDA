@@ -5,8 +5,6 @@
 package fachadas;
 
 import dto.MesaDTO;
-import dto.TipoMesaDTO;
-import dto.UbicacionMesaDTO;
 import excepciones.NegocioException;
 import iFachadas.IagregarMesasFCD;
 import ibo.IMesasBO;

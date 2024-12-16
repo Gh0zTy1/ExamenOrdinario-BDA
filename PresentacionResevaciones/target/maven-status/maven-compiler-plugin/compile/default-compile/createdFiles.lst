@@ -1,10 +1,10 @@
 guis\frmAministradorMesas$1.class
+guis\frmReservarMesa$3.class
 guis\frnCancelarReservacion.class
 guis\frmMenu$3.class
 guis\frmHistorialDeRestaurante$3.class
 guis\frmHistorialDeRestaurante.class
 guis\frmMenu$5.class
-com\mycompany\presentacionresevaciones\Main.class
 guis\frmInicio$3.class
 guis\frmReservarMesa.class
 guis\frmMenu$1.class
@@ -17,6 +17,7 @@ guis\frmMenu$4.class
 guis\frmHistorialCliente$3.class
 guis\frmAministradorMesas$2.class
 guis\frmHistorialCliente$1.class
+guis\frmReservarMesa$4.class
 guis\frmHistorialDeRestaurante$2.class
 guis\frmHistorialDeRestaurante$1.class
 guis\frmInicio.class
@@ -25,5 +26,6 @@ guis\frmInicio$2.class
 guis\frmHistorialCliente.class
 guis\frmMenu.class
 guis\frnCancelarReservacion$1.class
+guis\frmReservarMesa$2.class
 guis\frmHistorialCliente$2.class
 guis\frmMenu$2.class

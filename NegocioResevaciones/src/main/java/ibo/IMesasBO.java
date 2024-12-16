@@ -49,18 +49,7 @@ public interface IMesasBO {
      */
     public List<MesaDTO> obtenerMesasPorTipo(Long idRestaurante, TipoMesaDTO tipo) throws NegocioException;
 
-    /**
-     * Inserta de manera "masiva" el número dado de mesas con el tipo y
-     * ubicación especificados.
-     *
-     * @param idRestaurante ID del restaurante donde se agregarán las mesas
-     * @param tipo tipo de mesas a insertar
-     * @param ubicacion ubicación de las mesas a insertar
-     * @param cantidad cantidad de mesas a insertar
-     * @throws excepciones.NegocioException
-     */
-    public void insertarMesas(Long idRestaurante, TipoMesaDTO tipo, UbicacionMesaDTO ubicacion, int cantidad) throws NegocioException;
-
+    
     /**
      * Elimina una mesa en el sistema por su código especificado.
      *

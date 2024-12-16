@@ -49,16 +49,7 @@ public interface IMesasDAO {
      */
     public List<Mesa> obtenerMesasPorTipo(Long idRestaurante, TipoMesa tipo) throws DAOException;
     
-    /**
-     * Inserta de manera "masiva" el numero dado de mesas con el tipo y
-     * ubicacion especifica.
-     * @param idRestautante ID del restaurante donde se agregaran las mesas
-     * @param tipo Tipo de mesas a insertar
-     * @param ubicacion Ubicacion de las mesas a insertar
-     * @param cantidad Cantidad de las mesas a insertar
-     * @throws DAOException Si ocurre un error al insertar las mesas.
-     */
-    public void insertarMesas(Long idRestautante, TipoMesa tipo, UbicacionMesa ubicacion, int cantidad) throws DAOException;
+    
     
    /**
  * Inserta una sola mesa en el sistema.

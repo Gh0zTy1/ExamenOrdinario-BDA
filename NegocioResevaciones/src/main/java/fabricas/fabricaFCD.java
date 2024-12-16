@@ -6,18 +6,26 @@ package fabricas;
 
 import bo.MesasBO;
 import bo.ReservacionesBO;
+import bo.TiposMesaBO;
 import conexion.Conexion;
 import convertidores.MesaConvertidor;
 import convertidores.ReservacionConvertidor;
 import convertidores.TipoMesaConvertidor;
 import daos.MesasDAO;
 import daos.ReservacionesDAO;
+import daos.TiposMesaDAO;
+import dto.TipoMesaDTO;
+import excepciones.NegocioException;
 import fachadas.CargarMesasFACHADA;
+import fachadas.TiposMesaFachada;
 import fachadas.agregarMesasFCD;
 import fachadas.cancelarReservacionFCD;
 import fachadas.consultarHistorialClienteFCD;
 import fachadas.consultarHistorialRestauranteFCD;
 import fachadas.crearReservacionFACHADA;
+import ibo.ITiposMesaBO;
+import java.util.ArrayList;
+import java.util.List;
 
 
 /**
@@ -131,6 +139,33 @@ public class fabricaFCD {
     return new CargarMesasFACHADA(mesasBO);
 }
 
-   
-   
+   /**
+     * Método para obtener los tipos de mesa utilizando la fachada.
+     *
+     * @return Lista de nombres de tipos de mesa.
+     * @throws NegocioException Si ocurre un error en la capa de negocio.
+     */
+    public static List<TipoMesaDTO> obtenerTiposMesa() throws NegocioException {
+    // Crear la conexión a la base de datos
+    Conexion conexion = Conexion.getInstance();
+
+    // Crear el DAO necesario para acceder a los tipos de mesa
+    TiposMesaDAO mesasDAO = new TiposMesaDAO(conexion);
+
+    // Crear el convertidor de tipo de mesa
+    TipoMesaConvertidor tipoMesaConvertidor = new TipoMesaConvertidor();
+
+    // Crear el BO de tipos de mesa
+    ITiposMesaBO tiposMesaBO = new TiposMesaBO(mesasDAO, tipoMesaConvertidor);
+
+    // Crear la fachada para manejar los tipos de mesa
+    TiposMesaFachada tiposMesaFachada = new TiposMesaFachada(tiposMesaBO);
+
+    // Obtener los tipos de mesa
+    List<TipoMesaDTO> tiposMesaDTOs = tiposMesaFachada.obtenerTiposMesaTodos();
+
+
+    // Retornar la lista de nombres de los tipos de mesa
+    return tiposMesaDTOs;
+}
 }

@@ -7,7 +7,6 @@ package guis;
 
 import bo.ClientesBO;
 import bo.MesasBO;
-import dto.ClienteDTO;
 import dto.EstadoReservacionDTO;
 import dto.MesaDTO;
 import dto.ReservacionDTO;

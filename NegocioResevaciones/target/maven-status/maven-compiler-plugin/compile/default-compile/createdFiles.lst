@@ -1,6 +1,7 @@
 iFachadas\ICrearReservacionFCD.class
 fachadas\ReportesFachada.class
 ibo\IMesasBO.class
+fachadas\TiposMesaFachada.class
 com\mycompany\negocioresevaciones\NegocioResevaciones.class
 fachadas\agregarMesasFCD.class
 bo\ClientesBO.class
