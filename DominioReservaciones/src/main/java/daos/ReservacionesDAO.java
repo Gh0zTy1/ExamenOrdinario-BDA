@@ -41,7 +41,9 @@ public class ReservacionesDAO implements IReservacionesDAO {
 @Override
 public List<Reservacion> obtenerReservacionesTodos(Long idRestaurante) throws DAOException {
     try {
-        TypedQuery<Reservacion> query = conexion.crearConexion().createQuery(
+          EntityManager entityManager = Conexion.getInstance().crearConexion();
+        EntityTransaction transaction = entityManager.getTransaction();
+        TypedQuery<Reservacion> query = entityManager.createQuery(
                 "SELECT r FROM Reservacion r WHERE r.mesa.restaurante.id = :idRestaurante", Reservacion.class);
         query.setParameter("idRestaurante", idRestaurante);
         List<Reservacion> reservaciones = query.getResultList();
@@ -63,13 +65,17 @@ public List<Reservacion> obtenerReservacionesTodos(Long idRestaurante) throws DA
                 throw new DAOException("Error al desencriptar el teléfono del cliente en una reservación", e);
             }
         }
-
+        
+if (entityManager.isOpen()) {
+                entityManager.close();
+            }
         return reservaciones;
     } catch (NoResultException e) {
         return new ArrayList<>();
     } catch (Exception e) {
         throw new DAOException("Error al obtener todas las reservaciones del restaurante", e);
     }
+    
 }
 
 
@@ -120,22 +126,64 @@ public List<Reservacion> obtenerReservacionesTodos(Long idRestaurante) throws DA
         }
     }
 
-    @Override
-    public List<Reservacion> obtenerReservacionesCliente(Long idRestaurante, String telefono) throws DAOException {
-      
-        // Filtrar por restaurante y el teléfono del cliente
+  @Override
+public List<Reservacion> obtenerReservacionesCliente(Long idRestaurante, String telefonoDESEncriptado) throws DAOException {
+    EntityManager entityManager = null;
+
+    try {
+        // Desencriptar el teléfono proporcionado
+        String telefonoDesencriptado;
         try {
-            TypedQuery<Reservacion> query = conexion.crearConexion().createQuery(
-                    "SELECT r FROM Reservacion r WHERE r.mesa.restaurante.id = :idRestaurante AND r.cliente.telefono = :telefono", Reservacion.class);
-            query.setParameter("idRestaurante", idRestaurante);
-            query.setParameter("telefono", telefono);
-            return query.getResultList();
+            telefonoDesencriptado = CifradoTelefono.encriptar(telefonoDESEncriptado);
         } catch (Exception e) {
-            throw new DAOException("Error al obtener reservaciones del cliente en el restaurante");
-        } finally {
-           conexion.crearConexion().close();
+            throw new DAOException("Error al desencriptar el teléfono proporcionado: " + telefonoDESEncriptado, e);
+        }
+
+        // Crear conexión y consulta
+        entityManager = Conexion.getInstance().crearConexion();
+        TypedQuery<Reservacion> query = entityManager.createQuery(
+                "SELECT r FROM Reservacion r WHERE r.mesa.restaurante.id = :idRestaurante AND r.cliente.telefono = :telefono", 
+                Reservacion.class
+        );
+        query.setParameter("idRestaurante", idRestaurante);
+        query.setParameter("telefono", telefonoDesencriptado);
+
+        // Obtener reservaciones
+        List<Reservacion> reservaciones = query.getResultList();
+
+        // Desencriptar el teléfono de los clientes en las reservaciones
+        for (Reservacion reservacion : reservaciones) {
+            if (reservacion.getCliente() != null && reservacion.getCliente().getTelefono() != null) {
+                try {
+                    Cliente cliente = reservacion.getCliente();
+                    String telefonoClienteEncriptado = cliente.getTelefono();
+                    String telefonoClienteDesencriptado = CifradoTelefono.desencriptar(telefonoClienteEncriptado);
+                    cliente.setTelefono(telefonoClienteDesencriptado); // Actualizar cliente con teléfono desencriptado
+                } catch (Exception e) {
+                    throw new DAOException("Error al desencriptar el teléfono del cliente en la reservación", e);
+                }
+            }
+        }
+
+        return reservaciones;
+
+    } catch (NoResultException e) {
+        return new ArrayList<>(); // Retorna lista vacía si no hay resultados
+    } catch (Exception e) {
+        throw new DAOException("Error al obtener reservaciones del cliente en el restaurante", e);
+    } finally {
+        if (entityManager != null) {
+            try {
+                entityManager.close();
+            } catch (Exception e) {
+                System.err.println("Error al cerrar el EntityManager: " + e.getMessage());
+            }
         }
     }
+}
+
+
+
 
     @Override
     public Reservacion obtenerReservacionPorID(Long id) throws DAOException {

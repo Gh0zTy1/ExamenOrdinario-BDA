@@ -6,10 +6,7 @@
 package guis;
 
 import bo.ClientesBO;
-import bo.MesasBO;
 import dto.ClienteDTO;
-import dto.EstadoReservacionDTO;
-import dto.MesaDTO;
 import dto.ReservacionDTO;
 import java.util.List;
 import java.util.logging.Level;
@@ -378,7 +375,8 @@ public class frmHistorialCliente extends javax.swing.JFrame {
 
     private void cbxClientesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cbxClientesActionPerformed
         String telefonoSeleccionado = (String) cbxClientes.getSelectedItem();
-
+        System.out.println("TElefono seleccionado es"+telefonoSeleccionado);
+        System.out.println("ID RESTAURANTE"+ this.restaurante.getId());
         try {
             List<ReservacionDTO> reservaciones;
 
