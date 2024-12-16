@@ -53,7 +53,7 @@ public interface IRestaurantesDAO {
     /**
      * Elimina una sucursal en el sistema
      * @param idRestaurante ID de la sucursal a eliminar
-     * @throws Excepciones.DAOException
+     * @throws excepciones.DAOException Si ocurre un error en la eliminacion
      */
     public void eliminarRestaurante(Long idRestaurante) throws DAOException;
 }

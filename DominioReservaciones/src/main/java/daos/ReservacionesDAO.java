@@ -1,7 +1,6 @@
 package daos;
 
 import Excepciones.DAOException;
-import cifrado.CifradoTelefono;
 import conexion.Conexion;
 import conexion.IConexion;
 import entidades.EstadoReservacion;
@@ -38,36 +37,18 @@ public class ReservacionesDAO implements IReservacionesDAO {
     
 
      @Override
-public List<Reservacion> obtenerReservacionesTodos(Long idRestaurante) throws DAOException {
-    try {
-        TypedQuery<Reservacion> query = conexion.crearConexion().createQuery(
-                "SELECT r FROM Reservacion r WHERE r.mesa.restaurante.id = :idRestaurante", Reservacion.class);
-        query.setParameter("idRestaurante", idRestaurante);
-        List<Reservacion> reservaciones = query.getResultList();
-        
-        // Descifrar los teléfonos de cada reservación
-        for (Reservacion reservacion : reservaciones) {
-            // Asumimos que el objeto Cliente está asociado a cada Reservacion
-            String telefonoCifrado = reservacion.getCliente().getTelefono();  // Accedemos al teléfono cifrado
-            if (telefonoCifrado != null) {
-                try {
-                    String telefonoDescifrado = CifradoTelefono.desencriptar(telefonoCifrado);  // Desciframos el teléfono
-                    reservacion.getCliente().setTelefono(telefonoDescifrado);  // Actualizamos el teléfono del cliente
-                } catch (Exception e) {
-                    // Manejo de excepción en caso de error al descifrar
-                    throw new DAOException("Error al descifrar el teléfono del cliente", e);
-                }
-            }
+    public List<Reservacion> obtenerReservacionesTodos(Long idRestaurante) throws DAOException {
+        try {
+            TypedQuery<Reservacion> query = conexion.crearConexion().createQuery(
+                    "SELECT r FROM Reservacion r WHERE r.mesa.restaurante.id = :idRestaurante", Reservacion.class);
+            query.setParameter("idRestaurante", idRestaurante);
+            return query.getResultList();
+        } catch (NoResultException e) {
+            return new ArrayList<>();
+        } catch (Exception e) {
+            throw new DAOException("Error al obtener todas las reservaciones del restaurante", e);
         }
-        
-        return reservaciones;
-    } catch (NoResultException e) {
-        return new ArrayList<>();
-    } catch (Exception e) {
-        throw new DAOException("Error al obtener todas las reservaciones del restaurante", e);
     }
-}
-
 
     @Override
     public List<Reservacion> obtenerReservacionesDeMesa(Long idRestaurante, String codigoMesa) throws DAOException {

@@ -39,10 +39,6 @@ public class Conexion implements IConexion {
         }
         return instancia;
     }
-    /**
-     * 
-     * @return 
-     */
 
     @Override
     public EntityManager crearConexion() {
