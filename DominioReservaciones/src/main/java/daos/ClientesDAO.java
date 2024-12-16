@@ -6,6 +6,7 @@ package daos;
 
 import Excepciones.DAOException;
 import cifrado.CifradoTelefono;
+import conexion.Conexion;
 import conexion.IConexion;
 import entidades.Cliente;
 import idaos.IClientesDAO;
@@ -14,6 +15,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
+import javax.persistence.NoResultException;
 import javax.persistence.TypedQuery;
 
 /**
@@ -80,25 +82,32 @@ public class ClientesDAO implements IClientesDAO {
         }
     }
 
-    @Override
-    public Cliente obtenerClientePorTelefono(String numeroTelefono) throws DAOException {
-        EntityManager entityManager = conexion.crearConexion();
+   @Override
+public Cliente obtenerClientePorTelefono(String numeroTelefono) throws DAOException {
+    EntityManager entityManager = Conexion.getInstance().crearConexion();
+    try {
+        // Cifrar el número de teléfono para la consulta
+        String telefonoCifrado = CifradoTelefono.encriptar(numeroTelefono);
 
-        try {
-            Cliente cl = entityManager.createQuery(
-                            "SELECT c FROM Cliente c WHERE c.telefono = :telefono", Cliente.class)
-                    .setParameter("telefono", numeroTelefono)
-                    .getSingleResult();
+        // Buscar cliente por el teléfono cifrado
+        Cliente cliente = entityManager.createQuery(
+                "SELECT c FROM Cliente c WHERE c.telefono = :telefono", Cliente.class)
+                .setParameter("telefono", telefonoCifrado)
+                .getSingleResult();
 
-            if (cl == null) {
-                throw new DAOException("No se encontró al cliente con el número de teléfono dado.");
-            }
-
-            return cl;
-        } catch (Exception e) {
-            throw new DAOException("Error al obtener la información del cliente, por favor intente más tarde.", e);
-        } finally {
-            entityManager.close();
+        // Descifrar el teléfono antes de retornarlo
+        if (cliente.getTelefono() != null) {
+            cliente.setTelefono(CifradoTelefono.desencriptar(cliente.getTelefono()));
         }
+
+        return cliente;
+    } catch (NoResultException e) {
+        throw new DAOException("No se encontró al cliente con el número de teléfono dado.", e);
+    } catch (Exception e) {
+        throw new DAOException("Error al obtener la información del cliente, por favor intente más tarde.", e);
+    } finally {
+        entityManager.close();
     }
+}
+
 }

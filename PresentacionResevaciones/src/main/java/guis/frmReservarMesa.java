@@ -327,7 +327,20 @@ this.clientesBO = fachada.getClientesBO();
     }//GEN-LAST:event_btnAtrasActionPerformed
 
     private void btnReservarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnReservarActionPerformed
- try {
+try {
+        // Validación de restaurante y horario
+        if (restaurante == null) {
+            throw new IllegalArgumentException("El restaurante no está configurado correctamente.");
+        }
+        
+        LocalTime horaApertura = restaurante.getHoraApertura();
+        LocalTime horaCierre = restaurante.getHoraCierre();
+        if (horaApertura == null || horaCierre == null) {
+            throw new IllegalArgumentException("El restaurante no tiene configuradas las horas de apertura y cierre.");
+        }
+        
+        horaCierre = horaCierre.minusHours(1); // Última hora válida
+
         // Validación 1: Obtener la mesa seleccionada
         int filaSeleccionada = tblMesas.getSelectedRow();
         if (filaSeleccionada == -1) {
@@ -341,9 +354,12 @@ this.clientesBO = fachada.getClientesBO();
         mesaSeleccionada.setId(idMesa);
         mesaSeleccionada.setCodigo(codigoMesa);
         mesaSeleccionada.setRestaurante(restaurante);
+        
+        
 
         // Validación 2: Obtener el cliente seleccionado
         String telefonoCliente = (String) cbxClientes.getSelectedItem();
+        System.out.println("Teléfono seleccionado: " + telefonoCliente);
         if (telefonoCliente == null || telefonoCliente.equals("<None>")) {
             throw new IllegalArgumentException("Seleccione un cliente válido.");
         }
@@ -371,8 +387,6 @@ this.clientesBO = fachada.getClientesBO();
         }
 
         // Validación de horario del restaurante
-        LocalTime horaApertura = restaurante.getHoraApertura();
-        LocalTime horaCierre = restaurante.getHoraCierre().minusHours(1); // Última hora válida
         if (horaSeleccionada.isBefore(horaApertura) || horaSeleccionada.isAfter(horaCierre)) {
             throw new IllegalArgumentException("La reservación solo puede hacerse entre %s y %s"
                     .formatted(horaApertura, horaCierre));
@@ -408,6 +422,7 @@ this.clientesBO = fachada.getClientesBO();
     } catch (Exception e) {
         JOptionPane.showMessageDialog(this, "Ocurrió un error inesperado: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
     }
+
     }//GEN-LAST:event_btnReservarActionPerformed
 
     private void cbxClientesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cbxClientesActionPerformed
