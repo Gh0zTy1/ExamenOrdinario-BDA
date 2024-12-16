@@ -1,8 +1,10 @@
 package daos;
 
 import Excepciones.DAOException;
+import cifrado.CifradoTelefono;
 import conexion.Conexion;
 import conexion.IConexion;
+import entidades.Cliente;
 import entidades.EstadoReservacion;
 import entidades.Reservacion;
 import entidades.TipoMesa;
@@ -36,19 +38,42 @@ public class ReservacionesDAO implements IReservacionesDAO {
  
     
 
-     @Override
-    public List<Reservacion> obtenerReservacionesTodos(Long idRestaurante) throws DAOException {
-        try {
-            TypedQuery<Reservacion> query = conexion.crearConexion().createQuery(
-                    "SELECT r FROM Reservacion r WHERE r.mesa.restaurante.id = :idRestaurante", Reservacion.class);
-            query.setParameter("idRestaurante", idRestaurante);
-            return query.getResultList();
-        } catch (NoResultException e) {
-            return new ArrayList<>();
-        } catch (Exception e) {
-            throw new DAOException("Error al obtener todas las reservaciones del restaurante", e);
+@Override
+public List<Reservacion> obtenerReservacionesTodos(Long idRestaurante) throws DAOException {
+    try {
+        TypedQuery<Reservacion> query = conexion.crearConexion().createQuery(
+                "SELECT r FROM Reservacion r WHERE r.mesa.restaurante.id = :idRestaurante", Reservacion.class);
+        query.setParameter("idRestaurante", idRestaurante);
+        List<Reservacion> reservaciones = query.getResultList();
+
+        // Desencriptar el teléfono del cliente asociado a cada reservación
+        for (Reservacion reservacion : reservaciones) {
+            try {
+                if (reservacion.getCliente() != null && reservacion.getCliente().getTelefono() != null) {
+                    Cliente cliente = reservacion.getCliente();
+                    String telefonoClienteEncriptado = cliente.getTelefono();
+                    String telefonoClienteDesencriptado = CifradoTelefono.desencriptar(telefonoClienteEncriptado);
+                    cliente.setTelefono(telefonoClienteDesencriptado);
+
+                    // Asegurarse de que la reservación actualiza el cliente con el teléfono desencriptado
+                    reservacion.setCliente(cliente);
+                }
+            } catch (Exception e) {
+                // Manejar errores de desencriptación
+                throw new DAOException("Error al desencriptar el teléfono del cliente en una reservación", e);
+            }
         }
+
+        return reservaciones;
+    } catch (NoResultException e) {
+        return new ArrayList<>();
+    } catch (Exception e) {
+        throw new DAOException("Error al obtener todas las reservaciones del restaurante", e);
     }
+}
+
+
+
 
     @Override
     public List<Reservacion> obtenerReservacionesDeMesa(Long idRestaurante, String codigoMesa) throws DAOException {
