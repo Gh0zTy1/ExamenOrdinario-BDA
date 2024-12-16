@@ -23,6 +23,7 @@ import fachadas.cancelarReservacionFCD;
 import fachadas.consultarHistorialClienteFCD;
 import fachadas.consultarHistorialRestauranteFCD;
 import fachadas.crearReservacionFACHADA;
+import fachadas.eliminarMesasFCD;
 import ibo.ITiposMesaBO;
 import java.util.ArrayList;
 import java.util.List;
@@ -168,4 +169,24 @@ public class fabricaFCD {
     // Retornar la lista de nombres de los tipos de mesa
     return tiposMesaDTOs;
 }
+    
+    public static eliminarMesasFCD fabricaFCDEliminarMesas() {
+    // Crear la conexión a la base de datos
+    Conexion conexion = Conexion.getInstance();
+
+    // Crear el DAO necesario para acceder a las mesas
+    MesasDAO mesasDAO = new MesasDAO(conexion);
+
+    // Crear los convertidores
+    TipoMesaConvertidor tipoMesaConvertidor = new TipoMesaConvertidor();
+    MesaConvertidor mesaConvertidor = new MesaConvertidor();
+
+    // Crear el BO (lógica de negocio) para las mesas, pasando los convertidores
+    MesasBO mesasBO = new MesasBO(mesasDAO, mesaConvertidor, tipoMesaConvertidor);
+
+    // Crear y devolver la instancia de eliminarMesasFCD
+    return new eliminarMesasFCD(mesasBO);
+}
+
+    
 }

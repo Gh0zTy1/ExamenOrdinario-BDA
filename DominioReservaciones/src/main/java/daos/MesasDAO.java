@@ -67,11 +67,12 @@ public class MesasDAO implements IMesasDAO {
 
     @Override
     public void eliminarMesa(Long idRestaurante, String codigo) throws DAOException {
-        EntityTransaction transaction = conexion.crearConexion().getTransaction();
+        EntityManager entityManager = Conexion.getInstance().crearConexion();
+        EntityTransaction transaction = entityManager.getTransaction();
         try {
             transaction.begin();
 
-            TypedQuery<Mesa> consulta = conexion.crearConexion().createQuery(
+            TypedQuery<Mesa> consulta = entityManager.createQuery(
                 "SELECT m FROM Mesa m WHERE m.codigo = :codigo AND m.restaurante.id = :idRestaurante", 
                 Mesa.class
             );
@@ -84,7 +85,7 @@ public class MesasDAO implements IMesasDAO {
                 throw new DAOException("No se encontró la mesa con el código dado");
             }
 
-            conexion.crearConexion().remove(mesa);
+            entityManager.remove(mesa);
             transaction.commit();
         } catch (NoResultException e) {
             if (transaction.isActive()) transaction.rollback();

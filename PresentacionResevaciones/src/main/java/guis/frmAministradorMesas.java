@@ -12,6 +12,7 @@ import excepciones.NegocioException;
 import fabricas.fabricaFCD;
 import fachadas.TiposMesaFachada;
 import fachadas.agregarMesasFCD;
+import fachadas.eliminarMesasFCD;
 import iFachadas.ICargarMesasFCD;
 import java.awt.GridLayout;
 import java.util.List;
@@ -66,6 +67,7 @@ public class frmAministradorMesas extends javax.swing.JFrame {
                 mesa.getId(),
                 mesa.getCodigo(),
                 mesa.getUbicacion().toString(),
+                mesa.getRestaurante().getId(),
                 mesa.getTipoMesa().getNombre()
             });
         }
@@ -106,9 +108,52 @@ private int obtenerSiguienteNumeroSecuencial(String ubicacionAbrev, String tipoM
         return 1;  // En caso de error, empieza desde 1
     }
 }
+    public void eliminarMesaSeleccionada() {
+    // Obtén la fila seleccionada de la tabla
+    int filaSeleccionada = tblMesas.getSelectedRow();
 
-    
-     
+    // Verifica que una fila esté seleccionada
+    if (filaSeleccionada == -1) {
+        JOptionPane.showMessageDialog(this, "Por favor, seleccione una mesa para eliminar.", "Error", JOptionPane.ERROR_MESSAGE);
+        return;
+    }
+
+    // Obtén el ID del restaurante y el código de la mesa desde la tabla
+    Long idRestaurante = (Long) tblMesas.getValueAt(filaSeleccionada, 3); // Cambia el índice según corresponda (columna 0 para idRestaurante)
+    String codigoMesa = (String) tblMesas.getValueAt(filaSeleccionada, 1); // Cambia el índice según corresponda (columna 1 para codigoMesa)
+
+    // Verifica si los valores son válidos
+    if (idRestaurante == null || codigoMesa == null || codigoMesa.isEmpty()) {
+        JOptionPane.showMessageDialog(this, "La mesa seleccionada no tiene un ID o código válido.", "Error", JOptionPane.ERROR_MESSAGE);
+        return;
+    }
+
+    // Confirmación antes de eliminar
+    int respuesta = JOptionPane.showConfirmDialog(this, "¿Está seguro que desea eliminar esta mesa?", "Confirmación", JOptionPane.YES_NO_OPTION);
+    if (respuesta == JOptionPane.YES_OPTION) {
+        // Aquí llamamos al método de la fachada para eliminar la mesa
+        try {
+            eliminarMesaDeFachada(idRestaurante, codigoMesa); // Llamamos a la fachada con ambos parámetros
+            JOptionPane.showMessageDialog(this, "Mesa eliminada exitosamente.", "Éxito", JOptionPane.INFORMATION_MESSAGE);
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this, "Error al eliminar la mesa: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+        }
+          // Actualizar la tabla
+                cargarMesasEnTabla();
+    }
+}
+
+/**
+ * Método para eliminar la mesa usando la fachada correspondiente.
+ */
+private void eliminarMesaDeFachada(Long idRestaurante, String codigoMesa) throws Exception {
+    // Aquí puedes llamar a tu fachada para manejar la eliminación de la mesa
+    // Llamamos al método de la fachada con ambos parámetros
+    eliminarMesasFCD eliminarFCD = fabricaFCD.fabricaFCDEliminarMesas();
+    eliminarFCD.eliminarMesa(idRestaurante, codigoMesa); // Método modificado para aceptar ambos parámetros
+}
+
+
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -144,13 +189,13 @@ private int obtenerSiguienteNumeroSecuencial(String ubicacionAbrev, String tipoM
 
         tblMesas.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null}
+                {null, null, null, null, null},
+                {null, null, null, null, null},
+                {null, null, null, null, null},
+                {null, null, null, null, null}
             },
             new String [] {
-                "ID", "Codigo", "Ubicacion", "Tipo mesa"
+                "ID", "Codigo", "Ubicacion", "ID restaurante", "Tipo mesa"
             }
         ));
         jScrollPane1.setViewportView(tblMesas);
@@ -290,7 +335,8 @@ private int obtenerSiguienteNumeroSecuencial(String ubicacionAbrev, String tipoM
     }//GEN-LAST:event_btnAtrasActionPerformed
 
     private void btnEliminarMesaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEliminarMesaActionPerformed
-        // TODO add your handling code here:
+eliminarMesaSeleccionada();
+ 
     }//GEN-LAST:event_btnEliminarMesaActionPerformed
 
    
