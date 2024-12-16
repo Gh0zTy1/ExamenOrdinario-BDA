@@ -117,11 +117,10 @@ public class MesasDAO implements IMesasDAO {
     }
     
     
-  @Override
+@Override
 public void insertarMesa(Mesa mesa) throws DAOException {
     EntityManager entityManager = Conexion.getInstance().crearConexion();
-        EntityTransaction transaction = entityManager.getTransaction();
- 
+    EntityTransaction transaction = entityManager.getTransaction();
 
     if (mesa == null || mesa.getUbicacion() == null || mesa.getTipoMesa() == null || mesa.getCodigo() == null) {
         throw new DAOException("Parámetros inválidos para la inserción de la mesa");
@@ -131,24 +130,53 @@ public void insertarMesa(Mesa mesa) throws DAOException {
         // Iniciar la transacción
         transaction.begin();
 
+        // Verificar si el restaurante existe
         Restaurante restaurante = entityManager.find(Restaurante.class, mesa.getRestaurante().getId());
         if (restaurante == null) {
             throw new DAOException("El restaurante especificado no existe");
         }
         mesa.setRestaurante(restaurante);
 
-        // Persistir la mesa con el código generado
-        entityManager.persist(mesa);
+        // Obtener el código original
+        String codigoOriginal = mesa.getCodigo();
+        String nuevoCodigo = codigoOriginal;
         
+        // Consulta para obtener todas las mesas que tienen el mismo prefijo de código
+        TypedQuery<Mesa> query = entityManager.createQuery(
+            "SELECT m FROM Mesa m WHERE m.codigo LIKE :codigo", Mesa.class);
+        query.setParameter("codigo", codigoOriginal.substring(0, codigoOriginal.lastIndexOf('-') + 1) + "%");
+        List<Mesa> mesasExistentes = query.getResultList();
+
+        // Si ya existe una mesa con el código, incrementar el número final del código
+        if (!mesasExistentes.isEmpty()) {
+            int maxNumber = 0;
+            // Buscar el máximo número final del código
+            for (Mesa m : mesasExistentes) {
+                String codigoMesa = m.getCodigo();
+                String[] partes = codigoMesa.split("-");
+                int numero = Integer.parseInt(partes[2]);
+                if (numero > maxNumber) {
+                    maxNumber = numero;
+                }
+            }
+            // Incrementar el número final
+            maxNumber++;
+            // Generar el nuevo código con el número incrementado
+            nuevoCodigo = codigoOriginal.substring(0, codigoOriginal.lastIndexOf('-') + 1) + String.format("%03d", maxNumber);
+            mesa.setCodigo(nuevoCodigo);
+        }
+
+        // Asignar el nuevo código a la mesa
+        mesa.setCodigo(nuevoCodigo);
+
+        // Persistir la mesa con el nuevo código generado
+        entityManager.persist(mesa);
+
         // Forzar la sincronización de los cambios con la base de datos
-       entityManager.flush();
+        entityManager.flush();
 
         // Verificar que la mesa se haya guardado correctamente
-        TypedQuery<Mesa> query =entityManager.createQuery(
-            "SELECT m FROM Mesa m WHERE m.codigo = :codigo", Mesa.class);
-        query.setParameter("codigo", mesa.getCodigo());
-        
-        Mesa mesaGuardada = query.getSingleResult();
+        Mesa mesaGuardada = entityManager.find(Mesa.class, mesa.getId());
 
         // Si llegamos aquí, la mesa se ha guardado correctamente
         System.out.println("Mesa guardada correctamente: " + mesaGuardada);
@@ -159,14 +187,16 @@ public void insertarMesa(Mesa mesa) throws DAOException {
         // Si ocurre un error, revertir la transacción
         if (transaction.isActive()) {
             transaction.rollback();
-        } 
+        }
         throw new DAOException("Error al insertar la mesa: " + e.getMessage());
-    }finally{
+    } finally {
         if (entityManager.isOpen()) {
-                entityManager.close();
-            }
+            entityManager.close();
+        }
     }
 }
+
+
 
 @Override
 public void modificarMesa(Long idRestaurante, String codigo, TipoMesa nuevoTipo, UbicacionMesa nuevaUbicacion) throws DAOException {

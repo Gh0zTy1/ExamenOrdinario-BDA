@@ -75,18 +75,18 @@ public class frmAministradorMesas extends javax.swing.JFrame {
     }
 }
     
-   private String generarCodigoMesa(String ubicacion, String tipoMesa, String capacidad) {
+ private String generarCodigoMesa(String ubicacion, String tipoMesa, String capacidad) {
     // Convertir las primeras letras de la ubicación y tipo de mesa
     String ubicacionAbrev = ubicacion.substring(0, 3).toUpperCase();
-    String tipoMesaAbrev = tipoMesa.substring(0, 3).toUpperCase();
 
     // Obtener el siguiente número secuencial único desde la base de datos
-    int numeroSecuencial = obtenerSiguienteNumeroSecuencial(ubicacionAbrev, tipoMesaAbrev);
+    int numeroSecuencial = obtenerSiguienteNumeroSecuencial(ubicacionAbrev, capacidad);
 
     // Formatear el código como: "UBI-TIP-001"
     return ubicacionAbrev + "-" + capacidad + "-" + String.format("%03d", numeroSecuencial);
 }
-private int obtenerSiguienteNumeroSecuencial(String ubicacionAbrev, String tipoMesaAbrev) {
+
+private int obtenerSiguienteNumeroSecuencial(String ubicacionAbrev, String capacidad) {
     // Aquí es donde obtienes el siguiente número secuencial desde la base de datos.
     // Llamas al DAO o al servicio que maneja las mesas y consultas el siguiente número secuencial.
     try {
@@ -94,19 +94,20 @@ private int obtenerSiguienteNumeroSecuencial(String ubicacionAbrev, String tipoM
         Long idRestaurante = restaurante.getId(); // Obtén el ID del restaurante
         List<MesaDTO> mesas = fachadaMesas.cargarMesas(idRestaurante);
 
-        // Filtrar las mesas que corresponden a la ubicación y tipo de mesa
+        // Filtrar las mesas que corresponden a la ubicación y capacidad
         long count = mesas.stream()
                 .filter(m -> m.getUbicacion().toString().substring(0, 3).equals(ubicacionAbrev) && 
-                             m.getTipoMesa().getNombre().substring(0, 3).equals(tipoMesaAbrev))
+                             String.valueOf(m.getTipoMesa().getMaximoPersonas()).equals(capacidad))
                 .count();
 
-        // El siguiente número será el número de mesas con esa ubicación y tipo + 1
+        // El siguiente número será el número de mesas con esa ubicación y capacidad + 1
         return (int) (count + 1);
     } catch (NegocioException e) {
         JOptionPane.showMessageDialog(this, "Error al obtener el siguiente número secuencial: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
         return 1;  // En caso de error, empieza desde 1
     }
 }
+
     public void eliminarMesaSeleccionada() {
     // Obtén la fila seleccionada de la tabla
     int filaSeleccionada = tblMesas.getSelectedRow();
@@ -316,7 +317,7 @@ private void eliminarMesaDeFachada(Long idRestaurante, String codigoMesa) throws
                 fachadaMesas.agregarMesas(mesaDTO);
                 
                 // Mensaje de éxito
-                JOptionPane.showMessageDialog(this, "Mesa agregada con éxito. Código de la mesa: " + codigoMesa);
+                JOptionPane.showMessageDialog(this, "Mesa agregada con éxito. Código de la mesa: ");
                 
                 // Actualizar la tabla
                 cargarMesasEnTabla();
