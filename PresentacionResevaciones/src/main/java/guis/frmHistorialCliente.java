@@ -300,7 +300,7 @@ public class frmHistorialCliente extends javax.swing.JFrame {
         Font fontContenido = new Font(Font.FontFamily.HELVETICA, 10, Font.NORMAL);
 
         // Título del reporte
-        Paragraph titulo = new Paragraph("Reporte de Reservaciones", fontTitulo);
+        Paragraph titulo = new Paragraph("Reporte de Reservaciones Por Cliente", fontTitulo);
         titulo.setAlignment(Element.ALIGN_CENTER);
         document.add(titulo);
         document.add(new Paragraph(" ")); // Espacio en blanco
