@@ -1,1 +1,0 @@
-packageSearchIndex = [{"l":"All Packages","u":"allpackages-index.html"},{"l":"bo"},{"l":"com.mycompany.negocioresevaciones"},{"l":"convertidores"},{"l":"dto"},{"l":"excepciones"},{"l":"fabricas"},{"l":"fachadas"},{"l":"ibo"},{"l":"iFachadas"}];updateSearchResults();
