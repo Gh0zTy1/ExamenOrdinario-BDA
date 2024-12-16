@@ -6,16 +6,21 @@ package fabricas;
 
 import bo.MesasBO;
 import bo.ReservacionesBO;
+import bo.RestaurantesBO;
 import bo.TiposMesaBO;
 import conexion.Conexion;
 import convertidores.MesaConvertidor;
 import convertidores.ReservacionConvertidor;
+import convertidores.RestauranteConvertidor;
 import convertidores.TipoMesaConvertidor;
 import daos.MesasDAO;
 import daos.ReservacionesDAO;
+import daos.RestaurantesDAO;
 import daos.TiposMesaDAO;
 import dto.TipoMesaDTO;
 import excepciones.NegocioException;
+import fachadas.ActualizarRestauranteFACHADA;
+import fachadas.AgregarRestauranteFACHADA;
 import fachadas.CargarMesasFACHADA;
 import fachadas.TiposMesaFachada;
 import fachadas.agregarMesasFCD;
@@ -188,5 +193,39 @@ public class fabricaFCD {
     return new eliminarMesasFCD(mesasBO);
 }
 
+    
+    public static ActualizarRestauranteFACHADA fabricaFCDActualizarRestaurante() {
+    // Crear la conexión a la base de datos
+    Conexion conexion = Conexion.getInstance();
+
+    // Crear el DAO necesario para acceder a los restaurantes
+    RestaurantesDAO restaurantesDAO = new RestaurantesDAO(conexion);
+
+    // Crear el convertidor de restaurantes
+    RestauranteConvertidor restauranteConvertidor = new RestauranteConvertidor();
+
+    // Crear el BO (lógica de negocio) para restaurantes
+    RestaurantesBO restaurantesBO = new RestaurantesBO(restaurantesDAO, restauranteConvertidor);
+
+    // Crear y devolver la instancia de ActualizarRestauranteFACHADA
+    return new ActualizarRestauranteFACHADA(restaurantesBO);
+}
+
+public static AgregarRestauranteFACHADA fabricaFCDAgregarRestaurante() {
+    // Crear la conexión a la base de datos
+    Conexion conexion = Conexion.getInstance();
+
+    // Crear el DAO necesario para acceder a los restaurantes
+    RestaurantesDAO restaurantesDAO = new RestaurantesDAO(conexion);
+
+    // Crear el convertidor de restaurantes
+    RestauranteConvertidor restauranteConvertidor = new RestauranteConvertidor();
+
+    // Crear el BO (lógica de negocio) para restaurantes
+    RestaurantesBO restaurantesBO = new RestaurantesBO(restaurantesDAO, restauranteConvertidor);
+
+    // Crear y devolver la instancia de AgregarRestauranteFACHADA
+    return new AgregarRestauranteFACHADA(restaurantesBO);
+}
     
 }

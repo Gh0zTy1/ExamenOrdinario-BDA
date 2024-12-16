@@ -21,7 +21,9 @@ C:\Users\caarl\Documents\GitHub\ExamenOrdinario-BDA\NegocioResevaciones\src\main
 C:\Users\caarl\Documents\GitHub\ExamenOrdinario-BDA\NegocioResevaciones\src\main\java\excepciones\NegocioException.java
 C:\Users\caarl\Documents\GitHub\ExamenOrdinario-BDA\NegocioResevaciones\src\main\java\fabricas\fabricaFCD.java
 C:\Users\caarl\Documents\GitHub\ExamenOrdinario-BDA\NegocioResevaciones\src\main\java\fabricas\ReportesFachadaFactory.java
+C:\Users\caarl\Documents\GitHub\ExamenOrdinario-BDA\NegocioResevaciones\src\main\java\fachadas\ActualizarRestauranteFACHADA.java
 C:\Users\caarl\Documents\GitHub\ExamenOrdinario-BDA\NegocioResevaciones\src\main\java\fachadas\agregarMesasFCD.java
+C:\Users\caarl\Documents\GitHub\ExamenOrdinario-BDA\NegocioResevaciones\src\main\java\fachadas\AgregarRestauranteFACHADA.java
 C:\Users\caarl\Documents\GitHub\ExamenOrdinario-BDA\NegocioResevaciones\src\main\java\fachadas\cancelarReservacionFCD.java
 C:\Users\caarl\Documents\GitHub\ExamenOrdinario-BDA\NegocioResevaciones\src\main\java\fachadas\CargarMesasFACHADA.java
 C:\Users\caarl\Documents\GitHub\ExamenOrdinario-BDA\NegocioResevaciones\src\main\java\fachadas\consultarHistorialClienteFCD.java
@@ -30,13 +32,16 @@ C:\Users\caarl\Documents\GitHub\ExamenOrdinario-BDA\NegocioResevaciones\src\main
 C:\Users\caarl\Documents\GitHub\ExamenOrdinario-BDA\NegocioResevaciones\src\main\java\fachadas\eliminarMesasFCD.java
 C:\Users\caarl\Documents\GitHub\ExamenOrdinario-BDA\NegocioResevaciones\src\main\java\fachadas\modificarMesasFCD.java
 C:\Users\caarl\Documents\GitHub\ExamenOrdinario-BDA\NegocioResevaciones\src\main\java\fachadas\ReportesFachada.java
+C:\Users\caarl\Documents\GitHub\ExamenOrdinario-BDA\NegocioResevaciones\src\main\java\fachadas\RestaurantesFachada.java
 C:\Users\caarl\Documents\GitHub\ExamenOrdinario-BDA\NegocioResevaciones\src\main\java\fachadas\TiposMesaFachada.java
 C:\Users\caarl\Documents\GitHub\ExamenOrdinario-BDA\NegocioResevaciones\src\main\java\ibo\IClientesBO.java
 C:\Users\caarl\Documents\GitHub\ExamenOrdinario-BDA\NegocioResevaciones\src\main\java\ibo\IMesasBO.java
 C:\Users\caarl\Documents\GitHub\ExamenOrdinario-BDA\NegocioResevaciones\src\main\java\ibo\IReservacionesBO.java
 C:\Users\caarl\Documents\GitHub\ExamenOrdinario-BDA\NegocioResevaciones\src\main\java\ibo\IRestaurantesBO.java
 C:\Users\caarl\Documents\GitHub\ExamenOrdinario-BDA\NegocioResevaciones\src\main\java\ibo\ITiposMesaBO.java
+C:\Users\caarl\Documents\GitHub\ExamenOrdinario-BDA\NegocioResevaciones\src\main\java\iFachadas\IActualizarRestauranteFCD.java
 C:\Users\caarl\Documents\GitHub\ExamenOrdinario-BDA\NegocioResevaciones\src\main\java\iFachadas\IagregarMesasFCD.java
+C:\Users\caarl\Documents\GitHub\ExamenOrdinario-BDA\NegocioResevaciones\src\main\java\iFachadas\IAgregarRestauranteFCD.java
 C:\Users\caarl\Documents\GitHub\ExamenOrdinario-BDA\NegocioResevaciones\src\main\java\iFachadas\IcancelarReservacionFCD.java
 C:\Users\caarl\Documents\GitHub\ExamenOrdinario-BDA\NegocioResevaciones\src\main\java\iFachadas\ICargarMesasFCD.java
 C:\Users\caarl\Documents\GitHub\ExamenOrdinario-BDA\NegocioResevaciones\src\main\java\iFachadas\IconsultarHistorialClienteFCD.java

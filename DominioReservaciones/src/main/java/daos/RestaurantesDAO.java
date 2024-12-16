@@ -89,14 +89,89 @@ public class RestaurantesDAO implements IRestaurantesDAO {
 
     @Override
     public void agregarRestaurante(Restaurante restaurante) throws DAOException {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        EntityManager entityManager = Conexion.getInstance().crearConexion();
+        EntityTransaction transaction = entityManager.getTransaction();
+        
+        try {
+            // Verificar si ya existe un restaurante con el mismo teléfono o dirección
+            TypedQuery<Long> queryTelefono = entityManager.createQuery(
+                "SELECT COUNT(r) FROM Restaurante r WHERE r.telefono = :telefono", Long.class);
+            queryTelefono.setParameter("telefono", restaurante.getTelefono());
+            
+            TypedQuery<Long> queryDireccion = entityManager.createQuery(
+                "SELECT COUNT(r) FROM Restaurante r WHERE r.direccion = :direccion", Long.class);
+            queryDireccion.setParameter("direccion", restaurante.getDireccion());
+            
+            if (queryTelefono.getSingleResult() > 0) {
+                throw new DAOException("Ya existe un restaurante con este número de teléfono");
+            }
+            
+            if (queryDireccion.getSingleResult() > 0) {
+                throw new DAOException("Ya existe un restaurante con esta dirección");
+            }
+            
+            // Iniciar transacción
+            transaction = entityManager.getTransaction();
+            transaction.begin();
+            
+            // Persistir el nuevo restaurante
+            entityManager.persist(restaurante);
+            
+            // Commit de la transacción
+            transaction.commit();
+        } catch (DAOException e) {
+            // Manejar errores específicos de persistencia
+            if (transaction != null && transaction.isActive()) {
+                transaction.rollback();
+            }
+            throw new DAOException("Error al agregar el restaurante: " + e.getMessage());
+        } catch (Exception e) {
+            // Manejar otros tipos de errores
+            if (transaction != null && transaction.isActive()) {
+                transaction.rollback();
+            }
+            throw new DAOException("Error inesperado al agregar el restaurante: " + e.getMessage());
+        } finally {
+            // Asegurar que el EntityManager se cierre
+            if (entityManager.isOpen()) {
+                entityManager.close();
+            }
+        }
     }
 
     @Override
     public void actualizarRestaurante(Restaurante restaurante) throws DAOException {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        EntityManager entityManager = Conexion.getInstance().crearConexion();
+        EntityTransaction transaction = entityManager.getTransaction();
+        
+        try {
+            transaction = entityManager.getTransaction();
+            transaction.begin();
+            
+            // Buscar el restaurante existente
+            Restaurante restauranteExistente = entityManager.find(Restaurante.class, restaurante.getId());
+            
+            if (restauranteExistente == null) {
+                throw new DAOException("No se encontró un restaurante con el ID proporcionado");
+            }
+            
+            // Actualizar solo los campos necesarios
+            restauranteExistente.setHoraApertura(restaurante.getHoraApertura());
+            restauranteExistente.setHoraCierre(restaurante.getHoraCierre());
+            
+            entityManager.merge(restauranteExistente);
+            transaction.commit();
+        } catch (Exception e) {
+            if (transaction != null && transaction.isActive()) {
+                transaction.rollback();
+            }
+            throw new DAOException("Error al actualizar el horario del restaurante: " + e.getMessage());
+        } finally {
+            if (entityManager.isOpen()) {
+                entityManager.close();
+            }
+        }
     }
-
     @Override
     public void eliminarRestaurante(Long idRestaurante) throws DAOException {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
