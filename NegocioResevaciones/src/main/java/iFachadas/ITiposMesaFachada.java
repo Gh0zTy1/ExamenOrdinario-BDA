@@ -11,6 +11,15 @@ import excepciones.NegocioException;
  *
  * @author caarl
  */
+/**
+ * asd
+ * @author caarl
+ */
 public interface ITiposMesaFachada {
+    /**
+     * 
+     * @param tipoMesaDTO
+     * @throws NegocioException 
+     */
     void agregarTipoMesa(TipoMesaDTO tipoMesaDTO) throws NegocioException;
 }

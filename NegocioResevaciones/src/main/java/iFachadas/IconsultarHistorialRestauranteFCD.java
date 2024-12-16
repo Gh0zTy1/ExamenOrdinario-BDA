@@ -13,5 +13,11 @@ import java.util.List;
  * @author caarl
  */
 public interface IconsultarHistorialRestauranteFCD {
+    /**
+     * 
+     * @param idRestaurante
+     * @return
+     * @throws NegocioException 
+     */
     List<ReservacionDTO> consultarHistorialRestaurante(Long idRestaurante) throws NegocioException;
 }

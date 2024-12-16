@@ -11,5 +11,11 @@ import excepciones.NegocioException;
  * @author caarl
  */
 public interface IeliminarMesasFCD {
+    /**
+     * 
+     * @param idRestaurante
+     * @param codigo
+     * @throws NegocioException 
+     */
     void eliminarMesa(Long idRestaurante, String codigo) throws NegocioException;
 }

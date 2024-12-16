@@ -9,8 +9,14 @@ package com.mycompany.negocioresevaciones;
  * @author caarl
  */
 public class NegocioResevaciones {
-
+/**
+ * 
+ * @param args 
+ */
     public static void main(String[] args) {
+        /**
+         * 
+         */
         System.out.println("Hello World!");
     }
 }

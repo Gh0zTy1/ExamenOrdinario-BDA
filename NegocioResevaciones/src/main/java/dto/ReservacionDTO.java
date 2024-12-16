@@ -56,7 +56,6 @@ public class ReservacionDTO implements Serializable {
      * @param mesa La mesa asociada a la reservación.
      * @param cliente El cliente asociado a la reservación.
      * @param montoTotal El monto total de la reservación.
-     * @param multa La multa asociada a la reservación.
      */
     public ReservacionDTO(Long id, LocalDateTime fechaHora, Integer numeroPersonas, EstadoReservacionDTO estado, MesaDTO mesa, ClienteDTO cliente, Float montoTotal) {
         this.id = id;
@@ -78,7 +77,6 @@ public class ReservacionDTO implements Serializable {
      * @param mesa La mesa asociada a la reservación.
      * @param cliente El cliente asociado a la reservación.
      * @param montoTotal El monto total de la reservación.
-     * @param multa La multa asociada a la reservación.
      */
     public ReservacionDTO(LocalDateTime fechaHora, Integer numeroPersonas, EstadoReservacionDTO estado, MesaDTO mesa, ClienteDTO cliente, Float montoTotal) {
         this.fechaHora = fechaHora;

@@ -37,7 +37,13 @@ public class ReservacionesBO implements IReservacionesBO {
         this.reservacionesDAO = reservacionesDAO;
         this.reservacionConvertidor = reservacionConvertidor;
     }
-
+/**
+ * 
+ * @param idRestaurante
+ * @param codigoMesa
+ * @return
+ * @throws NegocioException 
+ */
     @Override
     public List<ReservacionDTO> obtenerReservacionesDeMesa(Long idRestaurante, String codigoMesa) throws NegocioException {
         try {
@@ -47,7 +53,12 @@ public class ReservacionesBO implements IReservacionesBO {
             throw new NegocioException(e.getMessage());
         }
     }
-
+/**
+ * 
+ * @param idRestaurante
+ * @return
+ * @throws NegocioException 
+ */
     @Override
     public List<ReservacionDTO> obtenerReservacionesTodos(Long idRestaurante) throws NegocioException {
         try {

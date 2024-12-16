@@ -12,5 +12,10 @@ import excepciones.NegocioException;
  * @author caarl
  */
 public interface ICrearReservacionFCD {
+    /**
+     * 
+     * @param reservacion
+     * @throws NegocioException 
+     */
      void crearReservacion(ReservacionDTO reservacion) throws NegocioException;
 }

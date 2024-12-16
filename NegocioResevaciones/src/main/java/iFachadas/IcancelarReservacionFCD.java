@@ -10,6 +10,17 @@ import excepciones.NegocioException;
  *
  * @author caarl
  */
+
+
+/**
+ * 
+ * @author caarl
+ */
 public interface IcancelarReservacionFCD {
+    /**
+     * 
+     * @param idReservacion
+     * @throws NegocioException 
+     */
     void cancelarReservacion(Long idReservacion) throws NegocioException;
 }

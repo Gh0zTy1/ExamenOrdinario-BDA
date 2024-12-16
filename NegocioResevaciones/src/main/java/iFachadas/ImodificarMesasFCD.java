@@ -12,5 +12,10 @@ import excepciones.NegocioException;
  * @author caarl
  */
 public interface ImodificarMesasFCD {
+    /**
+     * 
+     * @param mesaDTO
+     * @throws NegocioException 
+     */
     void modificarMesa(MesaDTO mesaDTO) throws NegocioException;
 }

@@ -93,6 +93,12 @@ public interface IReservacionesBO {
      */
     public void eliminarReservacion(Long id) throws NegocioException;
     
+    /**
+     * 
+     * @param idReservacion
+     * @throws NegocioException 
+     */
+    
      void cancelarReservacion(Long idReservacion) throws NegocioException;
 
 }
