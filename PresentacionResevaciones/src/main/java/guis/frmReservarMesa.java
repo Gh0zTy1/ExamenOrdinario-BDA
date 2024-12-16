@@ -16,6 +16,7 @@ import fabricas.fabricaFCD;
 import fachadas.ReportesFachada;
 import fachadas.RestaurantesFachada;
 import iFachadas.ICargarMesasFCD;
+import iFachadas.IObtenerPrecioTipoMesaFCD;
 import ibo.IReservacionesBO;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -326,8 +327,8 @@ this.clientesBO = fachada.getClientesBO();
     }//GEN-LAST:event_btnAtrasActionPerformed
 
     private void btnReservarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnReservarActionPerformed
-    try {
-    // ** Usar la fábrica para obtener la fachada de restaurantes **
+try {
+    // ** Usar la fábrica para obtener la fachada de restaurantes ** 
     RestaurantesFachada restaurantesFachada = fabricaFCD.fabricaFCDRestaurantes();
 
     // ** Obtener el restaurante por ID (Ejemplo: ID del restaurante en la UI) **
@@ -357,45 +358,44 @@ this.clientesBO = fachada.getClientesBO();
     ClienteDTO cliente = clientesBO.obtenerClientePorTelefono(telefonoCliente);
 
     // ** Validación 3: Fecha y hora de reservación **
-Date fechaSeleccionada = dtcFechaReservacion.getDate();
-LocalTime horaSeleccionada = tpHoradeseada.getTime();
+    Date fechaSeleccionada = dtcFechaReservacion.getDate();
+    LocalTime horaSeleccionada = tpHoradeseada.getTime();
 
-if (fechaSeleccionada == null) {
-    throw new IllegalArgumentException("Seleccione una fecha válida.");
-}
-if (horaSeleccionada == null) {
-    throw new IllegalArgumentException("Seleccione una hora válida.");
-}
-
-LocalDate fechaActual = LocalDate.now();
-LocalDate fechaReservacion = fechaSeleccionada.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
-
-if (fechaReservacion.isBefore(fechaActual)) {
-    throw new IllegalArgumentException("La fecha no puede ser anterior al día de hoy.");
-}
-if (fechaReservacion.isEqual(fechaActual) && horaSeleccionada.isBefore(LocalTime.now())) {
-    throw new IllegalArgumentException("La hora no puede ser anterior a la actual si la reservación es para hoy.");
-}
-
-// Validación de horario del restaurante (si los horarios están configurados)
-LocalTime horaApertura = restaurante.getHoraApertura();
-LocalTime horaCierre = restaurante.getHoraCierre();
-
-if (horaApertura != null && horaCierre != null) {
-    horaCierre = horaCierre.minusHours(1); // Ajuste de margen
-
-    if (horaSeleccionada.isBefore(horaApertura) || horaSeleccionada.isAfter(horaCierre)) {
-        throw new IllegalArgumentException(
-            "La reservación solo puede hacerse entre %s y %s".formatted(horaApertura, horaCierre)
-        );
+    if (fechaSeleccionada == null) {
+        throw new IllegalArgumentException("Seleccione una fecha válida.");
     }
-} else {
-    // Puedes registrar un mensaje informativo si los horarios no están configurados
-    System.out.println("Advertencia: El restaurante no tiene horarios configurados.");
-}
+    if (horaSeleccionada == null) {
+        throw new IllegalArgumentException("Seleccione una hora válida.");
+    }
 
-LocalDateTime fechaHoraReservacion = LocalDateTime.of(fechaReservacion, horaSeleccionada);
+    LocalDate fechaActual = LocalDate.now();
+    LocalDate fechaReservacion = fechaSeleccionada.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
 
+    if (fechaReservacion.isBefore(fechaActual)) {
+        throw new IllegalArgumentException("La fecha no puede ser anterior al día de hoy.");
+    }
+    if (fechaReservacion.isEqual(fechaActual) && horaSeleccionada.isBefore(LocalTime.now())) {
+        throw new IllegalArgumentException("La hora no puede ser anterior a la actual si la reservación es para hoy.");
+    }
+
+    // Validación de horario del restaurante (si los horarios están configurados)
+    LocalTime horaApertura = restaurante.getHoraApertura();
+    LocalTime horaCierre = restaurante.getHoraCierre();
+
+    if (horaApertura != null && horaCierre != null) {
+        horaCierre = horaCierre.minusHours(1); // Ajuste de margen
+
+        if (horaSeleccionada.isBefore(horaApertura) || horaSeleccionada.isAfter(horaCierre)) {
+            throw new IllegalArgumentException(
+                "La reservación solo puede hacerse entre %s y %s".formatted(horaApertura, horaCierre)
+            );
+        }
+    } else {
+        // Puedes registrar un mensaje informativo si los horarios no están configurados
+        System.out.println("Advertencia: El restaurante no tiene horarios configurados.");
+    }
+
+    LocalDateTime fechaHoraReservacion = LocalDateTime.of(fechaReservacion, horaSeleccionada);
 
     // ** Validación 4: Cantidad de personas **
     String cantPersonasStr = (String) cbxCantPersonas.getSelectedItem();
@@ -410,14 +410,20 @@ LocalDateTime fechaHoraReservacion = LocalDateTime.of(fechaReservacion, horaSele
         throw new IllegalArgumentException("La cantidad de personas debe ser un número válido.");
     }
 
-    // ** Creación del DTO de Reservación **
+    // ** Usar la fábrica para obtener la fachada de tipo de mesa y obtener el precio **
+    IObtenerPrecioTipoMesaFCD obtenerPrecioTipoMesaFachada = fabricaFCD.fabricaFCDObtenerPrecioPorTipoMesa();
+    float precioTipoMesa = obtenerPrecioTipoMesaFachada.obtenerPrecioPorTipoMesa(mesaSeleccionada.getId());
+
+    // ** Creación del DTO de Reservación con el monto total **
+    float montoTotal = precioTipoMesa;
+
     ReservacionDTO nuevaReservacion = new ReservacionDTO();
     nuevaReservacion.setMesa(mesaSeleccionada);
     nuevaReservacion.setCliente(cliente);
     nuevaReservacion.setFechaHora(fechaHoraReservacion);
     nuevaReservacion.setNumeroPersonas(numeroPersonas);
+    nuevaReservacion.setMontoTotal(montoTotal); // Agregar monto total
     nuevaReservacion.setEstado(EstadoReservacionDTO.PENDIENTE);
-    
 
     // ** Guardar la reservación **
     reservacionesBO.agregarReservacion(nuevaReservacion);
@@ -453,7 +459,6 @@ LocalDateTime fechaHoraReservacion = LocalDateTime.of(fechaReservacion, horaSele
         JOptionPane.ERROR_MESSAGE
     );
 }
-
 
 
     }//GEN-LAST:event_btnReservarActionPerformed

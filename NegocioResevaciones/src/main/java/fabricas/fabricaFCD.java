@@ -31,6 +31,8 @@ import fachadas.consultarHistorialClienteFCD;
 import fachadas.consultarHistorialRestauranteFCD;
 import fachadas.crearReservacionFACHADA;
 import fachadas.eliminarMesasFCD;
+import fachadas.obtenerPrecioTipoMesaFCD;
+import iFachadas.IObtenerPrecioTipoMesaFCD;
 import iFachadas.ITiposMesaFachada;
 import ibo.ITiposMesaBO;
 import idaos.ITiposMesaDAO;
@@ -266,5 +268,18 @@ public static RestaurantesFachada fabricaFCDRestaurantes() {
     // Crear y devolver la instancia de RestaurantesFachada
     return new RestaurantesFachada(restaurantesBO);
 }
+
+/**
+     * Método de fábrica para crear la fachada ObtenerPrecioTipoMesaFACHADA.
+     *
+     * @return Instancia de la fachada IObtenerPrecioTipoMesaFCD.
+     */
+    public static obtenerPrecioTipoMesaFCD fabricaFCDObtenerPrecioPorTipoMesa() {
+        Conexion conexion = Conexion.getInstance();
+        TiposMesaDAO tiposMesaDAO = new TiposMesaDAO(conexion);
+        TipoMesaConvertidor tipoMesaConvertidor = new TipoMesaConvertidor();
+        TiposMesaBO tiposMesaBO = new TiposMesaBO(tiposMesaDAO, tipoMesaConvertidor);
+        return new obtenerPrecioTipoMesaFCD(tiposMesaBO);
+    }
 
 }

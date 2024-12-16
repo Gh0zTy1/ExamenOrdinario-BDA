@@ -31,4 +31,12 @@ public interface ITiposMesaDAO {
      * @throws DAOException Si ocurre un error en la eliminacion del tipo
      */
     public void eliminarTipoMesa(Long id) throws DAOException;
+    /**
+ * Obtiene el precio de un tipo de mesa por su ID
+ * @param id ID del tipo de mesa
+ * @return Precio del tipo de mesa
+ * @throws DAOException Si ocurre un error en la consulta
+ */
+public float obtenerPrecioPorTipoMesa(Long id) throws DAOException;
+
 }

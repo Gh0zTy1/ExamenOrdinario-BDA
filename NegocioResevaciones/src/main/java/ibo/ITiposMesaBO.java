@@ -34,5 +34,15 @@ public interface ITiposMesaBO {
      * @throws excepciones.NegocioException
      */
     public void eliminarTipoMesa(Long id) throws NegocioException;
+    
+    /**
+ * Obtiene el precio de un tipo de mesa por su ID.
+ * 
+ * @param id ID del tipo de mesa.
+ * @return Precio del tipo de mesa.
+ * @throws NegocioException Si ocurre un error en la operación.
+ */
+float obtenerPrecioPorTipoMesa(Long id) throws NegocioException;
+
 
 }

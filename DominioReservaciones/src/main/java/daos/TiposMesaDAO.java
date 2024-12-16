@@ -9,6 +9,7 @@ import idaos.ITiposMesaDAO;
 import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
+import javax.persistence.NoResultException;
 import javax.persistence.TypedQuery;
 
 /**
@@ -109,4 +110,26 @@ public class TiposMesaDAO implements ITiposMesaDAO {
             }
         }
     }
+    @Override
+public float obtenerPrecioPorTipoMesa(Long id) throws DAOException {
+    EntityManager entityManager = Conexion.getInstance().crearConexion();
+    try {
+        // Consulta para obtener el precio por ID
+        float precio = entityManager.createQuery(
+                "SELECT t.precio FROM TipoMesa t WHERE t.id = :id", float.class)
+                .setParameter("id", id)
+                .getSingleResult();
+
+        return precio;
+    } catch (NoResultException e) {
+        throw new DAOException("No se encontró un tipo de mesa con el ID especificado.");
+    } catch (Exception e) {
+        throw new DAOException("Error al obtener el precio del tipo de mesa: " + e.getMessage());
+    } finally {
+        if (entityManager.isOpen()) {
+            entityManager.close();
+        }
+    }
+}
+
 }

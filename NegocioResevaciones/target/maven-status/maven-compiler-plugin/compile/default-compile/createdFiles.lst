@@ -1,5 +1,6 @@
 fachadas\ReportesFachada.class
 ibo\IMesasBO.class
+fachadas\obtenerPrecioTipoMesaFCD.class
 com\mycompany\negocioresevaciones\NegocioResevaciones.class
 iFachadas\IconsultarHistorialClienteFCD.class
 iFachadas\IconsultarHistorialRestauranteFCD.class
@@ -18,6 +19,7 @@ fachadas\consultarHistorialClienteFCD.class
 convertidores\ReservacionConvertidor.class
 fachadas\eliminarMesasFCD.class
 iFachadas\ITiposMesaFachada.class
+iFachadas\IObtenerPrecioTipoMesaFCD.class
 fachadas\CargarMesasFACHADA.class
 iFachadas\IcancelarReservacionFCD.class
 iFachadas\ICrearReservacionFCD.class

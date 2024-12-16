@@ -64,4 +64,15 @@ public class TiposMesaBO implements ITiposMesaBO {
             throw new NegocioException(e.getMessage());
         }
     }
+    @Override
+public float obtenerPrecioPorTipoMesa(Long id) throws NegocioException {
+    try {
+        // Llamamos al DAO para obtener el precio
+        return tiposMesaDAO.obtenerPrecioPorTipoMesa(id);
+    } catch (DAOException e) {
+        // Encapsulamos cualquier error del DAO en una NegocioException
+        throw new NegocioException("Error al obtener el precio del tipo de mesa: " + e.getMessage());
+    }
+}
+
 }

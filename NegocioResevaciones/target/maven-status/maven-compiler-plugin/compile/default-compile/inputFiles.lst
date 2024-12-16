@@ -32,6 +32,7 @@ C:\Users\caarl\Documents\GitHub\ExamenOrdinario-BDA\NegocioResevaciones\src\main
 C:\Users\caarl\Documents\GitHub\ExamenOrdinario-BDA\NegocioResevaciones\src\main\java\fachadas\crearReservacionFACHADA.java
 C:\Users\caarl\Documents\GitHub\ExamenOrdinario-BDA\NegocioResevaciones\src\main\java\fachadas\eliminarMesasFCD.java
 C:\Users\caarl\Documents\GitHub\ExamenOrdinario-BDA\NegocioResevaciones\src\main\java\fachadas\modificarMesasFCD.java
+C:\Users\caarl\Documents\GitHub\ExamenOrdinario-BDA\NegocioResevaciones\src\main\java\fachadas\obtenerPrecioTipoMesaFCD.java
 C:\Users\caarl\Documents\GitHub\ExamenOrdinario-BDA\NegocioResevaciones\src\main\java\fachadas\ReportesFachada.java
 C:\Users\caarl\Documents\GitHub\ExamenOrdinario-BDA\NegocioResevaciones\src\main\java\fachadas\RestaurantesFachada.java
 C:\Users\caarl\Documents\GitHub\ExamenOrdinario-BDA\NegocioResevaciones\src\main\java\fachadas\TiposMesaFachada.java
@@ -50,4 +51,5 @@ C:\Users\caarl\Documents\GitHub\ExamenOrdinario-BDA\NegocioResevaciones\src\main
 C:\Users\caarl\Documents\GitHub\ExamenOrdinario-BDA\NegocioResevaciones\src\main\java\iFachadas\ICrearReservacionFCD.java
 C:\Users\caarl\Documents\GitHub\ExamenOrdinario-BDA\NegocioResevaciones\src\main\java\iFachadas\IeliminarMesasFCD.java
 C:\Users\caarl\Documents\GitHub\ExamenOrdinario-BDA\NegocioResevaciones\src\main\java\iFachadas\ImodificarMesasFCD.java
+C:\Users\caarl\Documents\GitHub\ExamenOrdinario-BDA\NegocioResevaciones\src\main\java\iFachadas\IObtenerPrecioTipoMesaFCD.java
 C:\Users\caarl\Documents\GitHub\ExamenOrdinario-BDA\NegocioResevaciones\src\main\java\iFachadas\ITiposMesaFachada.java
