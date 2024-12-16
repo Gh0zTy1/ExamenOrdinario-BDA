@@ -15,6 +15,7 @@ public class frmMenu extends javax.swing.JFrame {
     /**
      * Creates new form frmMenu
      */
+    
     private final RestauranteDTO restaurante;
     public frmMenu(RestauranteDTO restaurante) {
          this.restaurante = restaurante;

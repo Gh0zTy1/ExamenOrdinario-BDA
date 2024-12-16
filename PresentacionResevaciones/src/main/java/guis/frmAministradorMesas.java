@@ -10,7 +10,6 @@ import dto.TipoMesaDTO;
 import dto.UbicacionMesaDTO;
 import excepciones.NegocioException;
 import fabricas.fabricaFCD;
-import fachadas.TiposMesaFachada;
 import fachadas.agregarMesasFCD;
 import fachadas.eliminarMesasFCD;
 import iFachadas.ICargarMesasFCD;

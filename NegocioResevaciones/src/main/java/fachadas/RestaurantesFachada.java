@@ -4,6 +4,7 @@
  */
 package fachadas;
 
+import Excepciones.DAOException;
 import dto.RestauranteDTO;
 import excepciones.NegocioException;
 import ibo.IRestaurantesBO;
@@ -26,52 +27,19 @@ public class RestaurantesFachada {
         this.restaurantesBO = restaurantesBO;
     }
 
+    
     /**
-     * Obtiene todos los restaurantes con manejo de errores centralizado.
+     * Método para obtener un restaurante por su ID.
      * 
-     * @return Lista de restaurantes en formato DTO
-     * @throws NegocioException Si ocurre un error al recuperar los restaurantes
-     */
-    public List<RestauranteDTO> obtenerRestaurantesTodos() throws NegocioException {
-        List<RestauranteDTO> restaurantes = restaurantesBO.obtenerRestaurantesTodos(); // Logging de errores
-        // Puedes agregar lógica adicional de manejo de errores
-        // Validaciones adicionales si son necesarias
-        if (restaurantes == null || restaurantes.isEmpty()) {
-            System.out.println("[!] No se encontraron restaurantes.");
-            return Collections.emptyList();
-        }
-        return restaurantes;
-    }
-
-    /**
-     * Método para obtener el primer restaurante de la lista.
-     * 
-     * @return Primer restaurante encontrado
-     * @throws NegocioException Si no hay restaurantes o ocurre un error
-     */
-    public RestauranteDTO obtenerPrimerRestaurante() throws NegocioException {
-        List<RestauranteDTO> restaurantes = obtenerRestaurantesTodos();
-        
-        if (restaurantes.isEmpty()) {
-            throw new NegocioException("No se encontraron restaurantes.");
-        }
-        
-        return restaurantes.getFirst();
-    }
-
-    /**
-     * Método para obtener un restaurante por su nombre.
-     * 
-     * @param nombre Nombre del restaurante a buscar
+     * @param id ID del restaurante a buscar
      * @return Restaurante encontrado
-     * @throws NegocioException Si no se encuentra el restaurante
+     * @throws NegocioException Si ocurre un error o no se encuentra el restaurante
      */
-    public RestauranteDTO obtenerRestaurantePorNombre(String nombre) throws NegocioException {
-        List<RestauranteDTO> restaurantes = obtenerRestaurantesTodos();
-        
-        return restaurantes.stream()
-            .filter(r -> r.getNombre().equalsIgnoreCase(nombre))
-            .findFirst()
-            .orElseThrow(() -> new NegocioException("No se encontró un restaurante con el nombre: " + nombre));
+    public  RestauranteDTO obtenerRestaurantePorID(Long id) throws NegocioException {
+        RestauranteDTO restaurante = restaurantesBO.obtenerRestaurantePorID(id);
+        return restaurante;
     }
+    
+    
+    
 }

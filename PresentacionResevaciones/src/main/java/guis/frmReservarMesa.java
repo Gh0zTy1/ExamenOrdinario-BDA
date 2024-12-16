@@ -14,8 +14,8 @@ import excepciones.NegocioException;
 import fabricas.ReportesFachadaFactory;
 import fabricas.fabricaFCD;
 import fachadas.ReportesFachada;
+import fachadas.RestaurantesFachada;
 import iFachadas.ICargarMesasFCD;
-import iFachadas.ICrearReservacionFCD;
 import ibo.IReservacionesBO;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -23,8 +23,6 @@ import java.time.LocalTime;
 import java.time.ZoneId;
 import java.util.Date;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 
@@ -40,6 +38,7 @@ private final RestauranteDTO restaurante;
  private final IReservacionesBO reservacionesBO;
     /**
      * Creates new form frmReservarMesa
+     * @param restaurante
      */
 
     public frmReservarMesa(RestauranteDTO restaurante) {
@@ -327,101 +326,135 @@ this.clientesBO = fachada.getClientesBO();
     }//GEN-LAST:event_btnAtrasActionPerformed
 
     private void btnReservarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnReservarActionPerformed
-try {
-        // Validación de restaurante y horario
-        if (restaurante == null) {
-            throw new IllegalArgumentException("El restaurante no está configurado correctamente.");
-        }
-        
-        LocalTime horaApertura = restaurante.getHoraApertura();
-        LocalTime horaCierre = restaurante.getHoraCierre();
-        if (horaApertura == null || horaCierre == null) {
-            throw new IllegalArgumentException("El restaurante no tiene configuradas las horas de apertura y cierre.");
-        }
-        
-        horaCierre = horaCierre.minusHours(1); // Última hora válida
+    try {
+    // ** Usar la fábrica para obtener la fachada de restaurantes **
+    RestaurantesFachada restaurantesFachada = fabricaFCD.fabricaFCDRestaurantes();
 
-        // Validación 1: Obtener la mesa seleccionada
-        int filaSeleccionada = tblMesas.getSelectedRow();
-        if (filaSeleccionada == -1) {
-            throw new IllegalArgumentException("Por favor, seleccione una mesa.");
-        }
-        Long idMesa = (Long) tblMesas.getValueAt(filaSeleccionada, 0); // ID de la mesa
-        String codigoMesa = (String) tblMesas.getValueAt(filaSeleccionada, 1);
+    // ** Obtener el restaurante por ID (Ejemplo: ID del restaurante en la UI) **
+    Long idRestaurante = 1L; // Este método debe obtener el ID del restaurante seleccionado en la UI
+    RestauranteDTO restaurante = restaurantesFachada.obtenerRestaurantePorID(idRestaurante);
 
-        // Crear un objeto MesaDTO
-        MesaDTO mesaSeleccionada = new MesaDTO();
-        mesaSeleccionada.setId(idMesa);
-        mesaSeleccionada.setCodigo(codigoMesa);
-        mesaSeleccionada.setRestaurante(restaurante);
-        
-        
-
-        // Validación 2: Obtener el cliente seleccionado
-        String telefonoCliente = (String) cbxClientes.getSelectedItem();
-        System.out.println("Teléfono seleccionado: " + telefonoCliente);
-        if (telefonoCliente == null || telefonoCliente.equals("<None>")) {
-            throw new IllegalArgumentException("Seleccione un cliente válido.");
-        }
-
-        ClienteDTO cliente = clientesBO.obtenerClientePorTelefono(telefonoCliente);
-
-        // Validación 3: Obtener la fecha y hora
-        Date fechaSeleccionada = dtcFechaReservacion.getDate();
-        LocalTime horaSeleccionada = tpHoradeseada.getTime();
-        if (fechaSeleccionada == null) {
-            throw new IllegalArgumentException("Seleccione una fecha válida.");
-        }
-        if (horaSeleccionada == null) {
-            throw new IllegalArgumentException("Seleccione una hora válida.");
-        }
-
-        // Validaciones de fecha y hora
-        LocalDate fechaActual = LocalDate.now();
-        LocalDate fechaReservacion = fechaSeleccionada.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
-        if (fechaReservacion.isBefore(fechaActual)) {
-            throw new IllegalArgumentException("La fecha no puede ser anterior al día de hoy.");
-        }
-        if (fechaReservacion.isEqual(fechaActual) && horaSeleccionada.isBefore(LocalTime.now())) {
-            throw new IllegalArgumentException("La hora no puede ser anterior a la hora actual si la reservación es para hoy.");
-        }
-
-        // Validación de horario del restaurante
-        if (horaSeleccionada.isBefore(horaApertura) || horaSeleccionada.isAfter(horaCierre)) {
-            throw new IllegalArgumentException("La reservación solo puede hacerse entre %s y %s"
-                    .formatted(horaApertura, horaCierre));
-        }
-
-        // Combinar fecha y hora en LocalDateTime
-        LocalDateTime fechaHoraReservacion = LocalDateTime.of(fechaReservacion, horaSeleccionada);
-
-        // Validación 4: Obtener el número de personas
-        String cantPersonasStr = (String) cbxCantPersonas.getSelectedItem();
-        if (cantPersonasStr == null) {
-            throw new IllegalArgumentException("Seleccione la cantidad de personas.");
-        }
-        int numeroPersonas = Integer.parseInt(cantPersonasStr);
-
-        // Creación del DTO de Reservación
-        ReservacionDTO nuevaReservacion = new ReservacionDTO();
-        nuevaReservacion.setMesa(mesaSeleccionada);
-        nuevaReservacion.setCliente(cliente);
-        nuevaReservacion.setFechaHora(fechaHoraReservacion);
-        nuevaReservacion.setNumeroPersonas(numeroPersonas);
-        nuevaReservacion.setEstado(EstadoReservacionDTO.PENDIENTE);
-
-        // Guardar la reservación
-        reservacionesBO.agregarReservacion(nuevaReservacion);
-        JOptionPane.showMessageDialog(this, "Reservación creada exitosamente.", "Éxito", JOptionPane.INFORMATION_MESSAGE);
-        limpiarFormulario();
-
-    } catch (IllegalArgumentException ex) {
-        JOptionPane.showMessageDialog(this, ex.getMessage(), "Error de Validación", JOptionPane.ERROR_MESSAGE);
-    } catch (NegocioException ex) {
-        JOptionPane.showMessageDialog(this, "Error al guardar la reservación: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
-    } catch (Exception e) {
-        JOptionPane.showMessageDialog(this, "Ocurrió un error inesperado: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+    // ** Validación 1: Selección de mesa **
+    int filaSeleccionada = tblMesas.getSelectedRow();
+    if (filaSeleccionada == -1) {
+        throw new IllegalArgumentException("Por favor, seleccione una mesa.");
     }
+
+    Long idMesa = (Long) tblMesas.getValueAt(filaSeleccionada, 0); // ID de la mesa
+    String codigoMesa = (String) tblMesas.getValueAt(filaSeleccionada, 1);
+
+    MesaDTO mesaSeleccionada = new MesaDTO();
+    mesaSeleccionada.setId(idMesa);
+    mesaSeleccionada.setCodigo(codigoMesa);
+    mesaSeleccionada.setRestaurante(restaurante);
+
+    // ** Validación 2: Selección de cliente **
+    String telefonoCliente = (String) cbxClientes.getSelectedItem();
+    if (telefonoCliente == null || telefonoCliente.equals("<None>")) {
+        throw new IllegalArgumentException("Seleccione un cliente válido.");
+    }
+
+    ClienteDTO cliente = clientesBO.obtenerClientePorTelefono(telefonoCliente);
+
+    // ** Validación 3: Fecha y hora de reservación **
+Date fechaSeleccionada = dtcFechaReservacion.getDate();
+LocalTime horaSeleccionada = tpHoradeseada.getTime();
+
+if (fechaSeleccionada == null) {
+    throw new IllegalArgumentException("Seleccione una fecha válida.");
+}
+if (horaSeleccionada == null) {
+    throw new IllegalArgumentException("Seleccione una hora válida.");
+}
+
+LocalDate fechaActual = LocalDate.now();
+LocalDate fechaReservacion = fechaSeleccionada.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+
+if (fechaReservacion.isBefore(fechaActual)) {
+    throw new IllegalArgumentException("La fecha no puede ser anterior al día de hoy.");
+}
+if (fechaReservacion.isEqual(fechaActual) && horaSeleccionada.isBefore(LocalTime.now())) {
+    throw new IllegalArgumentException("La hora no puede ser anterior a la actual si la reservación es para hoy.");
+}
+
+// Validación de horario del restaurante (si los horarios están configurados)
+LocalTime horaApertura = restaurante.getHoraApertura();
+LocalTime horaCierre = restaurante.getHoraCierre();
+
+if (horaApertura != null && horaCierre != null) {
+    horaCierre = horaCierre.minusHours(1); // Ajuste de margen
+
+    if (horaSeleccionada.isBefore(horaApertura) || horaSeleccionada.isAfter(horaCierre)) {
+        throw new IllegalArgumentException(
+            "La reservación solo puede hacerse entre %s y %s".formatted(horaApertura, horaCierre)
+        );
+    }
+} else {
+    // Puedes registrar un mensaje informativo si los horarios no están configurados
+    System.out.println("Advertencia: El restaurante no tiene horarios configurados.");
+}
+
+LocalDateTime fechaHoraReservacion = LocalDateTime.of(fechaReservacion, horaSeleccionada);
+
+
+    // ** Validación 4: Cantidad de personas **
+    String cantPersonasStr = (String) cbxCantPersonas.getSelectedItem();
+    if (cantPersonasStr == null) {
+        throw new IllegalArgumentException("Seleccione la cantidad de personas.");
+    }
+
+    int numeroPersonas;
+    try {
+        numeroPersonas = Integer.parseInt(cantPersonasStr);
+    } catch (NumberFormatException e) {
+        throw new IllegalArgumentException("La cantidad de personas debe ser un número válido.");
+    }
+
+    // ** Creación del DTO de Reservación **
+    ReservacionDTO nuevaReservacion = new ReservacionDTO();
+    nuevaReservacion.setMesa(mesaSeleccionada);
+    nuevaReservacion.setCliente(cliente);
+    nuevaReservacion.setFechaHora(fechaHoraReservacion);
+    nuevaReservacion.setNumeroPersonas(numeroPersonas);
+    nuevaReservacion.setEstado(EstadoReservacionDTO.PENDIENTE);
+    
+
+    // ** Guardar la reservación **
+    reservacionesBO.agregarReservacion(nuevaReservacion);
+
+    JOptionPane.showMessageDialog(
+        this,
+        "Reservación creada exitosamente.",
+        "Éxito",
+        JOptionPane.INFORMATION_MESSAGE
+    );
+
+    limpiarFormulario();
+
+} catch (IllegalArgumentException ex) {
+    JOptionPane.showMessageDialog(
+        this,
+        ex.getMessage(),
+        "Error de Validación",
+        JOptionPane.ERROR_MESSAGE
+    );
+} catch (NegocioException ex) {
+    JOptionPane.showMessageDialog(
+        this,
+        "Error al guardar la reservación: " + ex.getMessage(),
+        "Error",
+        JOptionPane.ERROR_MESSAGE
+    );
+} catch (Exception e) {
+    JOptionPane.showMessageDialog(
+        this,
+        "Ocurrió un error inesperado: " + e.getMessage(),
+        "Error",
+        JOptionPane.ERROR_MESSAGE
+    );
+}
+
+
 
     }//GEN-LAST:event_btnReservarActionPerformed
 

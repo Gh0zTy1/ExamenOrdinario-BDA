@@ -130,7 +130,7 @@ public class ReservacionesDAO implements IReservacionesDAO {
         }
     }
 
-    @Override
+   @Override
 public void agregarReservacion(Reservacion reservacion) throws DAOException {
     EntityManager entityManager = Conexion.getInstance().crearConexion();
     EntityTransaction transaction = entityManager.getTransaction();
@@ -147,13 +147,18 @@ public void agregarReservacion(Reservacion reservacion) throws DAOException {
             throw new DAOException("No se puede realizar la reservación porque el cliente ya tiene una reservación activa en este restaurante.");
         }
 
-        // Verificar disponibilidad de la mesa
+        // Verificar disponibilidad de la mesa (si el horario de cierre está configurado)
         LocalTime horaCierre = reservacion.getMesa().getRestaurante().getHoraCierre();
-        LocalTime limiteReservacion = horaCierre.minusHours(1); // Última hora válida para reservar
-        LocalTime horaReservacion = reservacion.getFechaHora().toLocalTime();
+        if (horaCierre != null) {
+            LocalTime limiteReservacion = horaCierre.minusHours(1); // Última hora válida para reservar
+            LocalTime horaReservacion = reservacion.getFechaHora().toLocalTime();
 
-        if (horaReservacion.isAfter(limiteReservacion)) {
-            throw new DAOException(String.format("La reservación no puede realizarse porque excede el horario límite permitido, que es hasta las %s", limiteReservacion.toString()));
+            if (horaReservacion.isAfter(limiteReservacion)) {
+                throw new DAOException(String.format(
+                    "La reservación no puede realizarse porque excede el horario límite permitido, que es hasta las %s",
+                    limiteReservacion.toString()
+                ));
+            }
         }
 
         // Verificar que la mesa no esté ocupada
@@ -182,6 +187,7 @@ public void agregarReservacion(Reservacion reservacion) throws DAOException {
         }
     }
 }
+
 
 
     @Override

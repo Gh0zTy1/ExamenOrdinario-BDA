@@ -22,6 +22,7 @@ import excepciones.NegocioException;
 import fachadas.ActualizarRestauranteFACHADA;
 import fachadas.AgregarRestauranteFACHADA;
 import fachadas.CargarMesasFACHADA;
+import fachadas.RestaurantesFachada;
 import fachadas.TiposMesaFachada;
 import fachadas.agregarMesasFCD;
 import fachadas.agregarTiposMesaFCD;
@@ -247,4 +248,23 @@ public static agregarTiposMesaFCD fabricaFCDAgregarTipoMesa() {
         // Crear y devolver la instancia de AgregarTiposMesaFCD
         return new agregarTiposMesaFCD(tiposMesaBO);
     }
+
+
+public static RestaurantesFachada fabricaFCDRestaurantes() {
+    // Crear la conexión a la base de datos
+    Conexion conexion = Conexion.getInstance();
+
+    // Crear los DAO necesarios
+    RestaurantesDAO restaurantesDAO = new RestaurantesDAO(conexion);
+
+    // Crear el convertidor
+    RestauranteConvertidor restauranteConvertidor = new RestauranteConvertidor();
+
+    // Crear el BO (lógica de negocio) para los restaurantes
+    RestaurantesBO restaurantesBO = new RestaurantesBO(restaurantesDAO, restauranteConvertidor);
+
+    // Crear y devolver la instancia de RestaurantesFachada
+    return new RestaurantesFachada(restaurantesBO);
+}
+
 }
