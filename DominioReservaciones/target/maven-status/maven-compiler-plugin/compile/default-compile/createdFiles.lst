@@ -18,6 +18,7 @@ idaos\IReservacionesDAO.class
 daos\ClientesDAO.class
 conexion\Main.class
 entidades\EstadoReservacion.class
+cifrado\CifradoTelefono.class
 entidades\Reservacion_.class
 fabricas\EntityManagerFactoryHelper.class
 entidades\Reservacion.class
