@@ -24,12 +24,15 @@ import fachadas.AgregarRestauranteFACHADA;
 import fachadas.CargarMesasFACHADA;
 import fachadas.TiposMesaFachada;
 import fachadas.agregarMesasFCD;
+import fachadas.agregarTiposMesaFCD;
 import fachadas.cancelarReservacionFCD;
 import fachadas.consultarHistorialClienteFCD;
 import fachadas.consultarHistorialRestauranteFCD;
 import fachadas.crearReservacionFACHADA;
 import fachadas.eliminarMesasFCD;
+import iFachadas.ITiposMesaFachada;
 import ibo.ITiposMesaBO;
+import idaos.ITiposMesaDAO;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -228,4 +231,20 @@ public static AgregarRestauranteFACHADA fabricaFCDAgregarRestaurante() {
     return new AgregarRestauranteFACHADA(restaurantesBO);
 }
     
+public static agregarTiposMesaFCD fabricaFCDAgregarTipoMesa() {
+        // Crear la conexión a la base de datos
+        Conexion conexion = Conexion.getInstance();
+
+        // Crear el DAO necesario para acceder a los tipos de mesa
+        ITiposMesaDAO tiposMesaDAO = new TiposMesaDAO(conexion);
+
+        // Crear el convertidor de tipos de mesa
+        TipoMesaConvertidor tipoMesaConvertidor = new TipoMesaConvertidor();
+
+        // Crear el BO para tipos de mesa
+        TiposMesaBO tiposMesaBO = new TiposMesaBO(tiposMesaDAO, tipoMesaConvertidor);
+
+        // Crear y devolver la instancia de AgregarTiposMesaFCD
+        return new agregarTiposMesaFCD(tiposMesaBO);
+    }
 }

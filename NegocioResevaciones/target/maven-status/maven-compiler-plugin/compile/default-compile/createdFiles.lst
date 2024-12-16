@@ -17,6 +17,7 @@ iFachadas\IagregarMesasFCD.class
 fachadas\consultarHistorialClienteFCD.class
 convertidores\ReservacionConvertidor.class
 fachadas\eliminarMesasFCD.class
+iFachadas\ITiposMesaFachada.class
 fachadas\CargarMesasFACHADA.class
 iFachadas\IcancelarReservacionFCD.class
 iFachadas\ICrearReservacionFCD.class
@@ -48,4 +49,5 @@ convertidores\RestauranteConvertidor.class
 iFachadas\ImodificarMesasFCD.class
 dto\MultaDTO.class
 iFachadas\IeliminarMesasFCD.class
+fachadas\agregarTiposMesaFCD.class
 dto\RestauranteDTO.class

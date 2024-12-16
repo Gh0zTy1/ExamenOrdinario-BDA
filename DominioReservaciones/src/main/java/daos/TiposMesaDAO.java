@@ -30,7 +30,7 @@ public class TiposMesaDAO implements ITiposMesaDAO {
     public List<TipoMesa> obtenerTiposMesaTodos() throws DAOException {
        
    EntityManager entityManager = Conexion.getInstance().crearConexion();
-       
+        EntityTransaction transaction = entityManager.getTransaction();
         
         try {
            TypedQuery<TipoMesa> query = entityManager.createQuery("SELECT t FROM TipoMesa t", TipoMesa.class);
@@ -47,11 +47,12 @@ public class TiposMesaDAO implements ITiposMesaDAO {
     @Override
     public void agregarTipoMesa(TipoMesa tipoMesa) throws DAOException {
       
-        EntityTransaction transaction = conexion.crearConexion().getTransaction();
+        EntityManager entityManager = Conexion.getInstance().crearConexion();
+        EntityTransaction transaction = entityManager.getTransaction();
 
         try {
             
-            boolean existe = conexion.crearConexion().createQuery("SELECT COUNT(t) FROM TipoMesa t WHERE t.nombre LIKE :nombreTipo", Long.class)
+            boolean existe = entityManager.createQuery("SELECT COUNT(t) FROM TipoMesa t WHERE t.nombre LIKE :nombreTipo", Long.class)
                             .setParameter("nombreTipo", tipoMesa.getNombre())
                             .getSingleResult() > 0;
             if (existe) {
@@ -59,7 +60,7 @@ public class TiposMesaDAO implements ITiposMesaDAO {
             }
             
             transaction.begin();
-            conexion.crearConexion().persist(tipoMesa);
+           entityManager.persist(tipoMesa);
             transaction.commit();
         } catch (Exception e) {
             if (transaction.isActive()) {
@@ -68,24 +69,27 @@ public class TiposMesaDAO implements ITiposMesaDAO {
             
             throw new DAOException(e.getMessage());
         } finally {
-            conexion.crearConexion().close();
+           if (entityManager.isOpen()) {
+                entityManager.close();
+            }
         }
     }
 
     @Override
     public void eliminarTipoMesa(Long id) throws DAOException {
-        
+         EntityManager entityManager = Conexion.getInstance().crearConexion();
+        EntityTransaction transaction = entityManager.getTransaction();
 
         try {
             
-            boolean noExiste = conexion.crearConexion().createQuery("SELECT COUNT(t) FROM TipoMesa t WHERE t.id = :id", Long.class)
+            boolean noExiste = entityManager.createQuery("SELECT COUNT(t) FROM TipoMesa t WHERE t.id = :id", Long.class)
                             .setParameter("id", id)
                             .getSingleResult() == 0;
             if (noExiste) {
                 throw new DAOException("El tipo de mesa con el ID dado no existe");
             }
             
-            conexion.crearConexion().getTransaction().begin();
+            entityManager.getTransaction().begin();
 
             TipoMesa tipoMesa = conexion.crearConexion().find(TipoMesa.class, id);
             if (tipoMesa != null) {
@@ -100,7 +104,9 @@ public class TiposMesaDAO implements ITiposMesaDAO {
             
             throw new DAOException(e.getMessage());
         } finally {
-            conexion.crearConexion().close();
+           if (entityManager.isOpen()) {
+                entityManager.close();
+            }
         }
     }
 }
